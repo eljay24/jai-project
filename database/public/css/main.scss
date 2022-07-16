@@ -1,0 +1,142 @@
+@font-face {
+  font-family: "Poppins Light";
+  src: url(../css/fonts/Poppins/Poppins-ExtraLight.ttf);
+}
+@font-face {
+  font-family: "Poppins Regular";
+  src: url(../css/fonts/Poppins/Poppins-Regular.ttf);
+}
+@font-face {
+  font-family: "Poppins Bold";
+  src: url(../css/fonts/Poppins/Poppins-Bold.ttf);
+}
+
+body {
+  padding: 50px;
+  * {
+    box-sizing: border-box;
+    font-family: "Poppins Regular", Times, serif;
+  }
+}
+
+.thumb-image {
+  width: 50px;
+}
+
+.update-image {
+  width: 200px;
+}
+
+header {
+  position: absolute;
+  top: 0;
+  left: calc(-200px + 15px);
+  height: 100%;
+  min-width: 200px;
+  background-color: rgb(71, 175, 80);
+  z-index: 100;
+  transition: all 300ms ease;
+  &:hover {
+    left: 0;
+  }
+  a {
+    &.nav-link {
+      color: white;
+    }
+  }
+}
+
+/* TABLE STYLE */
+
+.jai-table {
+  margin-top: 50px;
+  p {
+    margin: 0;
+    &.jai-table-name {
+      > span {
+      }
+    }
+    &.primary-font {
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+    &.sub-font {
+      font-size: 14px;
+      line-height: 17px;
+    }
+    &.red {
+      color: rgb(236, 30, 30);
+    }
+    &.green {
+      color: rgb(18, 155, 18);
+    }
+  }
+  > .row {
+    border: {
+      top: 1px solid #333;
+      left: 1px solid #333;
+      right: 1px solid #333;
+    }
+    &:first-child {
+      font-weight: bold;
+      > * {
+        padding: {
+          top: 10px;
+          bottom: 10px;
+        }
+        + * {
+          border-left: 1px solid #333;
+        }
+      }
+    }
+    > * {
+      padding: {
+        top: 5px;
+        bottom: 5px;
+      }
+      + * {
+        border-left: 1px solid #333;
+      }
+    }
+    &:first-child {
+      border: {
+        top: {
+          left: {
+            radius: 10px;
+          }
+          right: {
+            radius: 10px;
+          }
+        }
+      }
+    }
+    &:last-child {
+      border: {
+        bottom: 1px solid #333 {
+          left: {
+            radius: 10px;
+          }
+          right: {
+            radius: 10px;
+          }
+        }
+      }
+    }
+    .jai-col-ID {
+      display: flex;
+      justify-content: center;
+      flex: 0 0 5%;
+    }
+    .jai-table-input {
+      padding: 10px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+      resize: none;
+    }
+  }
+}

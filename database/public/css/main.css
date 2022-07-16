@@ -1,0 +1,115 @@
+@font-face {
+  font-family: "Poppins Light";
+  src: url(../css/fonts/Poppins/Poppins-ExtraLight.ttf);
+}
+@font-face {
+  font-family: "Poppins Regular";
+  src: url(../css/fonts/Poppins/Poppins-Regular.ttf);
+}
+@font-face {
+  font-family: "Poppins Bold";
+  src: url(../css/fonts/Poppins/Poppins-Bold.ttf);
+}
+body {
+  padding: 50px;
+}
+body * {
+  box-sizing: border-box;
+  font-family: "Poppins Regular", Times, serif;
+}
+
+.thumb-image {
+  width: 50px;
+}
+
+.update-image {
+  width: 200px;
+}
+
+header {
+  position: absolute;
+  top: 0;
+  left: -185px;
+  height: 100%;
+  min-width: 200px;
+  background-color: #47af50;
+  z-index: 100;
+  transition: all 300ms ease;
+}
+header:hover {
+  left: 0;
+}
+header a.nav-link {
+  color: white;
+}
+
+/* TABLE STYLE */
+.jai-table {
+  margin-top: 50px;
+}
+.jai-table p {
+  margin: 0;
+}
+.jai-table p.primary-font {
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+.jai-table p.sub-font {
+  font-size: 14px;
+  line-height: 17px;
+}
+.jai-table p.red {
+  color: #ec1e1e;
+}
+.jai-table p.green {
+  color: #129b12;
+}
+.jai-table > .row {
+  border-top: 1px solid #333;
+  border-left: 1px solid #333;
+  border-right: 1px solid #333;
+}
+.jai-table > .row:first-child {
+  font-weight: bold;
+}
+.jai-table > .row:first-child > * {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.jai-table > .row:first-child > * + * {
+  border-left: 1px solid #333;
+}
+.jai-table > .row > * {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.jai-table > .row > * + * {
+  border-left: 1px solid #333;
+}
+.jai-table > .row:first-child {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.jai-table > .row:last-child {
+  border-bottom: 1px solid #333;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+.jai-table > .row .jai-col-ID {
+  display: flex;
+  justify-content: center;
+  flex: 0 0 5%;
+}
+.jai-table > .row .jai-table-input {
+  padding: 10px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+}
+
+/*# sourceMappingURL=main.css.map */
