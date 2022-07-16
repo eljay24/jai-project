@@ -49,7 +49,7 @@ try {
 <div class="content-container">
   <div class="d-flex justify-content-between">
     <a href="create.php" type="button" class="btn btn-outline-success">Create new borrower</a>
-  
+
     <form>
       <div class="input-group">
         <input type="text" class="form-control" placeholder="Search for borrowers" name="search" value="<?php echo $search; ?>">
@@ -57,7 +57,7 @@ try {
       </div>
     </form>
   </div>
-  
+
   <div class="jai-table">
     <div class="row">
       <div class="jai-col-ID">ID</div>
@@ -88,58 +88,59 @@ try {
             </div>
           </div>
         </div>
-      </div>
-      <div class="col">
-        <?php if (ucwords(strtolower($borrower['amount'])) == "") {
-        ?>
-          No active loan
-        <?php
-        } else {
-        ?>
-          <div class="row">
-            <div class="col">
-              <p class="jai-table-amount primary-font"><span class="jai-table-label">Amount:</span> <?= $amountValue = ucwords(strtolower($borrower['amount'])) == "" ? "N/A" : ucwords(strtolower($borrower['amount'])); ?></p>
+        <div class="col">
+          <?php if (ucwords(strtolower($borrower['amount'])) == "") { ?>
+            No active loan
+          <?php } else { ?>
+            <div class="row">
+              <div class="col">
+                <p class="jai-table-amount primary-font"><span class="jai-table-label">Amount:</span> <?= $amountValue = ucwords(strtolower($borrower['amount'])) == "" ? "N/A" : ucwords(strtolower($borrower['amount'])); ?></p>
+              </div>
+              <div class="col">
+                <p class="jai-table-payable primary-font"> <span class="jai-table-label">Payable: </span> <?= "₱" . ucwords(strtolower($borrower['payable'])) ?></p>
+              </div>
             </div>
-            <div class="col">
-              <p class="jai-table-payable primary-font"> <span class="jai-table-label">Payable: </span> <?= "₱" . ucwords(strtolower($borrower['payable'])) ?></p>
+            <div class="row">
+              <div class="col">
+                <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Balance: </span> <?= "₱" . ucwords(strtolower($borrower['balance'])) ?></p>
+                <p class="jai-table-mode sub-font"> <span class="jai-table-label">Mode: </span> Weekly, 6 months</p>
+                <p class="jai-table-amort sub-font"> <span class="jai-table-label">Amortization: </span> ₱140.00</p>
+              </div>
+              <div class="col">
+                <p class="jai-table-release sub-font"> <span class="jai-table-label">Release Date: </span> 01/01/22</p>
+                <p class="jai-table-due sub-font"> <span class="jai-table-label">Due Date: </span> 01/01/22</p>
+              </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Balance: </span> <?= "₱" . ucwords(strtolower($borrower['balance'])) ?></p>
-              <p class="jai-table-mode sub-font"> <span class="jai-table-label">Mode: </span> Weekly, 6 months</p>
-              <p class="jai-table-amort sub-font"> <span class="jai-table-label">Amortization: </span> ₱140.00</p>
-            </div>
-            <div class="col">
-              <p class="jai-table-release sub-font"> <span class="jai-table-label">Release Date: </span> 01/01/22</p>
-              <p class="jai-table-due sub-font"> <span class="jai-table-label">Due Date: </span> 01/01/22</p>
-            </div>
-          </div>
-        <?php
-
-        } ?>
-
+          <?php
+          } ?>
+        </div>
+        <div class="col position-relative">
+          <textarea class="jai-table-input" type="text"></textarea>
+        </div>
+        <div class="col-1 d-flex align-items-center justify-content-around">
+          <a href="update.php?id=<?php echo $borrower['b_id'] ?>" class="btn btn-primary btn-sm">Edit</a>
+          <button type="button" class="btn btn-danger btn-sm delete-borrower" data-toggle="modal" data-target="#deleteBorrower">Delete</button>
+        </div>
       </div>
     <?php } ?>
   </div>
-</div>
 
-<div class="modal fade" id="deleteBorrower" tabindex="-1" role="dialog" aria-labelledby="deleteBorrowerLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-sm close-modal" data-dismiss="modal">Cancel</button>
-        <form class="delete-form" style="display: inline-block" method="post" action="delete.php">
-          <input type="hidden" name="b_id" value="">
-          <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-        </form>
+  <div class="modal fade" id="deleteBorrower" tabindex="-1" role="dialog" aria-labelledby="deleteBorrowerLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm close-modal" data-dismiss="modal">Cancel</button>
+          <form class="delete-form" style="display: inline-block" method="post" action="delete.php">
+            <input type="hidden" name="b_id" value="">
+            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-</body>
+  </body>
 
-</html>
+  </html>
