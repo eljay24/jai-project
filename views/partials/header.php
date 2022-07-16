@@ -19,12 +19,16 @@
 
 <body>
 
-  <header>
-    <nav class="d-flex flex-column">
-      <h2>JAI Fair Loan</h2>
-
-      <div class="nav-link-container"><a href="../../public/borrowers/index.php" class="nav-link">Borrowers</a></div>
-      <div class="nav-link-container"><a href="../../public/loans/index.php" class="nav-link">Loans</a></div>
-      <div class="nav-link-container"><a href="" class="nav-link">Payments</a></div>
-    </nav>
+  <header class="sticky-header">
+    <div class="nav-container">
+      <nav class="d-flex flex-column">
+        <div class="company-name">
+          <h2>JAI Fair Loan</h2>
+        </div>
+  
+        <div class="nav-link-container"><a href="../../public/borrowers/index.php" class="nav-link">Borrowers</a></div>
+        <div class="nav-link-container"><a href="../../public/loans/index.php" class="nav-link">Loans</a></div>
+        <div class="nav-link-container"><a href="" class="nav-link">Payments</a></div>
+      </nav>
+    </div>
   </header>
