@@ -7,7 +7,14 @@ try {
   $search = $_GET['search'] ?? '';
 
   if ($search) {
-    $statement = $conn->prepare("SELECT * FROM jai_db.borrowers WHERE firstname LIKE :search OR middlename LIKE :search OR lastname LIKE :search OR b_id LIKE :search ORDER BY b_id ASC");
+    $statement = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
+                                        b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
+                                        l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
+                                        l.releasedate, l.duedate, l.status, l.c_id
+                                 FROM jai_db.borrowers as b
+                                 LEFT JOIN jai_db.loans as l
+                                 ON b.b_id = l.b_id
+                                 WHERE firstname LIKE :search OR middlename LIKE :search OR lastname LIKE :search OR comaker LIKE :search OR b.b_id LIKE :search ORDER BY b.b_id ASC");
     $statement->bindValue(':search', "%$search%");
   } else {
     $statement = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
@@ -99,12 +106,12 @@ try {
               <div class="col">
                 <p class="jai-table-payable primary-font"> <span class="jai-table-label">Payable: </span> <?= "₱" . ucwords(strtolower($borrower['payable'])) ?></p>
               </div>
-            </div>
+            </div>            
             <div class="row">
               <div class="col">
                 <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Balance: </span> <?= "₱" . ucwords(strtolower($borrower['balance'])) ?></p>
-                <p class="jai-table-mode sub-font"> <span class="jai-table-label">Mode: </span> Weekly, 6 months</p>
-                <p class="jai-table-amort sub-font"> <span class="jai-table-label">Amortization: </span> ₱140.00</p>
+                <p class="jai-table-mode sub-font"> <span class="jai-table-label">Mode: </span> <?= ucwords(strtolower($borrower['mode'] . ', ' . $borrower['term'])) ?></p>
+                <p class="jai-table-amort sub-font"> <span class="jai-table-label">Amortization: </span> <?= "₱" . ucwords(strtolower($borrower['amortization'])) ?></p>
               </div>
               <div class="col">
                 <p class="jai-table-release sub-font"> <span class="jai-table-label">Release Date: </span> 01/01/22</p>
