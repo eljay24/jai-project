@@ -85,8 +85,35 @@ $loan = [
 </p>
 <h1>Add new loan</h1>
 <br>
+
+<!-- TEST AUTOCOMPLETE SEARCH -->
+<div class="form-group">
+  <label><strong>Borrower:</strong></label>
+  <input type="text" autocomplete="off" name="search" id="search" placeholder="Type to search borrower..." class="form-control">
+</div>
+
+<script type="text/javascript">
+  $(function() {
+    $("#search").autocomplete({
+      source: 'borrower_search.php',
+    });
+  });
+</script>
+<!-- TEST AUTOCOMPLETE SEARCH -->
+
+
+
+<!--
+<script type="text/javascript">
+  function changeFunc() {
+    var selectBox = document.getElementById("loaner");
+    var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+    alert(selectedValue);
+  }
+</script>
+
 <form action="">
-  <select name="loaner">
+  <select id="loaner" name="loaner" onchange="changeFunc();">
     <option value="">Select borrower</option>
     <?php foreach ($loans as $i => $loaner) { ?>
       <option value="<?= $loaner['b_id'] ?>"><?= '#' . $loaner['b_id'] . ' - ' . $loaner['firstname'] . ' ' . $loaner['middlename'] . ' ' . $loaner['lastname'] ?></option>
@@ -94,6 +121,7 @@ $loan = [
   </select>
   <a href="create.php?id=" class="btn btn-primary btn-sm">OK</a>
 </form>
+-->
 
 <?php include_once "../../views/loans/form.php" ?>
 
