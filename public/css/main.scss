@@ -16,6 +16,25 @@ body {
     box-sizing: border-box;
     font-family: "Poppins Regular", Times, serif;
   }
+  .btn {
+    border-radius: 35px;
+    padding: 10px 20px;
+    &.edit-btn,
+    &.delete-btn {
+      text-indent: -9999999px;
+      background-size: 25px;
+      background-position: center;
+      background-repeat: no-repeat;
+      height: 42px;
+      width: 42px;
+    }
+    &.edit-btn {
+      background-image: url(../assets/edit-icon.png);
+    }
+    &.delete-btn {
+      background-image: url(../assets/delete-icon.png);
+    }
+  }
 }
 
 .thumb-image {
@@ -27,7 +46,14 @@ body {
 }
 
 .content-container {
-  padding: 50px 50px 0 70px;
+  padding: 20px 50px 0 70px;
+  .page-name {
+    margin-bottom: 20px;
+    h1 {
+      font-weight: 600;
+      margin: 0;
+    }
+  }
 }
 
 /* NAV STYLE */
@@ -37,14 +63,17 @@ body {
   left: 0;
   .nav-container {
     position: absolute;
-    top: 0;
+    top: 20px;
     left: -220px;
-    height: 100vh;
+    height: calc(100vh - 40px);
     min-width: 238px;
     background-color: #06283d;
     z-index: 100;
     transition: all 300ms ease;
     color: white;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    box-shadow: 5px 5px 25px rgb(185, 185, 185);
     &:hover {
       left: 0;
     }
@@ -74,7 +103,7 @@ body {
 /* TABLE STYLE */
 
 .jai-table {
-  margin: 50px 0;
+  margin: 35px 15px;
   p {
     margin: 0;
     &.jai-table-name {
@@ -127,10 +156,10 @@ body {
       border: {
         top: {
           left: {
-            radius: 10px;
+            radius: 15px;
           }
           right: {
-            radius: 10px;
+            radius: 15px;
           }
         }
       }
@@ -139,10 +168,10 @@ body {
       border: {
         bottom: 1px solid #333 {
           left: {
-            radius: 10px;
+            radius: 15px;
           }
           right: {
-            radius: 10px;
+            radius: 15px;
           }
         }
       }

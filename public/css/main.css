@@ -14,6 +14,24 @@ body * {
   box-sizing: border-box;
   font-family: "Poppins Regular", Times, serif;
 }
+body .btn {
+  border-radius: 35px;
+  padding: 10px 20px;
+}
+body .btn.edit-btn, body .btn.delete-btn {
+  text-indent: -9999999px;
+  background-size: 25px;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 42px;
+  width: 42px;
+}
+body .btn.edit-btn {
+  background-image: url(../assets/edit-icon.png);
+}
+body .btn.delete-btn {
+  background-image: url(../assets/delete-icon.png);
+}
 
 .thumb-image {
   width: 50px;
@@ -24,7 +42,14 @@ body * {
 }
 
 .content-container {
-  padding: 50px 50px 0 70px;
+  padding: 20px 50px 0 70px;
+}
+.content-container .page-name {
+  margin-bottom: 20px;
+}
+.content-container .page-name h1 {
+  font-weight: 600;
+  margin: 0;
 }
 
 /* NAV STYLE */
@@ -35,14 +60,17 @@ body * {
 }
 .sticky-header .nav-container {
   position: absolute;
-  top: 0;
+  top: 20px;
   left: -220px;
-  height: 100vh;
+  height: calc(100vh - 40px);
   min-width: 238px;
   background-color: #06283d;
   z-index: 100;
   transition: all 300ms ease;
   color: white;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  box-shadow: 5px 5px 25px #b9b9b9;
 }
 .sticky-header .nav-container:hover {
   left: 0;
@@ -66,7 +94,7 @@ body * {
 
 /* TABLE STYLE */
 .jai-table {
-  margin: 50px 0;
+  margin: 35px 15px;
 }
 .jai-table p {
   margin: 0;
@@ -108,13 +136,13 @@ body * {
   border-left: 1px solid #333;
 }
 .jai-table > .row:first-child {
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
 }
 .jai-table > .row:last-child {
   border-bottom: 1px solid #333;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
 }
 .jai-table > .row .jai-col-ID {
   display: flex;
