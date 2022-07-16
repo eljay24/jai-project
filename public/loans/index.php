@@ -13,11 +13,14 @@ try {
                                   WHERE b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search ORDER BY l.l_id ASC");
     $statement->bindValue(':search', "%$search%");
   } else {
-    $statement = $conn->prepare("SELECT l.l_id, b.b_id, b.picture, b.firstname, b.middlename, b.lastname, l.amount, l.balance, l.payable
-                                  FROM jai_db.borrowers AS b 
-                                  INNER JOIN jai_db.loans AS l 
-                                  ON b.b_id = l.b_id 
-                                  ORDER BY l.l_id ASC");
+    $statement = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
+                                        b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
+                                        l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
+                                        l.releasedate, l.duedate, l.status, l.c_id
+                                  FROM jai_db.borrowers as b
+                                  INNER JOIN jai_db.loans as l
+                                  ON b.b_id = l.b_id
+                                  ORDER BY l.l_id DESC");
   }
 
   $statement->execute();

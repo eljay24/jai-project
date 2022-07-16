@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <a href="index.php" class="btn btn-secondary">Go back</a>
     </p>
     <h1>Update borrower</h1>
-    <h3><?php echo '#'.$borrower['b_id'].' - '.$borrower['firstname'].' '.$borrower['lastname'];?></h3>
+    <h3><?php echo '#'.$borrower['b_id'].' - '.ucwords(strtolower($borrower['firstname'])).' '.ucwords(strtolower($borrower['lastname']));?></h3>
 
     <?php include_once "../../views/borrowers/form.php" ?>
 
