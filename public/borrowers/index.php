@@ -54,6 +54,10 @@ try {
 <?php include_once "../../views/partials/header.php"; ?>
 
 <div class="content-container">
+  <div class="page-name">
+    <h1>Borrowers</h1>
+  </div>
+
   <div class="d-flex justify-content-between">
     <a href="create.php" type="button" class="btn btn-outline-success">Create new borrower</a>
 
@@ -106,7 +110,7 @@ try {
               <div class="col">
                 <p class="jai-table-payable primary-font"> <span class="jai-table-label">Payable: </span> <?= "₱" . ucwords(strtolower($borrower['payable'])) ?></p>
               </div>
-            </div>            
+            </div>
             <div class="row">
               <div class="col">
                 <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Balance: </span> <?= "₱" . ucwords(strtolower($borrower['balance'])) ?></p>
@@ -125,8 +129,10 @@ try {
           <textarea class="jai-table-input" type="text"></textarea>
         </div>
         <div class="col-1 d-flex align-items-center justify-content-around">
-          <a href="update.php?id=<?php echo $borrower['b_id'] ?>" class="btn btn-primary btn-sm">Edit</a>
-          <button type="button" class="btn btn-danger btn-sm delete-borrower" data-toggle="modal" data-target="#deleteBorrower">Delete</button>
+          <!-- <a href="update.php?id=<?php //echo $borrower['b_id'] 
+                                      ?>" class="btn btn-primary btn-sm edit-btn">Edit</a> -->
+          <a href="#" class="btn btn-primary btn-sm edit-btn">Edit</a>
+          <button type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower">Delete</button>
         </div>
       </div>
     <?php } ?>
@@ -143,6 +149,88 @@ try {
             <input type="hidden" name="b_id" value="">
             <button type="submit" class="btn btn-danger btn-sm">Delete</button>
           </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="editBorrower" tabindex="-1" role="dialog" aria-labelledby="editBorrowerLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <form action="" method="post" enctype="multipart/form-data">
+
+            <div class="container">
+              <div class="row">
+                <div class="col">
+                  <div class="mb-3">
+                    <input placeholder="First name" type="text" class="form-control" name="firstname" value="">
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="mb-3">
+                    <input placeholder="Middle name" type="text" class="form-control" name="middlename" value="">
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="mb-3">
+                    <input placeholder="Last name" type="text" class="form-control" name="lastname" value="">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="mb-3">
+                    <input placeholder="Address" type="text" class="form-control" name="address" value="">
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="mb-3">
+                    <input placeholder="Contact number" type="text" class="form-control" name="contactno" value="">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="mb-3">
+                    <input placeholder="Birthday" type="text" class="form-control" name="birthday" value="">
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="mb-3">
+                    <input placeholder="Business name" type="text" class="form-control" name="businessname" value="">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="mb-3">
+                    <input placeholder="Occupation" type="text" class="form-control" name="occupation" value="">
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="mb-3">
+                    <input placeholder="Comaker" type="text" class="form-control" name="comaker" value="">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="mb-3">
+              <input placeholder="Comaker Contact Number" type="text" class="form-control" name="comakerno" value="">
+            </div>
+            <div class="mb-3">
+              <textarea placeholder="Remarks" type="text" class="form-control" name="remarks"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm close-modal" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-secondary btn-sm">Edit</button>
         </div>
       </div>
     </div>

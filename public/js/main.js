@@ -1,7 +1,15 @@
 $(document).ready(function () {
   openDelete();
   closeDelete();
+  openModal(".edit-btn", "editBorrower", console.log("function working"));
 });
+
+function openModal(buttonName, modalName, modalFunction) {
+  $(buttonName).on("click", function () {
+    modalFunction;
+    $("#" + modalName).modal("toggle");
+  });
+}
 
 function openDelete() {
   $(".delete-borrower").on("click", function () {
