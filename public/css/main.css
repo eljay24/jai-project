@@ -37,6 +37,14 @@ body .btn.delete-btn {
   width: 50px;
 }
 
+.thumb-image2 {
+  width: 70px;
+}
+
+.jai-image-col {
+  flex: 0 0 120px;
+}
+
 .update-image {
   width: 200px;
 }

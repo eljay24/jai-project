@@ -83,8 +83,10 @@ try {
         <div class="jai-col-ID"><?php echo $borrower['b_id'] ?></div>
         <div class="col">
           <div class="row">
-            <div class="jai-picture">
-              <img src="/<?= 'JAI/public/' . $borrower['picture']; ?>" class="thumb-image2">
+            <div class="jai-image-col">
+              <div class="jai-picture">
+                <img src="/<?= 'JAI/public/' . $borrower['picture']; ?>" class="thumb-image2">
+              </div>
             </div>
             <div class="col">
               <p class="jai-table-name primary-font <?= $borrower['firstname'] == 'Angelo' ? 'red' : ''; ?>
@@ -93,7 +95,7 @@ try {
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Address: </span><?php echo $borrower['address'] ?></p>
             </div>
             <div class="col">
-              <p class="jai-table-name primary-font <?= $borrower['firstname'] == 'Angelo' ? 'red' : ''; ?>
+              <p class="jai-table-comaker primary-font <?= $borrower['firstname'] == 'Angelo' ? 'red' : ''; ?>
                                                 <?= $borrower['firstname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Comaker:</span> <?= ucwords(strtolower($borrower['comaker'])) ?></p>
               <p class="jai-table-contact sub-font"> <span class="jai-table-label">Contact: </span><?php echo $borrower['comakerno'] ?></p>
             </div>

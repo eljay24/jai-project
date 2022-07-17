@@ -23,7 +23,7 @@ function openDelete() {
         .find(".jai-table-name")
         .text();
 
-    modalBody.text(constText + modalBorrName.replace("Name:", ""));
+    modalBody.text(constText + modalBorrName.replace("Name:", "") + "?");
     deleteID.attr("value", modalID);
     modalParent.modal("toggle");
   });
