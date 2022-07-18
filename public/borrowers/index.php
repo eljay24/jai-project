@@ -79,7 +79,7 @@ try {
     </div>
     <?php
     foreach ($borrowers as $i => $borrower) { ?>
-      <div class="row jai-data-row">
+      <div data-row-id="<?php echo $borrower['b_id'] ?>" class="row jai-data-row">
         <div class="jai-col-ID"><?php echo $borrower['b_id'] ?></div>
         <div class="col">
           <div class="row">
@@ -140,7 +140,7 @@ try {
     <?php } ?>
   </div>
 
-  <div class="modal fade" id="deleteBorrower" tabindex="-1" role="dialog" aria-labelledby="deleteBorrowerLabel" aria-hidden="true">
+  <div class="modal fade" data-borrower="1" id="deleteBorrower" tabindex="-1" role="dialog" aria-labelledby="deleteBorrowerLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-body">
@@ -156,7 +156,7 @@ try {
     </div>
   </div>
 
-  <div class="modal fade" id="editBorrower" tabindex="-1" role="dialog" aria-labelledby="editBorrowerLabel" aria-hidden="true">
+  <div class="modal fade" data-borrower="1" id="editBorrower" tabindex="-1" role="dialog" aria-labelledby="editBorrowerLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-body">
@@ -226,13 +226,11 @@ try {
               <textarea placeholder="Remarks" type="text" class="form-control" name="remarks"></textarea>
             </div>
 
-            <button type="submit" class="btn btn-primary">Submit</button>
-
           </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary btn-sm close-modal" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-secondary btn-sm">Edit</button>
+          <button type="button" class="btn btn-secondary btn-sm submit-edit">Edit</button>
         </div>
       </div>
     </div>
