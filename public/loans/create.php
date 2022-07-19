@@ -9,9 +9,12 @@ try {
   echo "Connection failed: " . $e->getMessage();
 }
 
-$statement = $conn->prepare("SELECT *
-                              FROM jai_db.borrowers
-                              ORDER BY b_id ASC");
+$statement = $conn->prepare("SELECT b.b_id, b.firstname, b.middlename, b.lastname
+                                FROM jai_db.borrowers as b
+                                LEFT JOIN jai_db.loans as l
+                                ON b.b_id = l.b_id 
+                                WHERE l.amount IS NULL
+                                ORDER BY b.b_id ASC");
 $statement->execute();
 $loans = $statement->fetchAll(PDO::FETCH_ASSOC);
 
@@ -140,6 +143,11 @@ $loan = [
   <br>
   <span></span>
   <select id="test">
+  <?php
+  foreach ($loans as $i => $loan) {
+    echo '<option>#'.$loan['b_id'].' - '.$loan['firstname'].' '.$loan['middlename'].' '.$loan['lastname'].'</option>';
+  }
+?>
   </select>
 
   <!-- <script>

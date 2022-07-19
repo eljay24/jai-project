@@ -50,9 +50,9 @@ try {
 // exit;
 
 //TOTAL AMOUNT TEST
-// $totalAmount = 0;
-// $totalPayable = 0;
-// $totalBalance = 0;
+$totalAmount = 0;
+$totalPayable = 0;
+$totalBalance = 0;
 
 ?>
 
@@ -62,7 +62,7 @@ try {
   <div class="page-name">
 
 
-    <!-- <?php //TOTAL AMOUNT TEST
+    <?php //TOTAL AMOUNT TEST
 
     foreach ($borrowers as $i => $borrower) {
       $totalAmount += $borrower['amount'];
@@ -74,7 +74,7 @@ try {
     echo "Total Payable: ₱" . number_format($totalPayable, 2) . "<br>";
     echo "Total Balance: ₱" . number_format($totalBalance, 2);
 
-    ?> -->
+    ?>
 
     <h1>Borrowers</h1>
   </div>
