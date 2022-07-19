@@ -50,9 +50,9 @@ try {
 // exit;
 
 //TOTAL AMOUNT TEST
-$totalAmount = 0;
-$totalPayable = 0;
-$totalBalance = 0;
+// $totalAmount = 0;
+// $totalPayable = 0;
+// $totalBalance = 0;
 
 ?>
 
@@ -64,15 +64,15 @@ $totalBalance = 0;
 
     <?php //TOTAL AMOUNT TEST
 
-    foreach ($borrowers as $i => $borrower) {
-      $totalAmount += $borrower['amount'];
-      $totalPayable += $borrower['payable'];
-      $totalBalance += $borrower['balance'];
-    }
+    // foreach ($borrowers as $i => $borrower) {
+    //   $totalAmount += $borrower['amount'];
+    //   $totalPayable += $borrower['payable'];
+    //   $totalBalance += $borrower['balance'];
+    // }
 
-    echo "Total Amount: ₱" . number_format($totalAmount, 2) . "<br>";
-    echo "Total Payable: ₱" . number_format($totalPayable, 2) . "<br>";
-    echo "Total Balance: ₱" . number_format($totalBalance, 2);
+    // echo "Total Amount: ₱" . number_format($totalAmount, 2) . "<br>";
+    // echo "Total Payable: ₱" . number_format($totalPayable, 2) . "<br>";
+    // echo "Total Balance: ₱" . number_format($totalBalance, 2);
 
     ?>
 
@@ -93,7 +93,7 @@ $totalBalance = 0;
   <div class="jai-table">
     <div class="row">
       <div class="jai-col-ID">ID</div>
-      <div class="col">Borrower</div>
+      <div class="col">Borrower Details</div>
       <div class="col">Loan Details</div>
       <div class="col">Remarks</div>
       <div class="col-1">Action</div>
@@ -157,6 +157,9 @@ $totalBalance = 0;
           <a href="#" class="btn btn-primary btn-sm edit-btn">Edit</a>
           <button type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower">Delete</button>
         </div>
+        <div class="d-none hidden-field">
+          <input type="hidden" data-jai-firstname="<?= ucwords(strtolower($borrower['firstname'])) ?>" data-jai-middlename="<?= ucwords(strtolower($borrower['middlename'])) ?>" data-jai-lastname="<?= ucwords(strtolower($borrower['lastname'])) ?>" data-jai-address="<?= ucwords(strtolower($borrower['address'])) ?>" data-jai-contactno="<?= ucwords(strtolower($borrower['contactno'])) ?>" data-jai-birthday="<?= ucwords(strtolower($borrower['birthday'])) ?>" data-jai-businessname="<?= ucwords(strtolower($borrower['businessname'])) ?>" data-jai-occupation="<?= ucwords(strtolower($borrower['occupation'])) ?>" data-jai-comaker="<?= ucwords(strtolower($borrower['comaker'])) ?>" data-jai-comakerno="<?= ucwords(strtolower($borrower['comakerno'])) ?>">
+        </div>
       </div>
     <?php } ?>
   </div>
@@ -180,78 +183,100 @@ $totalBalance = 0;
   <div class="modal fade" data-borrower="1" id="editBorrower" tabindex="-1" role="dialog" aria-labelledby="editBorrowerLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Borrower</h5>
+        </div>
         <div class="modal-body">
           <form action="" method="post" enctype="multipart/form-data">
 
             <div class="container">
               <div class="row">
                 <div class="col">
-                  <div class="mb-3">
+                  <h5 class="modal-body-label">Borrower</h5>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="jai-mb-1">
                     <input placeholder="First name" type="text" class="form-control" name="firstname" value="">
                   </div>
                 </div>
                 <div class="col">
-                  <div class="mb-3">
+                  <div class="jai-mb-1">
                     <input placeholder="Middle name" type="text" class="form-control" name="middlename" value="">
                   </div>
                 </div>
                 <div class="col">
-                  <div class="mb-3">
+                  <div class="jai-mb-1">
                     <input placeholder="Last name" type="text" class="form-control" name="lastname" value="">
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="mb-3">
-                    <input placeholder="Address" type="text" class="form-control" name="address" value="">
+                  <div class="jai-mb-1">
+                    <input placeholder="Birthday" type="text" class="form-control" name="birthday" value="">
                   </div>
                 </div>
                 <div class="col">
-                  <div class="mb-3">
+                  <div class="jai-mb-1">
                     <input placeholder="Contact number" type="text" class="form-control" name="contactno" value="">
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="mb-3">
-                    <input placeholder="Birthday" type="text" class="form-control" name="birthday" value="">
+                  <div class="jai-mb-1">
+                    <input placeholder="Address" type="text" class="form-control" name="address" value="">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="jai-mb-2">
+                    <input placeholder="Occupation" type="text" class="form-control" name="occupation" value="">
                   </div>
                 </div>
                 <div class="col">
-                  <div class="mb-3">
+                  <div class="jai-mb-2">
                     <input placeholder="Business name" type="text" class="form-control" name="businessname" value="">
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="mb-3">
-                    <input placeholder="Occupation" type="text" class="form-control" name="occupation" value="">
+                  <h5 class="modal-body-label">Comaker</h5>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <div class="jai-mb-1">
+                    <input placeholder="Comaker" type="text" class="form-control" name="comaker" value="">
                   </div>
                 </div>
                 <div class="col">
-                  <div class="mb-3">
-                    <input placeholder="Comaker" type="text" class="form-control" name="comaker" value="">
+                  <div class="jai-mb-1">
+                    <input placeholder="Comaker Contact Number" type="text" class="form-control" name="comakerno" value="">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="jai-mb-1">
+                    <textarea placeholder="Remarks" type="text" class="form-control" name="remarks"></textarea>
                   </div>
                 </div>
               </div>
             </div>
 
 
-            <div class="mb-3">
-              <input placeholder="Comaker Contact Number" type="text" class="form-control" name="comakerno" value="">
-            </div>
-            <div class="mb-3">
-              <textarea placeholder="Remarks" type="text" class="form-control" name="remarks"></textarea>
-            </div>
 
           </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary btn-sm close-modal" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-secondary btn-sm submit-edit">Edit</button>
+          <button type="button" class="btn btn-primary btn-sm submit-edit">Edit</button>
         </div>
       </div>
     </div>

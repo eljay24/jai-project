@@ -1,0 +1,22 @@
+.modal {
+  &#editBorrower {
+    .modal-dialog {
+      max-width: 1200px;
+    }
+  }
+  .modal-dialog {
+    .modal-content {
+      border-radius: 15px;
+      .modal-body-label {
+        padding-left: 15px;
+      }
+    }
+  }
+}
+
+body {
+  &.modal-open {
+    overflow: visible !important;
+    padding-right: 0 !important;
+  }
+}

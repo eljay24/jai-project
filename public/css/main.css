@@ -14,24 +14,6 @@ body * {
   box-sizing: border-box;
   font-family: "Poppins Regular", Times, serif;
 }
-body .btn {
-  border-radius: 35px;
-  padding: 10px 20px;
-}
-body .btn.edit-btn, body .btn.delete-btn {
-  text-indent: -9999999px;
-  background-size: 25px;
-  background-position: center;
-  background-repeat: no-repeat;
-  height: 42px;
-  width: 42px;
-}
-body .btn.edit-btn {
-  background-image: url(../assets/edit-icon.png);
-}
-body .btn.delete-btn {
-  background-image: url(../assets/delete-icon.png);
-}
 
 .thumb-image {
   width: 50px;
@@ -54,6 +36,57 @@ body .btn.delete-btn {
 .content-container .page-name h1 {
   font-weight: 600;
   margin: 0;
+}
+
+.jai-mb-1 {
+  margin-bottom: 15px;
+}
+
+.jai-mb-2 {
+  margin-bottom: 25px;
+}
+
+.btn {
+  border-radius: 35px;
+  padding: 10px 20px;
+}
+.btn.edit-btn, .btn.delete-btn {
+  text-indent: -9999999px;
+  background-size: 25px;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 42px;
+  width: 42px;
+}
+.btn.edit-btn {
+  background-image: url(../assets/edit-icon.png);
+}
+.btn.delete-btn {
+  background-image: url(../assets/delete-icon.png);
+}
+
+input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+textarea:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+}
+input.form-control,
+textarea.form-control {
+  transition: all 300ms;
+  padding-left: 20px;
+  border-radius: 25px;
+  min-height: 45px;
+}
+input.form-control:focus,
+textarea.form-control:focus {
+  box-shadow: none;
+  border-color: #1363DF;
+}
+
+textarea.form-control {
+  border-radius: 15px;
 }
 
 /* NAV STYLE */
@@ -166,6 +199,21 @@ body .btn.delete-btn {
 }
 .jai-table .jai-image-col {
   flex: 0 0 120px;
+}
+
+.modal#editBorrower .modal-dialog {
+  max-width: 1200px;
+}
+.modal .modal-dialog .modal-content {
+  border-radius: 15px;
+}
+.modal .modal-dialog .modal-content .modal-body-label {
+  padding-left: 15px;
+}
+
+body.modal-open {
+  overflow: visible !important;
+  padding-right: 0 !important;
 }
 
 /*# sourceMappingURL=main.css.map */

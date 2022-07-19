@@ -1,0 +1,19 @@
+.btn {
+  border-radius: 35px;
+  padding: 10px 20px;
+  &.edit-btn,
+  &.delete-btn {
+    text-indent: -9999999px;
+    background-size: 25px;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 42px;
+    width: 42px;
+  }
+  &.edit-btn {
+    background-image: url(../assets/edit-icon.png);
+  }
+  &.delete-btn {
+    background-image: url(../assets/delete-icon.png);
+  }
+}

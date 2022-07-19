@@ -1,8 +1,9 @@
 $(document).ready(function () {
-  openDelete();
-  closeDelete();
-  openModal(".edit-btn", "#editBorrower", console.log("function working"));
+  closeModal();
+  openModal(".edit-btn", "#editBorrower", openEdit);
+  openModal(".delete-borrower", "#deleteBorrower", openDelete);
   editForm();
+  populateEditFields();
 });
 
 function editForm() {
@@ -22,7 +23,6 @@ function editForm() {
         bid: b_id,
       },
       function (data, status) {
-        console.log(data);
         $(".row").each(function () {
           if ($(this).attr("data-row-id") == b_id) {
             $(this)
@@ -36,37 +36,51 @@ function editForm() {
 }
 
 function openModal(buttonName, modalName, modalFunction) {
-  $(buttonName).on("click", function () {
-    modalFunction;
-    let b_id = $(this).parents(".jai-data-row").find(".jai-col-ID").html();
+  $(buttonName).on("click", function (event) {
+    event.preventDefault();
+    if (modalFunction) {
+      modalFunction(buttonName, modalName, $(this));
+    }
 
-    $(modalName).attr("data-borrower", b_id);
     $(modalName).modal("toggle");
   });
 }
 
-function openDelete() {
-  $(".delete-borrower").on("click", function () {
-    let modalParent = $("#deleteBorrower"),
-      constText = "Are you sure you want to delete ",
-      modalBody = modalParent.find(".modal-body"),
-      modalID = $(this).parents(".jai-data-row").find(".jai-col-ID").text(),
-      deleteID = modalParent.find(".delete-form input"),
-      modalBorrName = $(this)
-        .parents(".jai-data-row")
-        .find(".jai-table-name")
-        .text();
+function openEdit(buttonName, modalName, thisValue) {
+  let b_id = $(thisValue).parents(".jai-data-row").find(".jai-col-ID").html();
 
-    modalBody.text(constText + modalBorrName.replace("Name:", "") + "?");
-    deleteID.attr("value", modalID);
-    modalParent.modal("toggle");
-  });
+  $(modalName).attr("data-borrower", b_id);
 }
 
-function closeDelete() {
+function openDelete(buttonName, modalName, thisValue) {
+  let modalParent = $("#deleteBorrower"),
+    constText = "Are you sure you want to delete ",
+    modalBody = modalParent.find(".modal-body"),
+    modalID = thisValue.parents(".jai-data-row").find(".jai-col-ID").text(),
+    deleteID = modalParent.find(".delete-form input"),
+    modalBorrName = thisValue
+      .parents(".jai-data-row")
+      .find(".jai-table-name")
+      .text();
+
+  modalBody.text(constText + modalBorrName.replace("Name:", "") + "?");
+  deleteID.attr("value", modalID);
+  modalParent.modal("toggle");
+}
+
+function closeModal() {
   $(".close-modal").on("click", function (event) {
     event.preventDefault();
     let modalName = "#" + $(this).parents(".modal.fade").attr("id");
     $(modalName).modal("toggle");
+  });
+}
+
+function populateEditFields() {
+  $("#editBorrower").on("show.bs.modal", function (e) {
+    console.log("populate data now");
+    let b_id = $(this).data("borrower");
+
+    console.log($(".jai-data-row[data-row-id=" + b_id + "]").find(".hidden-field > input"));
   });
 }
