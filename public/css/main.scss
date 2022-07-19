@@ -41,6 +41,10 @@ body {
   width: 50px;
 }
 
+.thumb-image2 {
+  width: 70px;
+}
+
 .update-image {
   width: 200px;
 }
@@ -192,5 +196,8 @@ body {
       outline: none;
       resize: none;
     }
+  }
+  .jai-image-col {
+    flex: 0 0 120px;
   }
 }
