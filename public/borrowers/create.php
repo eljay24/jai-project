@@ -77,14 +77,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <?php include_once "../../views/partials/header.php"; ?>
+<div class="content-container">
+  <p>
+    <a href="index.php" class="btn btn-secondary">Go back</a>
+  </p>
+  <h1>Create new borrower</h1>
 
-<p>
-  <a href="index.php" class="btn btn-secondary">Go back</a>
-</p>
-<h1>Create new borrower</h1>
+  <?php include_once "../../views/borrowers/form.php" ?>
 
-<?php include_once "../../views/borrowers/form.php" ?>
+  </body>
 
-</body>
-
-</html>
+  </html>

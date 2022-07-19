@@ -80,51 +80,81 @@ $loan = [
 
 <?php include_once "../../views/partials/header.php"; ?>
 
-<p>
-  <a href="index.php" class="btn btn-secondary">Go back</a>
-</p>
-<h1>Add new loan</h1>
-<br>
+<div class="content-container">
+  <p>
+    <a href="index.php" class="btn btn-secondary">Go back</a>
+  </p>
+  <h1>Add new loan</h1>
+  <br>
 
-<!-- TEST AUTOCOMPLETE SEARCH -->
-<div class="form-group">
-  <label><strong>Borrower:</strong></label>
-  <input type="text" autocomplete="off" name="search" id="search" placeholder="Type to search borrower..." class="form-control">
-</div>
+  <script>
 
-<script type="text/javascript">
-  $(function() {
-    $("#search").autocomplete({
-      source: 'borrower_search.php',
+    $(document).ready(function() {
+      $("#namesearch").keyup(function() {
+        var name = $("#namesearch").val();
+        $.ajax({
+          url: "suggestions.php",
+          method: "POST",
+          data: {
+            suggestion: name
+          },
+          dataType: "html",
+          beforeSend: function() {},
+          success: function(data) {
+            
+            //response (data);
+            $("#test").html(data);
+            console.log(data)
+          },
+          error: function(response) {
+            console.log(response);
+          },
+        });
+      });
     });
-  });
-</script>
-<!-- TEST AUTOCOMPLETE SEARCH -->
+
+    // $( "#namesearch" ).autocomplete({
+    //   source: function( request, response ) {
+    //     $.ajax( {
+    //       url: "suggestions.php",
+    //       dataType: "jsonp",
+    //       data: {
+    //         term: request.term
+    //       },
+    //       success: function( data ) {
+    //         response( data );
+    //       }
+    //     } );
+    //   },
+    //   minLength: 2,
+    //   select: function( event, ui ) {
+    //     log( "Selected: " + ui.item.value + " aka " + ui.item.id );
+    //   }
+    // } );
+
+  </script>
 
 
 
-<!--
-<script type="text/javascript">
-  function changeFunc() {
-    var selectBox = document.getElementById("loaner");
-    var selectedValue = selectBox.options[selectBox.selectedIndex].value;
-    alert(selectedValue);
-  }
-</script>
-
-<form action="">
-  <select id="loaner" name="loaner" onchange="changeFunc();">
-    <option value="">Select borrower</option>
-    <?php foreach ($loans as $i => $loaner) { ?>
-      <option value="<?= $loaner['b_id'] ?>"><?= '#' . $loaner['b_id'] . ' - ' . $loaner['firstname'] . ' ' . $loaner['middlename'] . ' ' . $loaner['lastname'] ?></option>
-    <?php } ?>
+  <input data-borrower-name="" type="text" name="name" id="namesearch" placeholder="Search for borrowers...">
+  <br>
+  <span></span>
+  <select id="test">
   </select>
-  <a href="create.php?id=" class="btn btn-primary btn-sm">OK</a>
-</form>
--->
 
-<?php include_once "../../views/loans/form.php" ?>
+  <!-- <script>
+    var existingNames = ["lee", "jordan", "angelo", "ivan", "willie", "ann"];
 
-</body>
+    $("#namesearch").autocomplete({
+      source: existingNames
+    }, {
+      
+    });
+  </script> -->
 
-</html>
+
+  <?php include_once "../../views/loans/form.php" ?>
+
+  </body>
+
+  </html>

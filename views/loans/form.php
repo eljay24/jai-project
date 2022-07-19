@@ -34,25 +34,10 @@
         <input placeholder="Interest Rate" type="text" class="form-control" name="interestrate" value="<?php echo $interestrate ?>">
     </div>
     <div class="mb-3">
-        <input placeholder="Contact number" type="text" class="form-control" name="contactno" value="<?php echo $contactno ?>">
+        <input placeholder="Release Date" type="text" class="form-control" name="contactno" value="<?php echo $releasedate ?>">
     </div>
     <div class="mb-3">
-        <input placeholder="Birthday" type="text" class="form-control" name="birthday" value="<?php echo $birthday ?>">
-    </div>
-    <div class="mb-3">
-        <input placeholder="Business name" type="text" class="form-control" name="businessname" value="<?php echo $businessname ?>">
-    </div>
-    <div class="mb-3">
-        <input placeholder="Occupation" type="text" class="form-control" name="occupation" value="<?php echo $occupation ?>">
-    </div>
-    <div class="mb-3">
-        <input placeholder="Comaker" type="text" class="form-control" name="comaker" value="<?php echo $comaker ?>">
-    </div>
-    <div class="mb-3">
-        <input placeholder="Comaker Contact Number" type="text" class="form-control" name="comakerno" value="<?php echo $comakerno ?>">
-    </div>
-    <div class="mb-3">
-        <textarea placeholder="Remarks" type="text" class="form-control" name="remarks"><?php echo $remarks ?></textarea>
+        <input placeholder="Status" type="text" class="form-control" name="birthday" value="<?php echo $status ?>">
     </div>
 
     <button type="submit" class="btn btn-primary">Submit</button>
