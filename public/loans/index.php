@@ -10,7 +10,7 @@ try {
     $statement = $conn->prepare("SELECT * FROM jai_db.borrowers AS b
                                   INNER JOIN jai_db.loans AS l
                                   ON b.b_id = l.b_id
-                                  WHERE b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search ORDER BY l.l_id ASC");
+                                  WHERE (b.isdeleted = 0) AND (b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search) ORDER BY l.l_id ASC");
     $statement->bindValue(':search', "%$search%");
   } else {
     $statement = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
@@ -20,6 +20,7 @@ try {
                                   FROM jai_db.borrowers as b
                                   INNER JOIN jai_db.loans as l
                                   ON b.b_id = l.b_id
+                                  WHERE (b.isdeleted = 0)
                                   ORDER BY l.l_id DESC");
   }
 
