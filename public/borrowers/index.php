@@ -49,12 +49,33 @@ try {
 // echo '</pre>';
 // exit;
 
+//TOTAL AMOUNT TEST
+// $totalAmount = 0;
+// $totalPayable = 0;
+// $totalBalance = 0;
+
 ?>
 
 <?php include_once "../../views/partials/header.php"; ?>
 
 <div class="content-container">
   <div class="page-name">
+
+
+    <!-- <?php //TOTAL AMOUNT TEST
+
+    foreach ($borrowers as $i => $borrower) {
+      $totalAmount += $borrower['amount'];
+      $totalPayable += $borrower['payable'];
+      $totalBalance += $borrower['balance'];
+    }
+
+    echo "Total Amount: ₱" . number_format($totalAmount, 2) . "<br>";
+    echo "Total Payable: ₱" . number_format($totalPayable, 2) . "<br>";
+    echo "Total Balance: ₱" . number_format($totalBalance, 2);
+
+    ?> -->
+
     <h1>Borrowers</h1>
   </div>
 
