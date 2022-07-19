@@ -13,7 +13,7 @@ $statement = $conn->prepare("SELECT b.b_id, b.firstname, b.middlename, b.lastnam
                                 FROM jai_db.borrowers as b
                                 LEFT JOIN jai_db.loans as l
                                 ON b.b_id = l.b_id 
-                                WHERE l.amount IS NULL
+                                WHERE (b.isdeleted = 0) AND (l.amount IS NULL)
                                 ORDER BY b.b_id ASC");
 $statement->execute();
 $loans = $statement->fetchAll(PDO::FETCH_ASSOC);
