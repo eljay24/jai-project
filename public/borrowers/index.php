@@ -101,7 +101,7 @@ try {
       <div class="col-1">Action</div>
     </div>
     <?php
-    foreach ($borrowers as $i => $borrower) { ?>
+    foreach ($borrowers as $i => $borrower) { ?> 
       <div data-row-id="<?php echo $borrower['b_id'] ?>" class="row jai-data-row">
         <div class="jai-col-ID"><?php echo $borrower['b_id'] ?></div>
         <div class="col">
