@@ -107,7 +107,7 @@ try {
           <?php } else { ?>
             <div class="row">
               <div class="col">
-                <p class="jai-table-amount primary-font"><span class="jai-table-label">Amount:</span> <?= $amountValue = ucwords(strtolower($borrower['amount'])) == "" ? "N/A" : ucwords(strtolower($borrower['amount'])); ?></p>
+                <p class="jai-table-amount primary-font"><span class="jai-table-label">Amount:</span> <?= "₱" . $amountValue = ucwords(strtolower($borrower['amount'])) == "" ? "N/A" : ucwords(strtolower($borrower['amount'])); ?></p>
               </div>
               <div class="col">
                 <p class="jai-table-payable primary-font"> <span class="jai-table-label">Payable: </span> <?= "₱" . ucwords(strtolower($borrower['payable'])) ?></p>
