@@ -130,17 +130,17 @@ try {
           <?php } else { ?>
             <div class="row">
               <div class="col">
-                <p class="jai-table-amount primary-font"><span class="jai-table-label">Amount:</span> <?= "₱" . $amountValue = ucwords(strtolower($borrower['amount'])) == "" ? "N/A" : ucwords(strtolower($borrower['amount'])); ?></p>
+                <p class="jai-table-amount primary-font"><span class="jai-table-label">Amount:</span> <?= "₱ " . number_format($borrower['amount'],2); ?></p>
               </div>
               <div class="col">
-                <p class="jai-table-payable primary-font"> <span class="jai-table-label">Payable: </span> <?= "₱" . ucwords(strtolower($borrower['payable'])) ?></p>
+                <p class="jai-table-payable primary-font"> <span class="jai-table-label">Payable: </span> <?= "₱ " . number_format($borrower['payable'],2) ?></p>
               </div>
             </div>
             <div class="row">
               <div class="col">
-                <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Balance: </span> <?= "₱" . ucwords(strtolower($borrower['balance'])) ?></p>
+                <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Balance: </span> <?= "₱ " . number_format($borrower['balance'],2) ?></p>
                 <p class="jai-table-mode sub-font"> <span class="jai-table-label">Mode: </span> <?= ucwords(strtolower($borrower['mode'] . ', ' . $borrower['term'])) ?></p>
-                <p class="jai-table-amort sub-font"> <span class="jai-table-label">Amortization: </span> <?= "₱" . ucwords(strtolower($borrower['amortization'])) ?></p>
+                <p class="jai-table-amort sub-font"> <span class="jai-table-label">Amortization: </span> <?= "₱ " . number_format($borrower['amortization'],2) ?></p>
               </div>
               <div class="col">
                 <p class="jai-table-release sub-font"> <span class="jai-table-label">Release Date: </span> 01/01/22</p>
