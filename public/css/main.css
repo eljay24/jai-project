@@ -82,7 +82,19 @@ textarea.form-control {
 input.form-control:focus,
 textarea.form-control:focus {
   box-shadow: none;
-  border-color: #1363DF;
+  border-color: #1363df;
+}
+input.error,
+textarea.error {
+  position: relative;
+  border-color: #d32121;
+}
+input.error + span,
+textarea.error + span {
+  position: absolute;
+  color: #d32121;
+  font-size: 13px;
+  margin-left: 22px;
 }
 
 textarea.form-control {

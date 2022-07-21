@@ -3,35 +3,84 @@ $(document).ready(function () {
   openModal(".edit-btn", "#editBorrower", openEdit);
   openModal(".delete-borrower", "#deleteBorrower", openDelete);
   editForm();
-  populateEditFields();
 });
+
+function validateForm(formSelector) {
+  let messages = {
+    name: "Please enter a valid name",
+    firstname: "Please enter a valid first name",
+    middlename: "Please enter a valid middle name",
+    lastname: "Please enter a valid last name",
+    date: "Please enter a valid date",
+    phone: "Please enter a valid phone number",
+    occupation: "Please enter a occupation",
+    required: "This field is required",
+  };
+
+  // console.log(messages);
+  if ($(formSelector).is("form")) {
+    $(formSelector)
+      .find("input, select, textarea, checkbox")
+      .each(function () {
+        $(this).removeClass("error");
+        $(this).next("span").remove();
+
+        if (!$(this).val()) {
+          $(this)
+            .addClass("error")
+            .after("<span>" + messages.required + "</span>");
+          $(formSelector).addClass("invalid-form");
+        }
+      });
+  } else {
+    $(formSelector).removeClass("error");
+    $(formSelector).next("span").remove();
+
+    if (!$(formSelector).val()) {
+      $(formSelector)
+        .addClass("error")
+        .after("<span>" + messages.required + "</span>");
+      $(formSelector).addClass("invalid-form");
+    }
+  }
+
+  return !$(formSelector).hasClass("invalid-form");
+}
 
 function editForm() {
   $(".submit-edit").on("click", function (event) {
     event.preventDefault();
-    let fname = $('input[name="firstname"').val(),
-      mname = $('input[name="middlename"').val(),
-      lname = $('input[name="lastname"').val(),
+    let formValues = $(".edit-form").serializeArray(),
       b_id = $(this).parents("#editBorrower").attr("data-borrower");
 
-    $.post(
-      "../ajax-calls/edit-borrower.php",
-      {
-        firstname: fname,
-        middlename: mname,
-        lastname: lname,
-        bid: b_id,
-      },
-      function (data, status) {
-        $(".row").each(function () {
-          if ($(this).attr("data-row-id") == b_id) {
-            $(this)
-              .find(".jai-table-name")
-              .text("Name: " + data);
-          }
-        });
-      }
-    );
+    if (validateForm(".edit-form"))
+      $.ajax({
+        url: "../ajax-calls/edit-borrower.php",
+        method: "POST",
+        data: {
+          b_id: b_id,
+          form_values: formValues,
+        },
+        dataType: "json",
+        beforeSend: function () {},
+        success: function (data) {
+          console.log(data);
+
+          // $(".row").each(function () {
+          //   if ($(this).attr("data-row-id") == b_id) {
+          //     $(this)
+          //       .find(".jai-table-name")
+          //       .text("Name: " + data);
+          //   }
+          // });
+          //
+          $("#editBorrower").modal("toggle");
+        },
+        error: function (response) {
+          console.log("error");
+          console.log(response.responseText);
+        },
+      });
   });
 }
 
@@ -76,11 +125,36 @@ function closeModal() {
   });
 }
 
-function populateEditFields() {
-  $("#editBorrower").on("show.bs.modal", function (e) {
-    console.log("populate data now");
-    let b_id = $(this).data("borrower");
+// function populateEditFields() {
+//   $("#editBorrower").on("show.bs.modal", function (e) {
+//     console.log("populate data now");
+//     let b_id = $(this).data("borrower"),
+//       dataset = $(".jai-data-row[data-row-id=" + b_id + "]").find(
+//         ".hidden-field > input"
+//       ),
+//       firstName = dataset.data("jaiFirstname"),
+//       middleName = dataset.data("jaiMiddlename"),
+//       lastName = dataset.data("jaiLastname"),
+//       birthday = dataset.data("jaiBirthday"),
+//       contactNo = dataset.data("jaiContactno"),
+//       address = dataset.data("jaiAddress"),
+//       occupation = dataset.data("jaiOccupation"),
+//       businessName = dataset.data("jaiBusinessName"),
+//       coMaker = dataset.data("jaiComaker"),
+//       coMakerNo = dataset.data("jaiComakerno");
 
-    console.log($(".jai-data-row[data-row-id=" + b_id + "]").find(".hidden-field > input"));
-  });
-}
+//     console.log(
+//       b_id +
+//         firstName +
+//         middleName +
+//         lastName +
+//         birthday +
+//         contactNo +
+//         address +
+//         occupation +
+//         businessName +
+//         coMaker +
+//         coMakerNo
+//     );
+//   });
+// }

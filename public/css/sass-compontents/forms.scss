@@ -16,6 +16,16 @@ textarea {
       border-color: $secondary-color;
     }
   }
+  &.error {
+    position: relative;
+    border-color: $jai-error;
+    + span {
+      position: absolute;
+      color: $jai-error;
+      font-size: 13px;
+      margin-left: 22px;
+    }
+  }
 }
 
 textarea {

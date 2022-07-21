@@ -194,36 +194,36 @@ try {
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="jai-mb-1">
+                  <div class="jai-mb-2">
                     <input placeholder="First name" type="text" class="form-control" name="firstname" value="">
                   </div>
                 </div>
                 <div class="col">
-                  <div class="jai-mb-1">
+                  <div class="jai-mb-2">
                     <input placeholder="Middle name" type="text" class="form-control" name="middlename" value="">
                   </div>
                 </div>
                 <div class="col">
-                  <div class="jai-mb-1">
+                  <div class="jai-mb-2">
                     <input placeholder="Last name" type="text" class="form-control" name="lastname" value="">
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="jai-mb-1">
+                  <div class="jai-mb-2">
                     <input placeholder="Birthday" type="text" class="form-control" name="birthday" value="">
                   </div>
                 </div>
                 <div class="col">
-                  <div class="jai-mb-1">
+                  <div class="jai-mb-2">
                     <input placeholder="Contact number" type="text" class="form-control" name="contactno" value="">
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="jai-mb-1">
+                  <div class="jai-mb-2">
                     <input placeholder="Address" type="text" class="form-control" name="address" value="">
                   </div>
                 </div>
@@ -248,19 +248,19 @@ try {
 
               <div class="row">
                 <div class="col">
-                  <div class="jai-mb-1">
+                  <div class="jai-mb-2">
                     <input placeholder="Comaker" type="text" class="form-control" name="comaker" value="">
                   </div>
                 </div>
                 <div class="col">
-                  <div class="jai-mb-1">
+                  <div class="jai-mb-2">
                     <input placeholder="Comaker Contact Number" type="text" class="form-control" name="comakerno" value="">
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="jai-mb-1">
+                  <div class="jai-mb-2">
                     <textarea placeholder="Remarks" type="text" class="form-control" name="remarks"></textarea>
                   </div>
                 </div>
