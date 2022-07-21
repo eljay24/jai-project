@@ -88,67 +88,71 @@ $loan = [
     <a href="index.php" class="btn btn-secondary">Go back</a>
   </p>
   <h1>Add new loan</h1>
-  <br>
 
-  <script>
-
-    $(document).ready(function() {
-      $("#namesearch").keyup(function() {
-        var name = $("#namesearch").val();
-        $.ajax({
-          url: "suggestions.php",
-          method: "POST",
-          data: {
-            suggestion: name
-          },
-          dataType: "html",
-          beforeSend: function() {},
-          success: function(data) {
-            
-            //response (data);
-            $("#test").html(data);
-            console.log(data)
-          },
-          error: function(response) {
-            console.log(response);
-          },
-        });
-      });
-    });
-
-    // $( "#namesearch" ).autocomplete({
-    //   source: function( request, response ) {
-    //     $.ajax( {
-    //       url: "suggestions.php",
-    //       dataType: "jsonp",
-    //       data: {
-    //         term: request.term
-    //       },
-    //       success: function( data ) {
-    //         response( data );
-    //       }
-    //     } );
-    //   },
-    //   minLength: 2,
-    //   select: function( event, ui ) {
-    //     log( "Selected: " + ui.item.value + " aka " + ui.item.id );
-    //   }
-    // } );
-
-  </script>
-
-
-
-  <input data-borrower-name="" type="text" name="name" id="namesearch" placeholder="Search for borrowers...">
-  <br>
-  <span></span>
-  <select id="test">
   <?php
-  foreach ($loans as $i => $loan) {
-    echo '<option>#'.$loan['b_id'].' - '.$loan['firstname'].' '.$loan['middlename'].' '.$loan['lastname'].'</option>';
+
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $rAmount = floatval($_POST['amount']);
+    $rMode = $_POST['mode'];
+    $rTerm = $_POST['term'];
+
+    $statement = $conn->prepare("SELECT *
+                                  FROM jai_db.rates as r
+                                  WHERE (r.amount = '$rAmount') AND (r.mode = '$rMode') AND (r.term = '$rTerm')                                
+                                ");
+    $statement->execute();
+    $rates = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+
+    // echo $_POST['borrower'] . "<br>";
+    // echo $_POST['amount'] . "<br>";
+    // echo $_POST['mode'] . "<br>";
+    // echo $_POST['term'] . "<br>";
+
+
+    // echo "<pre>";
+    // var_dump($rates);
+    // echo "</pre>";
+
+
+    foreach ($rates as $i => $rate) {
+
+      echo "TEST <br>";
+      echo $_POST['borrower'] . '<br>';
+      echo 'Amount: ' . number_format($rate['amount'], 2) . '<br>';
+      echo 'Payable: ' . number_format($rate['payable'], 2) . '<br>';
+      echo 'Amortization: ' . number_format($rate['amortization']) . '<br>';
+      echo 'Interest Rate: ' . number_format($rate['interestrate'], 2) . '<br>';
+      echo ucwords(strtolower($rate['mode'])) . ', ' . ucwords(strtolower($rate['term'])) . '<br>';
+    }
+
+    $statement2 = $conn->prepare("INSERT INTO jai_db.loans (b_id, amount, payable, balance, mode, term,
+                                                            interestrate, amortization, releasedate, duedate, status)
+                                                    VALUES (:b_id, :amount, :payable, :balance, :mode, :term,
+                                                            :interestrate, :amortization, :releasedate, :duedate, :status)");
+    
+    $statement2->bindValue(':b_id', $_POST['borrower']);
+    $statement2->bindValue(':amount', $rate['amount']);
+    $statement2->bindValue(':payable', $rate['payable']);
+    $statement2->bindValue(':balance', $rate['payable']);
+    $statement2->bindValue(':mode', $rate['mode']);
+    $statement2->bindValue(':term', $rate['term']);
+    $statement2->bindValue(':interestrate', $rate['interestrate']);
+    $statement2->bindValue(':amortization', $rate['amortization']);
+    $statement2->bindValue(':releasedate', 'TEST');
+    $statement2->bindValue(':duedate', 'TEST');
+    $statement2->bindValue(':status', 'Active');
+
+    $statement2->execute();
+
+    header('Location: ../borrowers/index.php');
+
   }
-?>
-  </select>
+
+  ?>
+
+  <br>
 
   <!-- <script>
     var existingNames = ["lee", "jordan", "angelo", "ivan", "willie", "ann"];
