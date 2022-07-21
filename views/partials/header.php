@@ -32,7 +32,7 @@
   
         <div class="nav-link-container"><a href="../../public/borrowers/index.php" class="nav-link">Borrowers</a></div>
         <div class="nav-link-container"><a href="../../public/loans/index.php" class="nav-link">Loans</a></div>
-        <div class="nav-link-container"><a href="" class="nav-link">Payments</a></div>
+        <div class="nav-link-container"><a href="../../public/payments/index.php" class="nav-link">Payments</a></div>
       </nav>
     </div>
   </header>
