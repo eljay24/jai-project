@@ -17,32 +17,19 @@ function validateForm(formSelector) {
     required: "This field is required",
   };
 
-  // console.log(messages);
-  if ($(formSelector).is("form")) {
-    $(formSelector)
-      .find("input, select, textarea, checkbox")
-      .each(function () {
-        $(this).removeClass("error");
-        $(this).next("span").remove();
+  $(formSelector)
+    .find("input, select, textarea, checkbox")
+    .each(function () {
+      $(this).removeClass("error");
+      $(this).next("span").remove();
 
-        if (!$(this).val()) {
-          $(this)
-            .addClass("error")
-            .after("<span>" + messages.required + "</span>");
-          $(formSelector).addClass("invalid-form");
-        }
-      });
-  } else {
-    $(formSelector).removeClass("error");
-    $(formSelector).next("span").remove();
-
-    if (!$(formSelector).val()) {
-      $(formSelector)
-        .addClass("error")
-        .after("<span>" + messages.required + "</span>");
-      $(formSelector).addClass("invalid-form");
-    }
-  }
+      if (!$(this).val()) {
+        $(this)
+          .addClass("error")
+          .after("<span>" + messages.required + "</span>");
+        $(formSelector).addClass("invalid-form");
+      }
+    });
 
   return !$(formSelector).hasClass("invalid-form");
 }
