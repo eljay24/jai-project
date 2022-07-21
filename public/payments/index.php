@@ -18,14 +18,15 @@ try {
     $statement->bindValue(':search', "%$search%");
   } else {
     $statement = $conn->prepare("SELECT b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, l.l_id,
-                                        p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
+                                        p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
                                  FROM jai_db.payments as p
                                  INNER JOIN jai_db.collectors as c 
                                  ON p.c_id = c.c_id
                                  INNER JOIN jai_db.loans as l
                                  ON p.l_id = l.l_id
                                  INNER JOIN jai_db.borrowers as b 
-                                 ON b.b_id = l.b_id");
+                                 ON b.b_id = l.b_id
+                                 ORDER BY p.p_id ASC");
   }
 
 
@@ -33,7 +34,7 @@ try {
   $statement->execute();
   $payments = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-  
+
 
   // echo "DB connected successfully";
 } catch (PDOException $e) {
@@ -80,7 +81,7 @@ try {
 
     <form>
       <div class="input-group">
-        <input type="text" class="form-control" placeholder="Search for borrowers" name="search" value="<?php echo $search; ?>">
+        <input type="text" class="form-control" placeholder="Search..." name="search" value="<?php echo $search; ?>">
         <button class="btn btn-outline-secondary" type="submit">Search</button>
       </div>
     </form>
@@ -95,12 +96,12 @@ try {
       <div class="col-1">Action</div>
     </div>
     <?php
-    foreach ($payments as $i => $payment) { 
+    foreach ($payments as $i => $payment) {
 
       $date = date_create($payment['date']); ?>
-      
-      <div data-row-id="<?php echo $payment['l_id'] ?>" class="row jai-data-row">
-        <div class="jai-col-ID"><?php echo $payment['l_id'] ?></div>
+
+      <div data-row-id="<?php echo $payment['p_id'] ?>" class="row jai-data-row">
+        <div class="jai-col-ID"><?php echo $payment['p_id'] ?></div>
         <div class="col">
           <div class="row">
             <div class="jai-image-col">
@@ -111,13 +112,14 @@ try {
             <div class="col">
               <p class="jai-table-name primary-font <?= $payment['borrowerfname'] == 'Angelo' ? 'red' : ''; ?>
                                                 <?= $payment['borrowerfname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Borrower:</span> <?= ucwords(strtolower($payment['borrowerfname'])) . ' ' . ucwords(strtolower($payment['borrowermname'])) . ' ' . ucwords(strtolower($payment['borrowerlname'])) ?></p>
-              <p class="jai-table-contact sub-font"> <span class="jai-table-label">Type: </span><?php echo $payment['type'] ?></p>
+
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Collector: </span><?php echo ucwords(strtolower($payment['collectorfname'])) . ' ' . ucwords(strtolower($payment['collectormname'])) . ' ' . ucwords(strtolower($payment['collectorlname'])) ?></p>
             </div>
             <div class="col">
               <p class="jai-table-comaker primary-font <?= $payment['borrowerfname'] == 'Angelo' ? 'red' : ''; ?>
                                                 <?= $payment['borrowerfname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Paid Amount:</span> <?= ucwords(strtolower($payment['amount'])) ?></p>
-              <p class="sub-font">Date: <?= date_format($date, "M-d-Y" ) ?></p>
+              <p class="jai-table-contact sub-font"> <span class="jai-table-label">Type: </span><?php echo $payment['type'] ?></p>
+              <p class="sub-font">Date: <?= date_format($date, "M-d-Y") ?></p>
             </div>
 
           </div>
@@ -125,21 +127,21 @@ try {
         <div class="col">
           <div class="row">
             <div class="col">
-              <p class="jai-table-amount primary-font"><span class="jai-table-label">Collector: </span><?php echo ucwords(strtolower($payment['collectorfname'])) . ' ' . ucwords(strtolower($payment['collectormname'])) . ' ' . ucwords(strtolower($payment['collectorlname'])) ?></p>
+              <p class="jai-table-amount primary-font"><span class="jai-table-label">Collector???: </span><?php ?></p>
             </div>
             <div class="col">
-              <p class="jai-table-payable primary-font"> <span class="jai-table-label">Balance: </span> <?= "₱ " . number_format($payment['balance'], 2) ?></p>
+              <p class="jai-table-payable primary-font"> <span class="jai-table-label">Remaining Bal.: </span> <?php  ?></p>
             </div>
           </div>
           <div class="row">
             <div class="col">
-              <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Payable: </span> <?= "₱ " . number_format($payment['payable'], 2) ?></p>
-              <p class="jai-table-mode sub-font"> <span class="jai-table-label">Mode & Term: </span> <?= ucwords(strtolower($payment['mode'] . ', ' . $payment['term'])) ?></p>
-              <p class="jai-table-amort sub-font"> <span class="jai-table-label">Amortization: </span> <?= "₱ " . number_format($payment['amortization'], 2) ?></p>
+              <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Payable??: </span> <?php  ?></p>
+              <p class="jai-table-mode sub-font"> <span class="jai-table-label">Mode & Term??: </span> <?php ?></p>
+              <p class="jai-table-amort sub-font"> <span class="jai-table-label">Amortization???: </span> <?php ?></p>
             </div>
             <div class="col">
-              <p class="jai-table-release sub-font"> <span class="jai-table-label">Release Date: </span> 01/01/22</p>
-              <p class="jai-table-due sub-font"> <span class="jai-table-label">Due Date: </span> 01/01/22</p>
+              <p class="jai-table-release sub-font"> <span class="jai-table-label">Hmm???: </span> 01/01/22</p>
+              <p class="jai-table-due sub-font"> <span class="jai-table-label">Due Date???: </span> 01/01/22</p>
             </div>
           </div>
         </div>
