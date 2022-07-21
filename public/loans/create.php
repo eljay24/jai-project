@@ -127,10 +127,10 @@ $loan = [
       echo ucwords(strtolower($rate['mode'])) . ', ' . ucwords(strtolower($rate['term'])) . '<br>';
     }
 
-    $statement2 = $conn->prepare(" INSERT INTO jai_db.loans (b_id, amount, payable, balance, mode, term,
+    $statement2 = $conn->prepare("INSERT INTO jai_db.loans (b_id, amount, payable, balance, mode, term,
                                                             interestrate, amortization, releasedate, duedate, status)
                                                     VALUES (:b_id, :amount, :payable, :balance, :mode, :term,
-                                                            :interestrate, :amortization, :releasedate, :duedate, :status) ");
+                                                            :interestrate, :amortization, :releasedate, :duedate, :status)");
     
     $statement2->bindValue(':b_id', $_POST['borrower']);
     $statement2->bindValue(':amount', $rate['amount']);

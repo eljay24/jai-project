@@ -133,13 +133,13 @@ try {
                 <p class="jai-table-amount primary-font"><span class="jai-table-label">Amount:</span> <?= "₱ " . number_format($borrower['amount'],2); ?></p>
               </div>
               <div class="col">
-                <p class="jai-table-payable primary-font"> <span class="jai-table-label">Payable: </span> <?= "₱ " . number_format($borrower['payable'],2) ?></p>
+                <p class="jai-table-payable primary-font"> <span class="jai-table-label">Balance: </span> <?= "₱ " . number_format($borrower['balance'],2) ?></p>
               </div>
             </div>
             <div class="row">
               <div class="col">
-                <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Balance: </span> <?= "₱ " . number_format($borrower['balance'],2) ?></p>
-                <p class="jai-table-mode sub-font"> <span class="jai-table-label">Mode: </span> <?= ucwords(strtolower($borrower['mode'] . ', ' . $borrower['term'])) ?></p>
+                <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Payable: </span> <?= "₱ " . number_format($borrower['payable'],2) ?></p>
+                <p class="jai-table-mode sub-font"> <span class="jai-table-label">Mode & Term: </span> <?= ucwords(strtolower($borrower['mode'] . ', ' . $borrower['term'])) ?></p>
                 <p class="jai-table-amort sub-font"> <span class="jai-table-label">Amortization: </span> <?= "₱ " . number_format($borrower['amortization'],2) ?></p>
               </div>
               <div class="col">
