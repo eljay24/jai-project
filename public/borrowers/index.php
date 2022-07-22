@@ -126,21 +126,23 @@ try {
         </div>
         <div class="col">
           <?php if (ucwords(strtolower($borrower['amount'])) == "") { ?>
-            No active loan
+            <h4>
+              No active loan
+            </h4>
           <?php } else { ?>
             <div class="row">
               <div class="col">
-                <p class="jai-table-amount primary-font"><span class="jai-table-label">Amount:</span> <?= "₱ " . number_format($borrower['amount'],2); ?></p>
+                <p class="jai-table-amount primary-font"><span class="jai-table-label">Amount:</span> <?= "₱ " . number_format($borrower['amount'], 2); ?></p>
               </div>
               <div class="col">
-                <p class="jai-table-payable primary-font"> <span class="jai-table-label">Balance: </span> <?= "₱ " . number_format($borrower['balance'],2) ?></p>
+                <p class="jai-table-payable primary-font"> <span class="jai-table-label">Balance: </span> <?= "₱ " . number_format($borrower['balance'], 2) ?></p>
               </div>
             </div>
             <div class="row">
               <div class="col">
-                <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Payable: </span> <?= "₱ " . number_format($borrower['payable'],2) ?></p>
+                <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Payable: </span> <?= "₱ " . number_format($borrower['payable'], 2) ?></p>
                 <p class="jai-table-mode sub-font"> <span class="jai-table-label">Mode & Term: </span> <?= ucwords(strtolower($borrower['mode'] . ', ' . $borrower['term'])) ?></p>
-                <p class="jai-table-amort sub-font"> <span class="jai-table-label">Amortization: </span> <?= "₱ " . number_format($borrower['amortization'],2) ?></p>
+                <p class="jai-table-amort sub-font"> <span class="jai-table-label">Amortization: </span> <?= "₱ " . number_format($borrower['amortization'], 2) ?></p>
               </div>
               <div class="col">
                 <p class="jai-table-release sub-font"> <span class="jai-table-label">Release Date: </span> 01/01/22</p>
@@ -189,7 +191,7 @@ try {
           <h5 class="modal-title">Edit Borrower</h5>
         </div>
         <div class="modal-body">
-          <form action="" method="post" enctype="multipart/form-data">
+          <form class="edit-form" action="" method="post" enctype="multipart/form-data">
 
             <div class="container">
               <div class="row">
@@ -199,36 +201,36 @@ try {
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="jai-mb-1">
+                  <div class="jai-mb-2">
                     <input placeholder="First name" type="text" class="form-control" name="firstname" value="">
                   </div>
                 </div>
                 <div class="col">
-                  <div class="jai-mb-1">
+                  <div class="jai-mb-2">
                     <input placeholder="Middle name" type="text" class="form-control" name="middlename" value="">
                   </div>
                 </div>
                 <div class="col">
-                  <div class="jai-mb-1">
+                  <div class="jai-mb-2">
                     <input placeholder="Last name" type="text" class="form-control" name="lastname" value="">
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="jai-mb-1">
+                  <div class="jai-mb-2">
                     <input placeholder="Birthday" type="text" class="form-control" name="birthday" value="">
                   </div>
                 </div>
                 <div class="col">
-                  <div class="jai-mb-1">
+                  <div class="jai-mb-2">
                     <input placeholder="Contact number" type="text" class="form-control" name="contactno" value="">
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="jai-mb-1">
+                  <div class="jai-mb-2">
                     <input placeholder="Address" type="text" class="form-control" name="address" value="">
                   </div>
                 </div>
@@ -253,19 +255,19 @@ try {
 
               <div class="row">
                 <div class="col">
-                  <div class="jai-mb-1">
+                  <div class="jai-mb-2">
                     <input placeholder="Comaker" type="text" class="form-control" name="comaker" value="">
                   </div>
                 </div>
                 <div class="col">
-                  <div class="jai-mb-1">
+                  <div class="jai-mb-2">
                     <input placeholder="Comaker Contact Number" type="text" class="form-control" name="comakerno" value="">
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="jai-mb-1">
+                  <div class="jai-mb-2">
                     <textarea placeholder="Remarks" type="text" class="form-control" name="remarks"></textarea>
                   </div>
                 </div>
