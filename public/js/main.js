@@ -37,37 +37,33 @@ function validateForm(formSelector) {
 function editForm() {
   $(".submit-edit").on("click", function (event) {
     event.preventDefault();
-    let formValues = $(".edit-form").serializeArray(),
-      b_id = $(this).parents("#editBorrower").attr("data-borrower");
+    let formValues = $(".edit-form").serialize();
 
-    if (validateForm(".edit-form"))
-      $.ajax({
-        url: "../ajax-calls/edit-borrower.php",
-        method: "POST",
-        data: {
-          b_id: b_id,
-          form_values: formValues,
-        },
-        dataType: "json",
-        beforeSend: function () {},
-        success: function (data) {
-          console.log(data);
+    // if (validateForm(".edit-form"))
+    $.ajax({
+      url: "../ajax-calls/edit-borrower.php",
+      method: "POST",
+      data: formValues,
+      dataType: "json",
+      beforeSend: function () {},
+      success: function (data) {
+        console.log(data);
 
-          // $(".row").each(function () {
-          //   if ($(this).attr("data-row-id") == b_id) {
-          //     $(this)
-          //       .find(".jai-table-name")
-          //       .text("Name: " + data);
-          //   }
-          // });
-          //
-          $("#editBorrower").modal("toggle");
-        },
-        error: function (response) {
-          console.log("error");
-          console.log(response.responseText);
-        },
-      });
+        // $(".row").each(function () {
+        //   if ($(this).attr("data-row-id") == b_id) {
+        //     $(this)
+        //       .find(".jai-table-name")
+        //       .text("Name: " + data);
+        //   }
+        // });
+        //
+        $("#editBorrower").modal("toggle");
+      },
+      error: function (response) {
+        console.log("error");
+        console.log(response.responseText);
+      },
+    });
   });
 }
 
@@ -85,7 +81,7 @@ function openModal(buttonName, modalName, modalFunction) {
 function openEdit(buttonName, modalName, thisValue) {
   let b_id = $(thisValue).parents(".jai-data-row").find(".jai-col-ID").html();
 
-  $(modalName).attr("data-borrower", b_id);
+  $(modalName).find("#b_id").val(b_id);
 }
 
 function openDelete(buttonName, modalName, thisValue) {

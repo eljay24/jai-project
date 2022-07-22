@@ -192,6 +192,7 @@ try {
         </div>
         <div class="modal-body">
           <form class="edit-form" action="" method="post" enctype="multipart/form-data">
+            <input id="b_id" type="hidden" class="d-none" name="b_id" value="">
 
             <div class="container">
               <div class="row">
@@ -200,6 +201,7 @@ try {
                 </div>
               </div>
               <div class="row">
+
                 <div class="col">
                   <div class="jai-mb-2">
                     <input placeholder="First name" type="text" class="form-control" name="firstname" value="">
