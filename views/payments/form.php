@@ -34,30 +34,18 @@
             });
         });
 
-        // $( "#namesearch" ).autocomplete({
-        //   source: function( request, response ) {
-        //     $.ajax( {
-        //       url: "suggestions.php",
-        //       dataType: "jsonp",
-        //       data: {
-        //         term: request.term
-        //       },
-        //       success: function( data ) {
-        //         response( data );
-        //       }
-        //     } );
-        //   },
-        //   minLength: 2,
-        //   select: function( event, ui ) {
-        //     log( "Selected: " + ui.item.value + " aka " + ui.item.id );
-        //   }
-        // } );
+        function changeFunc() {
+            var selectBox = document.getElementById("borrower");
+            var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+            alert(selectedValue);
+        }
+
     </script>
 
     <input data-borrower-name="" type="text" name="name" id="namesearch" placeholder="Search for borrowers...">
     <br>
     <span></span>
-    <select id="borrower" name="borrower">
+    <select id="borrower" name="borrower" onchange="changeFunc();">
         <?php
         foreach ($loans as $i => $loan) {
             echo '<option>' . $loan['b_id'] . '</option>';
