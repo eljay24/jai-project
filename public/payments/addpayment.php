@@ -16,7 +16,7 @@ $statement = $conn->prepare("SELECT b.b_id, b.firstname, b.middlename, b.lastnam
                                 WHERE (b.isdeleted = 0) AND (l.amount IS NOT NULL)
                                 ORDER BY b.b_id ASC");
 $statement->execute();
-$loans = $statement->fetchAll(PDO::FETCH_ASSOC);
+$borrowers = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 date_default_timezone_set("Asia/Manila");
 
@@ -93,7 +93,7 @@ $loan = [
 
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $rAmount = floatval($_POST['amount']);
+    $rAmount = floatval($_POST['loanamount']);
     $rMode = $_POST['mode'];
     $rTerm = $_POST['term'];
 
@@ -111,9 +111,10 @@ $loan = [
     // echo $_POST['term'] . "<br>";
 
 
-    // echo "<pre>";
-    // var_dump($rates);
-    // echo "</pre>";
+    echo "<pre>";
+    var_dump($rates);
+    echo "</pre>";
+    
 
 
     foreach ($rates as $i => $rate) {

@@ -37,18 +37,54 @@
         function changeFunc() {
             var selectBox = document.getElementById("borrower");
             var selectedValue = selectBox.options[selectBox.selectedIndex].value;
-            alert(selectedValue);
+            var payment = document.getElementById("payment");
+
+            console.log(selectedValue);
+            $.ajax({
+                url: "../ajax-calls/get-borrower.php",
+                method: "POST",
+                data: {
+                    b_id: selectedValue,
+                },
+                dataType: "json",
+                success: function(borrowerDetails) {
+                    console.log(borrowerDetails[0]);
+
+                    $('#loanamount').val(borrowerDetails[0]['amount']);
+                    $('#payable').val(borrowerDetails[0]['payable']);
+                    $('#remainingbalance').val(borrowerDetails[0]['balance']);
+                    $('#amortization').val(borrowerDetails[0]['amortization']);
+                    $('#mode').val(borrowerDetails[0]['mode']);
+                    $('#term').val(borrowerDetails[0]['term']);
+                    $('#payment').val(borrowerDetails[0]['amortization']);
+                    payment.placeholder=borrowerDetails[0]['amortization'];
+
+                },
+                error: function(errorData) {
+                    console.log(errorData);
+                },
+            })
         }
 
+        function setToZero() {
+            var selectBox = document.getElementById("type");
+            var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+            if (selectedValue == "Pass") {
+                $('#payment').val(0);
+            }
+        }
     </script>
 
     <input data-borrower-name="" type="text" name="name" id="namesearch" placeholder="Search for borrowers...">
     <br>
+    <br>
     <span></span>
-    <select id="borrower" name="borrower" onchange="changeFunc();">
+    
+    <select id="borrower" name="borrower" class="form-control" onchange="changeFunc();">
+        <option value="" disabled selected>Select borrower</option>
         <?php
-        foreach ($loans as $i => $loan) {
-            echo '<option>' . $loan['b_id'] . '</option>';
+        foreach ($borrowers as $i => $borrower) {
+            echo '<option value="' . $borrower['b_id'] . '">' . $borrower['b_id'] . ' ' . $borrower['firstname']  . ' ' . $borrower['middlename'] . ' ' . $borrower['lastname']  . '</option>';
         }
         ?>
     </select>
@@ -63,71 +99,43 @@
     <?php // <img src="/<?= 'JAI/public/pictures/Default/picture-placeholder.png'; " class="update-image"> 
     ?>
 
-    <br><br>
+    <br>
     <div class="mb-3">
         <label>Loan Amount</label>
-        <input name="loanamount" placeholder="Loan Amount" type="text" class="form-control" readonly value="TEST">
+        <input id="loanamount" name="loanamount" placeholder="Loan Amount" type="text" class="form-control" readonly required>
+    </div>
+    <div class="mb-3">
+        <label>Payable</label>
+        <input id="payable" name="payable" placeholder="Remaining Balance" type="text" class="form-control" readonly required>
     </div>
     <div class="mb-3">
         <label>Remaining Balance</label>
-        <input name="releasedate" placeholder="Remaining Balance" type="text" class="form-control" readonly>
+        <input id="remainingbalance" name="remainingbalance" placeholder="Remaining Balance" type="text" class="form-control" readonly required>
     </div>
     <div class="mb-3">
-        <label>Amount</label>
-        <select class="form-control" name="amount">
-            <option>5000</option>
-            <option>10000</option>
-            <option>12000</option>
-            <option>14000</option>
-            <option>15000</option>
-            <option>20000</option>
-            <option>25000</option>
-            <option>30000</option>
-            <option>35000</option>
-            <option>40000</option>
-            <option>45000</option>
-            <option>50000</option>
-            <option>55000</option>
-            <option>60000</option>
-            <option>65000</option>
-            <option>70000</option>
-            <option>75000</option>
-            <option>80000</option>
-            <option>85000</option>
-            <option>90000</option>
-            <option>95000</option>
-            <option>100000</option>
-        </select>
-        <!-- <input placeholder="Amount" type="text" class="form-control" name="amount" value="<?php echo $amount ?>"> -->
+        <label>Amortization</label>
+        <input id="amortization" name="amortization" placeholder="Amortization" type="text" class="form-control" readonly required>
     </div>
     <div class="mb-3">
         <label>Mode</label>
-        <select class="form-control" name="mode">
-            <option>Daily</option>
-            <option>Weekly</option>
-            <option>Monthly</option>
-        </select>
-        <!-- <input placeholder="Mode" type="text" class="form-control" name="mode" value="<?php echo $mode ?>"> -->
+        <input id="mode" name="mode" placeholder="Mode" type="text" class="form-control" readonly required>
     </div>
     <div class="mb-3">
         <label>Term</label>
-        <select class="form-control" name="term">
-            <option>1 month</option>
-            <option>2 months</option>
-            <option>3 months</option>
-            <option>4 months</option>
-            <option>5 months</option>
-            <option>6 months</option>
+        <input id="term" name="term" placeholder="Term" type="text" class="form-control" readonly required>
+    </div>
+    <div class="mb-3">
+        <label for="payment">Payment</label>
+        <input id="payment" name="payment" placeholder="Payment" type="number" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label for="type">Type</label>
+        <select name="type" id="type" class="form-control" onchange="setToZero();">
+            <option value="" disabled selected>Select type</option>
+            <option value="Cash">Cash</option>
+            <option value="GCash">GCash</option>
+            <option value="Pass">Pass</option>
         </select>
-        <!-- <input placeholder="Term" type="text" class="form-control" name="term" value="<?php echo $term ?>"> -->
-    </div>
-    <div class="mb-3">
-        <label>Release Date</label>
-        <input name="releasedate" placeholder="Release Date" type="text" class="form-control" readonly>
-    </div>
-    <div class="mb-3">
-        <label>Due Date</label>
-        <input name="duedate" placeholder="Due Date" type="text" class="form-control">
     </div>
 
     <button type="submit" class="btn btn-primary">Submit</button>

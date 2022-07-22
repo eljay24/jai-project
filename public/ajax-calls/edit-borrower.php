@@ -1,6 +1,6 @@
 <?php
 
-include "../../dbconn.php";
+require "../../dbconn.php";
 
 if (isset($_POST['b_id'])) {
     $b_id = $_POST['b_id'];
