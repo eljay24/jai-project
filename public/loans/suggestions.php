@@ -37,8 +37,8 @@ if (isset($_POST['suggestion'])) {
             
             // echo json_encode($existingName);
             
-            echo '<option>'.'#' . $existingName['b_id'], ' - ', $existingName['firstname'], ' ', $existingName['middlename'], ' ', $existingName['lastname'].'</option>';
-            echo "<br>";
+            echo '<div>'.'#' . $existingName['b_id'], ' - ', $existingName['firstname'], ' ', $existingName['middlename'], ' ', $existingName['lastname'].'</div>';
+            
         } 
     }
 }

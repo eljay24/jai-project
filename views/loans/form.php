@@ -64,13 +64,9 @@ $terms = $statementTerm->fetchAll(PDO::FETCH_ASSOC);
     <input data-borrower-name="" type="text" name="name" id="namesearch" placeholder="Search for borrowers...">
     <br>
     <span></span>
-    <select id="borrower" name="borrower">
-        <?php
-        foreach ($loans as $i => $loan) {
-            echo '<option>' . $loan['b_id'] . '</option>';
-        }
-        ?>
-    </select>
+    <div id="borrower" name="borrower">
+      
+    </div>
 
     <!--
     <?php if ($borrower['picture']) { ?>
