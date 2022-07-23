@@ -29,7 +29,7 @@ try {
                                  ON p.l_id = l.l_id
                                  INNER JOIN jai_db.borrowers as b 
                                  ON b.b_id = l.b_id
-                                 ORDER BY p.p_id ASC");
+                                 ORDER BY p.p_id DESC");
   }
 
 
