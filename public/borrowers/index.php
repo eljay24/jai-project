@@ -25,15 +25,26 @@ try {
                                  LEFT JOIN jai_db.loans as l
                                  ON b.b_id = l.b_id
                                  WHERE b.isdeleted = 0
-                                 UNION
-                                 SELECT b.isdeleted, b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
-                                        b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
-                                        l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
-                                        l.releasedate, l.duedate, l.status, l.c_id
-                                 FROM jai_db.borrowers as b
-                                 RIGHT JOIN jai_db.loans as l
-                                 ON b.b_id = l.b_id
-                                 WHERE b.isdeleted = 0");
+                                 
+                                 ");
+
+    // $statement = $conn->prepare("SELECT b.isdeleted, b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
+    //                                     b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
+    //                                     l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
+    //                                     l.releasedate, l.duedate, l.status, l.c_id
+    //                              FROM jai_db.borrowers as b
+    //                              LEFT JOIN jai_db.loans as l
+    //                              ON b.b_id = l.b_id
+    //                              WHERE b.isdeleted = 0
+    //                              UNION
+    //                              SELECT b.isdeleted, b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
+    //                                     b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
+    //                                     l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
+    //                                     l.releasedate, l.duedate, l.status, l.c_id
+    //                              FROM jai_db.borrowers as b
+    //                              RIGHT JOIN jai_db.loans as l
+    //                              ON b.b_id = l.b_id
+    //                              WHERE b.isdeleted = 0");
   }
 
 
