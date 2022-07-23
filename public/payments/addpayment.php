@@ -93,46 +93,59 @@ $loan = [
 
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $rAmount = floatval($_POST['loanamount']);
-    $rMode = $_POST['mode'];
-    $rTerm = $_POST['term'];
-
-    $statement = $conn->prepare("SELECT *
-                                  FROM jai_db.rates as r
-                                  WHERE (r.amount = '$rAmount') AND (r.mode = '$rMode') AND (r.term = '$rTerm')                                
-                                ");
-    $statement->execute();
-    $rates = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-
-    // echo $_POST['borrower'] . "<br>";
-    // echo $_POST['amount'] . "<br>";
-    // echo $_POST['mode'] . "<br>";
-    // echo $_POST['term'] . "<br>";
-
-
     echo "<pre>";
-    var_dump($rates);
+    var_dump($_POST);
     echo "</pre>";
+
+    echo "TEST <br>";
+    echo $_POST['borrower'] . '<br>';
+    echo 'Amount: ' . $_POST['loanamount'] . '<br>';
+    echo 'Payable: ' . number_format($_POST['payable'], 2) . '<br>';
+    echo 'Balance: ' . number_format($_POST['remainingbalance'], 2) . '<br>';
+    echo 'Amortization: ' . number_format($_POST['amortization']) . '<br>';
+    echo 'Payment: ' . number_format($_POST['payment'], 2) . '<br>';
+    echo 'Type of Payment: ' . $_POST['type'] . '<br>';
+    echo 'Loan ID: ' . $_POST['loanid'] . '<br>';
+    echo 'Collector ID: ' . $_POST['collectorid'] . '<br>';
+    echo ucwords(strtolower($_POST['mode'])) . ', ' . ucwords(strtolower($_POST['term'])) . '<br>';
+
+
+    $statementPayment = $conn->prepare("INSERT INTO jai_db.payments
+                                  (b_id, l_id, c_id, amount, type, date)
+                                  VALUES
+                                  (:b_id, :l_id, :c_id, :amount, :type, :date)
+    ");
+
+    $paymentAmount = $_POST['payment'];
+
+    $statementPayment->bindValue(':b_id', $_POST['borrower']);
+    $statementPayment->bindValue(':l_id', $_POST['loanid']);
+    $statementPayment->bindValue(':c_id', $_POST['collectorid']);
+    $statementPayment->bindValue(':amount', $_POST['payment']);
+    $statementPayment->bindValue(':type', $_POST['type']);
+    $statementPayment->bindValue(':date', "TEST");
+
+    $statementPayment->execute();
+
+    $statementUpdateLoan = $conn->prepare("UPDATE jai_db.loans
+                                           SET balance = balance - :paidamount
+                                           WHERE b_id = :b_id AND l_id = :l_id
+    ");
+
+    $statementUpdateLoan->bindValue(':b_id', $_POST['borrower']);
+    $statementUpdateLoan->bindValue(':l_id', $_POST['loanid']);
+    $statementUpdateLoan->bindValue(':paidamount', $_POST['payment']);
+
+    $statementUpdateLoan->execute();
     
+    header('Location: ../borrowers/index.php');
 
-
-    foreach ($rates as $i => $rate) {
-
-      echo "TEST <br>";
-      echo $_POST['borrower'] . '<br>';
-      echo 'Amount: ' . number_format($rate['amount'], 2) . '<br>';
-      echo 'Payable: ' . number_format($rate['payable'], 2) . '<br>';
-      echo 'Amortization: ' . number_format($rate['amortization']) . '<br>';
-      echo 'Interest Rate: ' . number_format($rate['interestrate'], 2) . '<br>';
-      echo ucwords(strtolower($rate['mode'])) . ', ' . ucwords(strtolower($rate['term'])) . '<br>';
-    }
 
     // $statement2 = $conn->prepare("INSERT INTO jai_db.loans (b_id, amount, payable, balance, mode, term,
     //                                                         interestrate, amortization, releasedate, duedate, status)
     //                                                 VALUES (:b_id, :amount, :payable, :balance, :mode, :term,
     //                                                         :interestrate, :amortization, :releasedate, :duedate, :status)");
-    
+
     // $statement2->bindValue(':b_id', $_POST['borrower']);
     // $statement2->bindValue(':amount', $rate['amount']);
     // $statement2->bindValue(':payable', $rate['payable']);
@@ -147,7 +160,6 @@ $loan = [
 
     // $statement2->execute();
 
-    // header('Location: ../borrowers/index.php');
 
   }
 

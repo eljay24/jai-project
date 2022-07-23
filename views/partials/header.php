@@ -8,16 +8,16 @@
 
 
   <!------------------------------------------ BOOTSTRAP LINK-------------------------------------------------->
+  <link rel="stylesheet" href="../css/jquery-ui.css" />
   <link href="../css/bootstrap.min.css" rel="stylesheet">
   <link href="../css/main.css" rel="stylesheet">
 
-  <script src="../js/bootstrap.min.js"></script>
+
   <script src="../js/jquery-3.6.0.min.js"></script>
+  <script src="../js/jquery-ui.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
   <script src="../js/main.js"></script>
 
-  <!-- jQuery UI -->
-  <link rel="stylesheet" href="../css/jquery-ui.css" />
-  <script src="../js/jquery-ui.min.js"></script>
 
 </head>
 
@@ -29,7 +29,7 @@
         <div class="company-name">
           <h2>JAI Fair Loan</h2>
         </div>
-  
+
         <div class="nav-link-container"><a href="../../public/borrowers/index.php" class="nav-link">Borrowers</a></div>
         <div class="nav-link-container"><a href="../../public/loans/index.php" class="nav-link">Loans</a></div>
         <div class="nav-link-container"><a href="../../public/payments/index.php" class="nav-link">Payments</a></div>

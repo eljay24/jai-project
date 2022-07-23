@@ -129,11 +129,12 @@ $loan = [
     }
 
     $statement2 = $conn->prepare("INSERT INTO jai_db.loans (b_id, amount, payable, balance, mode, term,
-                                                            interestrate, amortization, releasedate, duedate, status)
+                                                            interestrate, amortization, releasedate, duedate, status, c_id)
                                                     VALUES (:b_id, :amount, :payable, :balance, :mode, :term,
-                                                            :interestrate, :amortization, :releasedate, :duedate, :status)");
+                                                            :interestrate, :amortization, :releasedate, :duedate, :status, :c_id)");
 
     $statement2->bindValue(':b_id', $_POST['borrower']);
+    $statement2->bindValue(':c_id', $_POST['collector']);
     $statement2->bindValue(':amount', $rate['amount']);
     $statement2->bindValue(':payable', $rate['payable']);
     $statement2->bindValue(':balance', $rate['payable']);

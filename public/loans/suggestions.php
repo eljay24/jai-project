@@ -27,18 +27,17 @@ if (isset($_POST['suggestion'])) {
 
     foreach ($existingNames as $i => $existingName) {
 
-       
+
 
         // echo "<pre>";
         // var_dump($existingName);
         // echo "</pre>";
 
         if (stripos($existingName['b_id'], $name) !== false or stripos($existingName['firstname'], $name) !== false or stripos($existingName['middlename'], $name) !== false or stripos($existingName['lastname'], $name) !== false) {
-            
+
             // echo json_encode($existingName);
-            
-            echo '<div>'.'#' . $existingName['b_id'], ' - ', $existingName['firstname'], ' ', $existingName['middlename'], ' ', $existingName['lastname'].'</div>';
-            
-        } 
+
+            echo '<div>' . '#' . $existingName['b_id'], ' - ', $existingName['firstname'], ' ', $existingName['middlename'], ' ', $existingName['lastname'] . '</div>';
+        }
     }
 }

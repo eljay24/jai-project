@@ -48,7 +48,7 @@
                 },
                 dataType: "json",
                 success: function(borrowerDetails) {
-                    console.log(borrowerDetails[0]);
+                    console.log(borrowerDetails);
 
                     $('#loanamount').val(borrowerDetails[0]['amount']);
                     $('#payable').val(borrowerDetails[0]['payable']);
@@ -56,8 +56,11 @@
                     $('#amortization').val(borrowerDetails[0]['amortization']);
                     $('#mode').val(borrowerDetails[0]['mode']);
                     $('#term').val(borrowerDetails[0]['term']);
-                    $('#payment').val(borrowerDetails[0]['amortization']);
-                    payment.placeholder=borrowerDetails[0]['amortization'];
+                    $('#collector').val(borrowerDetails[0]['cfname'] + ' ' + borrowerDetails[0]['clname']);
+                    $('#loanid').val(borrowerDetails[0]['l_id']);
+                    $('#collectorid').val(borrowerDetails[0]['c_id']);
+                    // $('#payment').val(borrowerDetails[0]['amortization']);
+                    payment.placeholder = borrowerDetails[0]['amortization'];
 
                 },
                 error: function(errorData) {
@@ -79,15 +82,16 @@
     <br>
     <br>
     <span></span>
-    
-    <select id="borrower" name="borrower" class="form-control" onchange="changeFunc();">
+
+    <select id="borrower" name="borrower" class="form-control" onchange="changeFunc();" data-live-search="true" required>
         <option value="" disabled selected>Select borrower</option>
         <?php
         foreach ($borrowers as $i => $borrower) {
-            echo '<option value="' . $borrower['b_id'] . '">' . $borrower['b_id'] . ' ' . $borrower['firstname']  . ' ' . $borrower['middlename'] . ' ' . $borrower['lastname']  . '</option>';
+            echo '<option value="' . $borrower['b_id'] . '">' . $borrower['b_id'] . ' ' . ucwords(strtolower($borrower['firstname']))  . ' ' . ucwords(strtolower($borrower['middlename'])) . ' ' . ucwords(strtolower($borrower['lastname']))  . '</option>';
         }
         ?>
     </select>
+
 
     <!--
     <?php if ($borrower['picture']) { ?>
@@ -102,19 +106,15 @@
     <br>
     <div class="mb-3">
         <label>Loan Amount</label>
-        <input id="loanamount" name="loanamount" placeholder="Loan Amount" type="text" class="form-control" readonly required>
+        <input id="loanamount" name="loanamount" placeholder="Loan Amount" type="number" class="form-control" readonly required>
     </div>
     <div class="mb-3">
         <label>Payable</label>
-        <input id="payable" name="payable" placeholder="Remaining Balance" type="text" class="form-control" readonly required>
+        <input id="payable" name="payable" placeholder="Remaining Balance" type="number" class="form-control" readonly required>
     </div>
     <div class="mb-3">
         <label>Remaining Balance</label>
-        <input id="remainingbalance" name="remainingbalance" placeholder="Remaining Balance" type="text" class="form-control" readonly required>
-    </div>
-    <div class="mb-3">
-        <label>Amortization</label>
-        <input id="amortization" name="amortization" placeholder="Amortization" type="text" class="form-control" readonly required>
+        <input id="remainingbalance" name="remainingbalance" placeholder="Remaining Balance" type="number" class="form-control" readonly required>
     </div>
     <div class="mb-3">
         <label>Mode</label>
@@ -125,18 +125,29 @@
         <input id="term" name="term" placeholder="Term" type="text" class="form-control" readonly required>
     </div>
     <div class="mb-3">
+        <label>Amortization</label>
+        <input id="amortization" name="amortization" placeholder="Amortization" type="number" class="form-control" readonly required>
+    </div>
+    <div class="mb-3">
         <label for="payment">Payment</label>
         <input id="payment" name="payment" placeholder="Payment" type="number" class="form-control" required>
     </div>
     <div class="mb-3">
-        <label for="type">Type</label>
-        <select name="type" id="type" class="form-control" onchange="setToZero();">
+        <label for="type">Type of Payment</label>
+        <select name="type" id="type" class="form-control" onchange="setToZero();" required>
             <option value="" disabled selected>Select type</option>
             <option value="Cash">Cash</option>
             <option value="GCash">GCash</option>
             <option value="Pass">Pass</option>
         </select>
     </div>
+    <div class="mb-3">
+        <label for="collector">Collector</label>
+        <input id="collector" name="collector" placeholder="Collector" type="text" class="form-control" readonly required>
+    </div>
+
+    <input id="loanid" name="loanid" hidden>
+    <input id="collectorid" name="collectorid" hidden>
 
     <button type="submit" class="btn btn-primary">Submit</button>
 

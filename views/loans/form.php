@@ -31,6 +31,11 @@ $statementTerm = $conn->prepare("SELECT
 $statementTerm->execute();
 $terms = $statementTerm->fetchAll(PDO::FETCH_ASSOC);
 
+//// SELECT COLLECTORS FROM COLLECTORS TABLE
+$statementCollector = $conn->prepare("SELECT * FROM jai_db.collectors as c");
+$statementCollector->execute();
+$collectors = $statementCollector->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <form action="" method="post" enctype="multipart/form-data">
@@ -65,7 +70,7 @@ $terms = $statementTerm->fetchAll(PDO::FETCH_ASSOC);
     <br>
     <span></span>
     <div id="borrower" name="borrower">
-      
+
     </div>
 
     <!--
@@ -82,7 +87,8 @@ $terms = $statementTerm->fetchAll(PDO::FETCH_ASSOC);
 
     <div class="mb-3">
         <label>Amount</label>
-        <select class="form-control" name="amount">
+        <select class="form-control" name="amount" required>
+            <option value="" disabled selected>Select amount</option>
             <?php
 
             foreach ($amounts as $amount) {
@@ -91,11 +97,11 @@ $terms = $statementTerm->fetchAll(PDO::FETCH_ASSOC);
 
             ?>
         </select>
-        <!-- <input placeholder="Amount" type="text" class="form-control" name="amount" value="<?php echo $amount ?>"> -->
     </div>
     <div class="mb-3">
         <label>Mode</label>
-        <select class="form-control" name="mode">
+        <select class="form-control" name="mode" required>
+            <option value="" disabled selected>Select mode</option>
             <?php
 
             foreach ($modes as $mode) {
@@ -104,11 +110,11 @@ $terms = $statementTerm->fetchAll(PDO::FETCH_ASSOC);
 
             ?>
         </select>
-        <!-- <input placeholder="Mode" type="text" class="form-control" name="mode" value="<?php echo $mode ?>"> -->
     </div>
     <div class="mb-3">
         <label>Term</label>
-        <select class="form-control" name="term">
+        <select class="form-control" name="term" required>
+            <option value="" disabled selected>Select term</option>
             <?php
 
             foreach ($terms as $term) {
@@ -117,7 +123,19 @@ $terms = $statementTerm->fetchAll(PDO::FETCH_ASSOC);
 
             ?>
         </select>
-        <!-- <input placeholder="Term" type="text" class="form-control" name="term" value="<?php echo $term ?>"> -->
+    </div>
+    <div class="mb-3">
+        <label>Collector</label>
+        <select class="form-control" name="collector" required>
+            <option value="" disabled selected>Select collector</option>
+            <?php
+
+            foreach ($collectors as $collector) {
+                echo '<option value="' . $collector['c_id'] . '">' . ucwords(strtolower($collector['firstname'])) . ' ' . ucwords(strtolower($collector['lastname'])) . '</option>';
+            }
+
+            ?>
+        </select>
     </div>
     <div class="mb-3">
         <label>Release Date</label>
