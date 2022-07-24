@@ -105,9 +105,9 @@ try {
             <div class="col">
               <p class="jai-table-name primary-font <?= $loan['firstname'] == 'Angelo' ? 'red' : ''; ?>
                                               <?= $loan['firstname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Name:</span> <?= '#' . $loan['b_id'] . ' - ' . $loan['firstname'] . ' ' . $loan['middlename'] . ' ' . $loan['lastname'] ?></p>
-              <p class="jai-table-contact sub-font"> <span class="jai-table-label">Initial Loan Amount: </span><?php echo $loan['amount'] ?></p>
-              <p class="jai-table-address sub-font"> <span class="jai-table-label">Payable: </span><?php echo $loan['payable'] ?></p>
-              <p class="jai-table-address sub-font"> <span class="jai-table-label">Balance: </span><?php echo $loan['balance'] ?></p>
+              <p class="jai-table-contact sub-font"> <span class="jai-table-label">Initial Loan Amount: </span><?= "₱ " . number_format($loan['amount'],2) ?></p>
+              <p class="jai-table-address sub-font"> <span class="jai-table-label">Payable: </span><?= "₱ " . number_format($loan['payable'],2) ?></p>
+              <p class="jai-table-address sub-font"> <span class="jai-table-label">Balance: </span><?= "₱ " . number_format($loan['balance'],2) ?></p>
             </div>
           </div>
         </div>
