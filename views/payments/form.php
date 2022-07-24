@@ -48,19 +48,20 @@
                 },
                 dataType: "json",
                 success: function(borrowerDetails) {
-                    console.log(borrowerDetails);
+                    
+                    // console.log(borrowerDetails[0]['amount']);
 
-                    $('#loanamount').val(borrowerDetails[0]['amount']);
-                    $('#payable').val(borrowerDetails[0]['payable']);
-                    $('#remainingbalance').val(borrowerDetails[0]['balance']);
-                    $('#amortization').val(borrowerDetails[0]['amortization']);
+                    $('#loanamount').val(borrowerDetails[0]['amount'].toFixed(2));
+                    $('#payable').val(borrowerDetails[0]['payable'].toFixed(2));
+                    $('#remainingbalance').val(borrowerDetails[0]['balance'].toFixed(2));
+                    $('#amortization').val(borrowerDetails[0]['amortization'].toFixed(2));
                     $('#mode').val(borrowerDetails[0]['mode']);
                     $('#term').val(borrowerDetails[0]['term']);
                     $('#collector').val(borrowerDetails[0]['cfname'] + ' ' + borrowerDetails[0]['clname']);
                     $('#loanid').val(borrowerDetails[0]['l_id']);
                     $('#collectorid').val(borrowerDetails[0]['c_id']);
                     // $('#payment').val(borrowerDetails[0]['amortization']);
-                    payment.placeholder = borrowerDetails[0]['amortization'];
+                    payment.placeholder = borrowerDetails[0]['amortization'].toFixed(2);
 
                 },
                 error: function(errorData) {
@@ -106,7 +107,7 @@
     <br>
     <div class="mb-3">
         <label>Loan Amount</label>
-        <input id="loanamount" name="loanamount" placeholder="Loan Amount" type="number" class="form-control" readonly required>
+        <input id="loanamount" name="loanamount" placeholder="Loan Amount" type="text" class="form-control" readonly required>
     </div>
     <div class="mb-3">
         <label>Payable</label>
@@ -144,6 +145,9 @@
     <div class="mb-3">
         <label for="collector">Collector</label>
         <input id="collector" name="collector" placeholder="Collector" type="text" class="form-control" readonly required>
+        <select>
+
+        </select>
     </div>
 
     <input id="loanid" name="loanid" hidden>

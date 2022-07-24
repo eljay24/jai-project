@@ -129,8 +129,7 @@ $loan = [
 
     $statementUpdateLoan = $conn->prepare("UPDATE jai_db.loans
                                            SET balance = balance - :paidamount
-                                           WHERE b_id = :b_id AND l_id = :l_id
-    ");
+                                           WHERE b_id = :b_id AND l_id = :l_id");
 
     $statementUpdateLoan->bindValue(':b_id', $_POST['borrower']);
     $statementUpdateLoan->bindValue(':l_id', $_POST['loanid']);
