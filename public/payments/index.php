@@ -7,14 +7,17 @@ try {
   $search = $_GET['search'] ?? '';
 
   if ($search) {
-    $statement = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
-                                        b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
-                                        l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
-                                        l.releasedate, l.duedate, l.status, l.c_id
-                                 FROM jai_db.borrowers as b
-                                 LEFT JOIN jai_db.loans as l
+    $statement = $conn->prepare("SELECT b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, l.l_id,
+                                        p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
+                                 FROM jai_db.payments as p
+                                 INNER JOIN jai_db.collectors as c 
+                                 ON p.c_id = c.c_id
+                                 INNER JOIN jai_db.loans as l
+                                 ON p.l_id = l.l_id
+                                 INNER JOIN jai_db.borrowers as b 
                                  ON b.b_id = l.b_id
-                                 WHERE (isdeleted = 0) AND (firstname LIKE :search OR middlename LIKE :search OR lastname LIKE :search OR comaker LIKE :search OR b.b_id LIKE :search) ORDER BY b.b_id ASC");
+                                 WHERE b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search OR b.b_id LIKE :search OR c.firstname LIKE :search
+                                 OR c.middlename LIKE :search OR c.lastname LIKE :search OR p.type LIKE :search");
     $statement->bindValue(':search', "%$search%");
   } else {
     $statement = $conn->prepare("SELECT b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, l.l_id,
@@ -26,7 +29,7 @@ try {
                                  ON p.l_id = l.l_id
                                  INNER JOIN jai_db.borrowers as b 
                                  ON b.b_id = l.b_id
-                                 ORDER BY p.p_id ASC");
+                                 ORDER BY p.p_id DESC");
   }
 
 
@@ -77,7 +80,7 @@ try {
   </div>
 
   <div class="d-flex justify-content-between">
-    <a href="create.php" type="button" class="btn btn-outline-success">Add new payment</a>
+    <a href="addpayment.php" type="button" class="btn btn-outline-success">Add new payment</a>
 
     <form>
       <div class="input-group">
