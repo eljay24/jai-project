@@ -57,12 +57,16 @@
                     $('#amortization').val(borrowerDetails[0]['amortization'].toFixed(2));
                     $('#mode').val(borrowerDetails[0]['mode']);
                     $('#term').val(borrowerDetails[0]['term']);
-                    $('#collector').val(borrowerDetails[0]['c_id']);
-
-                    // 2 hidden inputs:
-                    $('#loanid').val(borrowerDetails[0]['l_id']);
                     $('#collectorid').val(borrowerDetails[0]['c_id']);
+                    $('#type').val("Select");
+                    
+                    document.getElementById("payment").readOnly = false;
+                    $('#payment').val("");
+                    
 
+                    // 1 hidden inputs:
+                    $('#loanid').val(borrowerDetails[0]['l_id']);
+                    
                     // $('#payment').val(borrowerDetails[0]['amortization']);
                     payment.placeholder = borrowerDetails[0]['amortization'].toFixed(2);
 
@@ -84,7 +88,7 @@
                 if (paymentAmount != 0) {
                     $('#payment').val(paymentAmount);
                 } else {
-                    $('#payment').val("")
+                    $('#payment').val("");
                 }
                 document.getElementById("payment").readOnly = false;
             }
@@ -147,7 +151,7 @@
     </div>
     <div class="mb-3">
         <label for="type">Type of Payment</label>
-        <select name="type" id="type" class="form-control" onchange="setToZero();" required>
+        <select id="type" name="type" class="form-control" onchange="setToZero();" required>
             <option value="Select" disabled selected>Select type</option>
             <option value="Cash">Cash</option>
             <option value="GCash">GCash</option>
@@ -157,6 +161,7 @@
     <div class="mb-3">
         <label for="collectorid">Collector</label>
         <select id="collectorid" name="collectorid" class="form-control">
+            <option value="Select" disabled selected>Select collector</option>
             <?php
             foreach ($collectors as $i => $collector) {
                 echo '<option value="' . $collector['c_id'] . '">' . $collector['firstname'] . ' ' . $collector['middlename'] . ' ' . $collector['lastname'] . '</option>';

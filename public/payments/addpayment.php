@@ -54,37 +54,6 @@ $loan = [
   'status' => '',
 ];
 
-// if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-//   require_once "../../validate_loan.php";
-
-//   if (empty($errors)) {
-
-//     $statement = $conn->prepare("INSERT INTO jai_db.borrowers (picture, firstname, middlename, lastname, address, contactno, birthday, businessname,
-//                                                                     occupation, comaker, remarks, datecreated)
-//                                                            VALUES (:picture, :firstname, :middlename, :lastname, :address, :contactno, :birthday, :businessname,
-//                                                                     :occupation, :comaker, :remarks, :datecreated)");
-
-//     $statement->bindValue(':picture', $picturePath);
-//     $statement->bindValue(':firstname', $firstname);
-//     $statement->bindValue(':middlename', $middlename);
-//     $statement->bindValue(':lastname', $lastname);
-//     $statement->bindValue(':address', $address);
-//     $statement->bindValue(':contactno', $contactno);
-//     $statement->bindValue(':birthday', $birthday);
-//     $statement->bindValue(':businessname', $businessname);
-//     $statement->bindValue(':occupation', $occupation);
-//     $statement->bindValue(':comaker', $comaker);
-//     $statement->bindValue(':remarks', $remarks);
-//     $statement->bindValue(':datecreated', date('Y-m-d H:i:s'));
-
-//     $statement->execute();
-
-//     header('Location: index.php');
-//   }
-// }
-
-
 ?>
 
 <?php include_once "../../views/partials/header.php"; ?>
@@ -99,29 +68,35 @@ $loan = [
 
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    echo "<pre>";
-    var_dump($_POST);
-    echo "</pre>";
 
-    echo "TEST <br>";
-    echo $_POST['borrower'] . '<br>';
-    echo 'Amount: ' . $_POST['loanamount'] . '<br>';
-    echo 'Payable: ' . number_format($_POST['payable'], 2) . '<br>';
-    echo 'Balance: ' . number_format($_POST['remainingbalance'], 2) . '<br>';
-    echo 'Amortization: ' . number_format($_POST['amortization']) . '<br>';
-    echo 'Payment: ' . number_format($_POST['payment'], 2) . '<br>';
-    echo 'Type of Payment: ' . $_POST['type'] . '<br>';
-    echo 'Loan ID: ' . $_POST['loanid'] . '<br>';
-    echo 'Collector ID: ' . $_POST['collectorid'] . '<br>';
-    echo ucwords(strtolower($_POST['mode'])) . ', ' . ucwords(strtolower($_POST['term'])) . '<br>';
 
+    // ----------------------------------- TEST -------------------------------------------------
+
+    // echo "<pre>";
+    // var_dump($_POST);
+    // echo "</pre>";
+
+    // echo "TEST <br>";
+    // echo $_POST['borrower'] . '<br>';
+    // echo 'Amount: ' . $_POST['loanamount'] . '<br>';
+    // echo 'Payable: ' . number_format($_POST['payable'], 2) . '<br>';
+    // echo 'Balance: ' . number_format($_POST['remainingbalance'], 2) . '<br>';
+    // echo 'Amortization: ' . number_format($_POST['amortization']) . '<br>';
+    // echo 'Payment: ' . number_format($_POST['payment'], 2) . '<br>';
+    // echo 'Type of Payment: ' . $_POST['type'] . '<br>';
+    // echo 'Loan ID: ' . $_POST['loanid'] . '<br>';
+    // echo 'Collector ID: ' . $_POST['collectorid'] . '<br>';
+    // echo ucwords(strtolower($_POST['mode'])) . ', ' . ucwords(strtolower($_POST['term'])) . '<br>';
+
+    // ----------------------------------- END TEST ---------------------------------------------
+
+
+
+    // ADD PAYMENT TO PAYMENTS TABLE
     $statementPayment = $conn->prepare("INSERT INTO jai_db.payments
                                   (b_id, l_id, c_id, amount, type, date)
                                   VALUES
-                                  (:b_id, :l_id, :c_id, :amount, :type, :date)
-    ");
-
-    $paymentAmount = $_POST['payment'];
+                                  (:b_id, :l_id, :c_id, :amount, :type, :date)");
 
     $statementPayment->bindValue(':b_id', $_POST['borrower']);
     $statementPayment->bindValue(':l_id', $_POST['loanid']);
@@ -131,56 +106,40 @@ $loan = [
     $statementPayment->bindValue(':date', "TEST");
 
     $statementPayment->execute();
+    // END - ADD PAYMENT TO PAYMENTS TABLE
+
+
+
+    // UPDATE BALANCE ON LOANS TABLE
+    if ($_POST['type'] == 'Pass') {
+      $pass = 1;
+      $paymentsMade = 0;
+    } else {
+      $pass = 0;
+      $paymentsMade = 1;
+    }
 
     $statementUpdateLoan = $conn->prepare("UPDATE jai_db.loans
-                                           SET balance = balance - :paidamount
-                                           WHERE b_id = :b_id AND l_id = :l_id");
+                                            SET balance = balance - :paidamount, paymentsmade = paymentsmade + :paymentsmade, passes = passes + :passes
+                                            WHERE b_id = :b_id AND l_id = :l_id");
 
     $statementUpdateLoan->bindValue(':b_id', $_POST['borrower']);
     $statementUpdateLoan->bindValue(':l_id', $_POST['loanid']);
     $statementUpdateLoan->bindValue(':paidamount', $_POST['payment']);
+    $statementUpdateLoan->bindValue(':paymentsmade', $paymentsMade);
+    $statementUpdateLoan->bindValue(':passes', $pass);
 
     $statementUpdateLoan->execute();
-    
+    // END - UPDATE BALANCE ON LOANS TABLE
+
+
+
     header('Location: ../payments/index.php');
-
-
-    // $statement2 = $conn->prepare("INSERT INTO jai_db.loans (b_id, amount, payable, balance, mode, term,
-    //                                                         interestrate, amortization, releasedate, duedate, status)
-    //                                                 VALUES (:b_id, :amount, :payable, :balance, :mode, :term,
-    //                                                         :interestrate, :amortization, :releasedate, :duedate, :status)");
-
-    // $statement2->bindValue(':b_id', $_POST['borrower']);
-    // $statement2->bindValue(':amount', $rate['amount']);
-    // $statement2->bindValue(':payable', $rate['payable']);
-    // $statement2->bindValue(':balance', $rate['payable']);
-    // $statement2->bindValue(':mode', $rate['mode']);
-    // $statement2->bindValue(':term', $rate['term']);
-    // $statement2->bindValue(':interestrate', $rate['interestrate']);
-    // $statement2->bindValue(':amortization', $rate['amortization']);
-    // $statement2->bindValue(':releasedate', 'TEST');
-    // $statement2->bindValue(':duedate', 'TEST');
-    // $statement2->bindValue(':status', 'Active');
-
-    // $statement2->execute();
-
-
   }
 
   ?>
 
   <br>
-
-  <!-- <script>
-    var existingNames = ["lee", "jordan", "angelo", "ivan", "willie", "ann"];
-
-    $("#namesearch").autocomplete({
-      source: existingNames
-    }, {
-      
-    });
-  </script> -->
-
 
   <?php include_once "../../views/payments/form.php" ?>
 

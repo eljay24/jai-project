@@ -7,7 +7,7 @@ try {
   $search = $_GET['search'] ?? '';
 
   if ($search) {
-    $statement = $conn->prepare("SELECT b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, l.l_id,
+    $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, l.l_id,
                                         p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
                                  FROM jai_db.payments as p
                                  INNER JOIN jai_db.collectors as c 
@@ -20,7 +20,7 @@ try {
                                  OR c.middlename LIKE :search OR c.lastname LIKE :search OR p.type LIKE :search");
     $statement->bindValue(':search', "%$search%");
   } else {
-    $statement = $conn->prepare("SELECT b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, l.l_id,
+    $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, l.l_id,
                                         p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
                                  FROM jai_db.payments as p
                                  INNER JOIN jai_db.collectors as c 
@@ -114,7 +114,7 @@ try {
             </div>
             <div class="col">
               <p class="jai-table-name primary-font <?= $payment['borrowerfname'] == 'Angelo' ? 'red' : ''; ?>
-                                                <?= $payment['borrowerfname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Borrower:</span> <?= ucwords(strtolower($payment['borrowerfname'])) . ' ' . ucwords(strtolower($payment['borrowermname'])) . ' ' . ucwords(strtolower($payment['borrowerlname'])) ?></p>
+                                                <?= $payment['borrowerfname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Borrower:</span> <?= '#' . $payment['b_id'] . ' ' . ucwords(strtolower($payment['borrowerfname'])) . ' ' . ucwords(strtolower($payment['borrowermname'])) . ' ' . ucwords(strtolower($payment['borrowerlname'])) ?></p>
 
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Collector: </span><?php echo ucwords(strtolower($payment['collectorfname'])) . ' ' . ucwords(strtolower($payment['collectormname'])) . ' ' . ucwords(strtolower($payment['collectorlname'])) ?></p>
             </div>
@@ -130,7 +130,7 @@ try {
         <div class="col">
           <div class="row">
             <div class="col">
-              <p class="jai-table-amount primary-font"><span class="jai-table-label">Collector???: </span><?php ?></p>
+              <p class="jai-table-amount primary-font"><span class="jai-table-label">Collector: </span><?php echo ucwords(strtolower($payment['collectorfname'])) . ' ' . ucwords(strtolower($payment['collectormname'])) . ' ' . ucwords(strtolower($payment['collectorlname'])) ?></p>
             </div>
             <div class="col">
               <p class="jai-table-payable primary-font"> <span class="jai-table-label">Remaining Bal.: </span> <?php  ?></p>
