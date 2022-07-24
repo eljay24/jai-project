@@ -4,7 +4,6 @@ require "../../dbconn.php";
 
 if (isset($_POST['b_id'])) {
     $b_id = $_POST['b_id'];
-    // $values = $_POST['form_values'];
 
     $id = $b_id;
 
@@ -16,42 +15,43 @@ if (isset($_POST['b_id'])) {
     $errors = [];
 
     $firstname = $_POST['firstname'];
-    // $middlename = $values[1]['value'];
-    // $lastname = $values[2]['value'];
-    // $birthday = $values[3]['value'];
-    // $contactno = $values[4]['value'];
-    // $address = $values[5]['value'];
-    // $occupation = $values[6]['value'];
-    // $businessname = $values[7]['value'];
-    // $comaker = $values[8]['value'];
-    // $comakerno = $values[9]['value'];
-    // $remarks = $values[10]['value'];
+    $middlename = $_POST['middlename'];
+    $lastname = $_POST['lastname'];
+    $birthday = $_POST['birthday'];
+    $contactno = $_POST['contactno'];
+    $address = $_POST['address'];
+    $occupation = $_POST['occupation'];
+    $businessname = $_POST['businessname'];
+    $comaker = $_POST['comaker'];
+    $comakerno = $_POST['comakerno'];
+    $remarks = $_POST['remarks'];
 
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (empty($errors)) {
 
-            //     $statement = $conn->prepare("UPDATE jai_db.borrowers SET firstname=:firstname, middlename=:middlename, lastname=:lastname, address=:address,
-            // contactno=:contactno, birthday=:birthday, businessname=:businessname, occupation=:occupation,
-            // comaker=:comaker, comakerno=:comakerno, remarks=:remarks WHERE b_id=:b_id");
+            $statement = $conn->prepare("UPDATE jai_db.borrowers SET firstname=:firstname, middlename=:middlename, lastname=:lastname, address=:address,
+            contactno=:contactno, birthday=:birthday, businessname=:businessname, occupation=:occupation,
+            comaker=:comaker, comakerno=:comakerno, remarks=:remarks WHERE b_id=:b_id");
 
-            //     $statement->bindValue(':b_id', $id);
-            //     $statement->bindValue(':firstname', $firstname);
-            //     $statement->bindValue(':middlename', $middlename);
-            //     $statement->bindValue(':lastname', $lastname);
-            //     $statement->bindValue(':birthday', $birthday);
-            //     $statement->bindValue(':contactno', $contactno);
-            //     $statement->bindValue(':address', $address);
-            //     $statement->bindValue(':occupation', $occupation);
-            //     $statement->bindValue(':businessname', $businessname);
-            //     $statement->bindValue(':comaker', $comaker);
-            //     $statement->bindValue(':comakerno', $comakerno);
-            //     $statement->bindValue(':remarks', $remarks);
+            $statement->bindValue(':b_id', $id);
+            $statement->bindValue(':firstname', $firstname);
+            $statement->bindValue(':middlename', $middlename);
+            $statement->bindValue(':lastname', $lastname);
+            $statement->bindValue(':birthday', $birthday);
+            $statement->bindValue(':contactno', $contactno);
+            $statement->bindValue(':address', $address);
+            $statement->bindValue(':occupation', $occupation);
+            $statement->bindValue(':businessname', $businessname);
+            $statement->bindValue(':comaker', $comaker);
+            $statement->bindValue(':comakerno', $comakerno);
+            $statement->bindValue(':remarks', $remarks);
 
-            //     $statement->execute();
+            $statement->execute();
 
-            echo json_encode($firstname);
+            echo json_encode($_POST['b_id']);
+        } else {
         }
     }
 }

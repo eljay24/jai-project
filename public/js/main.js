@@ -5,7 +5,7 @@ $(document).ready(function () {
   editForm();
 });
 
-function validateForm(formSelector) {
+function validateForm(form) {
   let messages = {
     name: "Please enter a valid name",
     firstname: "Please enter a valid first name",
@@ -17,8 +17,10 @@ function validateForm(formSelector) {
     required: "This field is required",
   };
 
-  $(formSelector)
-    .find("input, select, textarea, checkbox")
+  $(form)
+    .find(
+      "input[required]:not([type='hidden']), select[required], textarea[required], checkbox[required]"
+    )
     .each(function () {
       $(this).removeClass("error");
       $(this).next("span").remove();
@@ -27,11 +29,11 @@ function validateForm(formSelector) {
         $(this)
           .addClass("error")
           .after("<span>" + messages.required + "</span>");
-        $(formSelector).addClass("invalid-form");
+        console.log($(this));
       }
     });
 
-  return !$(formSelector).hasClass("invalid-form");
+  return !$(form).find(".error").length;
 }
 
 function editForm() {
@@ -39,31 +41,31 @@ function editForm() {
     event.preventDefault();
     let formValues = $(".edit-form").serialize();
 
-    // if (validateForm(".edit-form"))
-    $.ajax({
-      url: "../ajax-calls/edit-borrower.php",
-      method: "POST",
-      data: formValues,
-      dataType: "json",
-      beforeSend: function () {},
-      success: function (data) {
-        console.log(data);
+    if (validateForm(".edit-form"))
+      $.ajax({
+        url: "../ajax-calls/edit-borrower.php",
+        method: "POST",
+        data: formValues,
+        dataType: "json",
+        beforeSend: function () {},
+        success: function (data) {
+          console.log(data);
 
-        // $(".row").each(function () {
-        //   if ($(this).attr("data-row-id") == b_id) {
-        //     $(this)
-        //       .find(".jai-table-name")
-        //       .text("Name: " + data);
-        //   }
-        // });
-        //
-        $("#editBorrower").modal("toggle");
-      },
-      error: function (response) {
-        console.log("error");
-        console.log(response.responseText);
-      },
-    });
+          // $(".row").each(function () {
+          //   if ($(this).attr("data-row-id") == b_id) {
+          //     $(this)
+          //       .find(".jai-table-name")
+          //       .text("Name: " + data);
+          //   }
+          // });
+          //
+          $("#editBorrower").modal("toggle");
+        },
+        error: function (response) {
+          console.log("error");
+          console.log(response);
+        },
+      });
   });
 }
 
@@ -73,15 +75,28 @@ function openModal(buttonName, modalName, modalFunction) {
     if (modalFunction) {
       modalFunction(buttonName, modalName, $(this));
     }
-
     $(modalName).modal("toggle");
   });
 }
 
 function openEdit(buttonName, modalName, thisValue) {
-  let b_id = $(thisValue).parents(".jai-data-row").find(".jai-col-ID").html();
+  let formValues = $(thisValue)
+      .parent()
+      .siblings(".hidden-field")
+      .find(".hidden-form")
+      .serializeArray(),
+    modalInput = $(modalName).find("form.edit-form input");
 
-  $(modalName).find("#b_id").val(b_id);
+  modalInput.each(function () {
+    let inputName = $(this).attr("name"),
+      input = $(this);
+
+    $(formValues).each(function () {
+      if (inputName == this["name"]) {
+        input.val(this["value"]);
+      }
+    });
+  });
 }
 
 function openDelete(buttonName, modalName, thisValue) {
@@ -107,37 +122,3 @@ function closeModal() {
     $(modalName).modal("toggle");
   });
 }
-
-// function populateEditFields() {
-//   $("#editBorrower").on("show.bs.modal", function (e) {
-//     console.log("populate data now");
-//     let b_id = $(this).data("borrower"),
-//       dataset = $(".jai-data-row[data-row-id=" + b_id + "]").find(
-//         ".hidden-field > input"
-//       ),
-//       firstName = dataset.data("jaiFirstname"),
-//       middleName = dataset.data("jaiMiddlename"),
-//       lastName = dataset.data("jaiLastname"),
-//       birthday = dataset.data("jaiBirthday"),
-//       contactNo = dataset.data("jaiContactno"),
-//       address = dataset.data("jaiAddress"),
-//       occupation = dataset.data("jaiOccupation"),
-//       businessName = dataset.data("jaiBusinessName"),
-//       coMaker = dataset.data("jaiComaker"),
-//       coMakerNo = dataset.data("jaiComakerno");
-
-//     console.log(
-//       b_id +
-//         firstName +
-//         middleName +
-//         lastName +
-//         birthday +
-//         contactNo +
-//         address +
-//         occupation +
-//         businessName +
-//         coMaker +
-//         coMakerNo
-//     );
-//   });
-// }
