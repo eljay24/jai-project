@@ -9,14 +9,20 @@ try {
   echo "Connection failed: " . $e->getMessage();
 }
 
-$statement = $conn->prepare("SELECT b.b_id, b.firstname, b.middlename, b.lastname
+$statementBorrowers = $conn->prepare("SELECT b.b_id, b.firstname, b.middlename, b.lastname
                                 FROM jai_db.borrowers as b
                                 LEFT JOIN jai_db.loans as l
                                 ON b.b_id = l.b_id 
                                 WHERE (b.isdeleted = 0) AND (l.amount IS NOT NULL)
                                 ORDER BY b.b_id ASC");
-$statement->execute();
-$borrowers = $statement->fetchAll(PDO::FETCH_ASSOC);
+$statementBorrowers->execute();
+$borrowers = $statementBorrowers->fetchAll(PDO::FETCH_ASSOC);
+
+$statementCollectors = $conn->prepare("SELECT *
+                                       FROM jai_db.collectors
+                                       ORDER BY c_id ASC");
+$statementCollectors->execute();
+$collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
 
 date_default_timezone_set("Asia/Manila");
 
@@ -109,7 +115,6 @@ $loan = [
     echo 'Collector ID: ' . $_POST['collectorid'] . '<br>';
     echo ucwords(strtolower($_POST['mode'])) . ', ' . ucwords(strtolower($_POST['term'])) . '<br>';
 
-
     $statementPayment = $conn->prepare("INSERT INTO jai_db.payments
                                   (b_id, l_id, c_id, amount, type, date)
                                   VALUES
@@ -137,7 +142,7 @@ $loan = [
 
     $statementUpdateLoan->execute();
     
-    header('Location: ../borrowers/index.php');
+    header('Location: ../payments/index.php');
 
 
     // $statement2 = $conn->prepare("INSERT INTO jai_db.loans (b_id, amount, payable, balance, mode, term,

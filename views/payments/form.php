@@ -48,8 +48,8 @@
                 },
                 dataType: "json",
                 success: function(borrowerDetails) {
-                    
-                    // console.log(borrowerDetails[0]['amount']);
+
+                    console.log(borrowerDetails[0]);
 
                     $('#loanamount').val(borrowerDetails[0]['amount'].toFixed(2));
                     $('#payable').val(borrowerDetails[0]['payable'].toFixed(2));
@@ -57,9 +57,12 @@
                     $('#amortization').val(borrowerDetails[0]['amortization'].toFixed(2));
                     $('#mode').val(borrowerDetails[0]['mode']);
                     $('#term').val(borrowerDetails[0]['term']);
-                    $('#collector').val(borrowerDetails[0]['cfname'] + ' ' + borrowerDetails[0]['clname']);
+                    $('#collector').val(borrowerDetails[0]['c_id']);
+
+                    // 2 hidden inputs:
                     $('#loanid').val(borrowerDetails[0]['l_id']);
                     $('#collectorid').val(borrowerDetails[0]['c_id']);
+
                     // $('#payment').val(borrowerDetails[0]['amortization']);
                     payment.placeholder = borrowerDetails[0]['amortization'].toFixed(2);
 
@@ -75,6 +78,15 @@
             var selectedValue = selectBox.options[selectBox.selectedIndex].value;
             if (selectedValue == "Pass") {
                 $('#payment').val(0);
+                document.getElementById("payment").readOnly = true;
+            } else {
+                var paymentAmount = $('#payment').val();
+                if (paymentAmount != 0) {
+                    $('#payment').val(paymentAmount);
+                } else {
+                    $('#payment').val("")
+                }
+                document.getElementById("payment").readOnly = false;
             }
         }
     </script>
@@ -136,22 +148,24 @@
     <div class="mb-3">
         <label for="type">Type of Payment</label>
         <select name="type" id="type" class="form-control" onchange="setToZero();" required>
-            <option value="" disabled selected>Select type</option>
+            <option value="Select" disabled selected>Select type</option>
             <option value="Cash">Cash</option>
             <option value="GCash">GCash</option>
             <option value="Pass">Pass</option>
         </select>
     </div>
     <div class="mb-3">
-        <label for="collector">Collector</label>
-        <input id="collector" name="collector" placeholder="Collector" type="text" class="form-control" readonly required>
-        <select>
-
+        <label for="collectorid">Collector</label>
+        <select id="collectorid" name="collectorid" class="form-control">
+            <?php
+            foreach ($collectors as $i => $collector) {
+                echo '<option value="' . $collector['c_id'] . '">' . $collector['firstname'] . ' ' . $collector['middlename'] . ' ' . $collector['lastname'] . '</option>';
+            }
+            ?>
         </select>
     </div>
 
     <input id="loanid" name="loanid" hidden>
-    <input id="collectorid" name="collectorid" hidden>
 
     <button type="submit" class="btn btn-primary">Submit</button>
 
