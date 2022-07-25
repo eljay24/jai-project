@@ -64,6 +64,19 @@ $collectors = $statementCollector->fetchAll(PDO::FETCH_ASSOC);
                 });
             });
         });
+
+        $(function() {
+            $("#releasedate").datepicker({dateFormat: 'yy-mm-dd'});
+        });
+
+        function addMonths() {
+            var dueDate = new Date(releaseDate.setMonth(releaseDate.getMonth()+3));
+            var dueDate = new Date(releaseDate);
+            console.log(dueDate);
+            alert(dueDate);
+        }
+
+
     </script>
 
     <input data-borrower-name="" type="text" name="name" id="namesearch" placeholder="Search for borrowers...">
@@ -148,7 +161,7 @@ $collectors = $statementCollector->fetchAll(PDO::FETCH_ASSOC);
     </div>
     <div class="mb-3">
         <label>Release Date</label>
-        <input name="releasedate" placeholder="Release Date" type="text" class="form-control">
+        <input id="releasedate" name="releasedate" placeholder="Release Date" type="text" class="form-control" onkeydown="return false" required onchange="addMonths();">
     </div>
     <div class="mb-3">
         <label>Due Date</label>
