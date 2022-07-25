@@ -92,7 +92,7 @@ try {
 
   <div class="jai-table">
     <div class="row">
-      <div class="jai-col-ID">Pay. ID</div>
+      <div class="jai-col-ID">ID</div>
       <div class="col">Payment Details</div>
       <div class="col">Loan Details</div>
       <div class="col">Remarks</div>
@@ -107,20 +107,20 @@ try {
         <div class="jai-col-ID"><?php echo $payment['p_id'] ?></div>
         <div class="col">
           <div class="row">
-            <div class="jai-image-col">
+            <!-- <div class="jai-image-col">
               <div class="jai-picture">
                 <img src="/<?= 'JAI/public/' . $payment['picture']; ?>" class="thumb-image2">
               </div>
-            </div>
+            </div> -->
             <div class="col">
               <p class="jai-table-name primary-font <?= $payment['borrowerfname'] == 'Angelo' ? 'red' : ''; ?>
-                                                <?= $payment['borrowerfname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Borrower:</span> <?= '#' . $payment['b_id'] . ' ' . ucwords(strtolower($payment['borrowerfname'])) . ' ' . ucwords(strtolower($payment['borrowermname'])) . ' ' . ucwords(strtolower($payment['borrowerlname'])) ?></p>
+                                                <?= $payment['borrowerfname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label"></span> <?= '#' . $payment['b_id'] . ' ' . ucwords(strtolower($payment['borrowerfname'])) . ' ' . ucwords(strtolower($payment['borrowermname'])) . ' ' . ucwords(strtolower($payment['borrowerlname'])) ?></p>
 
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Collector: </span><?php echo ucwords(strtolower($payment['collectorfname'])) . ' ' . ucwords(strtolower($payment['collectormname'])) . ' ' . ucwords(strtolower($payment['collectorlname'])) ?></p>
             </div>
             <div class="col">
               <p class="jai-table-comaker primary-font <?= $payment['borrowerfname'] == 'Angelo' ? 'red' : ''; ?>
-                                                <?= $payment['borrowerfname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Paid Amount:</span> <?= ucwords(strtolower($payment['amount'])) ?></p>
+                                                <?= $payment['borrowerfname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Amount:</span> <?= "₱ " .  number_format($payment['amount'],2) ?></p>
               <p class="jai-table-contact sub-font"> <span class="jai-table-label">Type: </span><?php echo $payment['type'] ?></p>
               <p class="sub-font">Date: <?= date_format($date, "M-d-Y") ?></p>
             </div>
@@ -220,7 +220,7 @@ try {
                 </div>
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input placeholder="Contact number" type="text" class="form-control" name="contactno" value="">
+                    <input placeholder="Contact number" type="number" class="form-control" name="contactno" value="">
                   </div>
                 </div>
               </div>
@@ -257,7 +257,7 @@ try {
                 </div>
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input placeholder="Comaker Contact Number" type="text" class="form-control" name="comakerno" value="">
+                    <input placeholder="Comaker Contact Number" type="number" class="form-control" name="comakerno" value="">
                   </div>
                 </div>
               </div>

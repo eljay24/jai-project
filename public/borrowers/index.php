@@ -250,7 +250,7 @@ try {
                 </div>
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input placeholder="Contact number" type="text" class="form-control" name="contactno" value="" required>
+                    <input placeholder="Contact number" type="number" class="form-control" name="contactno" value="" required>
                   </div>
                 </div>
               </div>
@@ -287,7 +287,7 @@ try {
                 </div>
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input placeholder="Comaker Contact Number" type="text" class="form-control" name="comakerno" value="" required>
+                    <input placeholder="Comaker Contact Number" type="number" class="form-control" name="comakerno" value="" required>
                   </div>
                 </div>
               </div>
