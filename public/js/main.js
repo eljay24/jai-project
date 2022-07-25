@@ -3,6 +3,7 @@ $(document).ready(function () {
   openModal(".edit-btn", "#editBorrower", openEdit);
   openModal(".delete-borrower", "#deleteBorrower", openDelete);
   editForm();
+  inputMask();
 });
 
 function validateForm(form) {
@@ -120,5 +121,27 @@ function closeModal() {
     event.preventDefault();
     let modalName = "#" + $(this).parents(".modal.fade").attr("id");
     $(modalName).modal("toggle");
+  });
+}
+
+function inputMask() {
+  $(".phone-number").mask("+63 000-000-0000");
+
+  $(".letters-only").mask("Z", {
+    translation: {
+      Z: {
+        pattern: /[a-zA-Z ]/,
+        recursive: true,
+      },
+    },
+  });
+
+  $(".alphanumeric']").mask("X", {
+    translation: {
+      X: {
+        pattern: /[a-zA-Z0-9 ]/,
+        recursive: true,
+      },
+    },
   });
 }

@@ -228,17 +228,17 @@ try {
 
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input placeholder="First name" type="text" class="form-control" name="firstname" value="" required>
+                    <input placeholder="First name" type="text" class="form-control letters-only" name="firstname" value="" required>
                   </div>
                 </div>
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input placeholder="Middle name" type="text" class="form-control" name="middlename" value="" required>
+                    <input placeholder="Middle name" type="text" class="form-control letters-only" name="middlename" value="" required>
                   </div>
                 </div>
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input placeholder="Last name" type="text" class="form-control" name="lastname" value="" required>
+                    <input placeholder="Last name" type="text" class="form-control letters-only" name="lastname" value="" required>
                   </div>
                 </div>
               </div>
@@ -250,26 +250,26 @@ try {
                 </div>
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input placeholder="Contact number" type="number" class="form-control" name="contactno" value="" required>
+                    <input placeholder="Contact number" type="text" class="form-control phone-number" name="contactno" value="" required>
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input placeholder="Address" type="text" class="form-control" name="address" value="" required>
+                    <input placeholder="Address" type="text" class="form-control alphanumeric" name="address" value="" required>
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input placeholder="Occupation" type="text" class="form-control" name="occupation" value="" required>
+                    <input placeholder="Occupation" type="text" class="form-control letters-only" name="occupation" value="" required>
                   </div>
                 </div>
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input placeholder="Business name" type="text" class="form-control" name="businessname" value="" required>
+                    <input placeholder="Business name" type="text" class="form-control alphanumeric" name="businessname" value="" required>
                   </div>
                 </div>
               </div>
@@ -282,12 +282,12 @@ try {
               <div class="row">
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input placeholder="Comaker" type="text" class="form-control" name="comaker" value="" required>
+                    <input placeholder="Comaker" type="text" class="form-control letters-only" name="comaker" value="" required>
                   </div>
                 </div>
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input placeholder="Comaker Contact Number" type="number" class="form-control" name="comakerno" value="" required>
+                    <input placeholder="Comaker Contact Number" type="text" class="form-control phone-number" name="comakerno" value="" required>
                   </div>
                 </div>
               </div>

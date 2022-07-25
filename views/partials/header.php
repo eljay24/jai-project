@@ -15,6 +15,7 @@
 
   <script src="../js/jquery-3.6.0.min.js"></script>
   <script src="../js/jquery-ui.min.js"></script>
+  <script src="../js/inputmask.js"></script>
   <script src="../js/bootstrap.min.js"></script>
   <script src="../js/main.js"></script>
 
