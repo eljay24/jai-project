@@ -75,6 +75,7 @@ $loan = [
     // echo "<pre>";
     // var_dump($_POST);
     // echo "</pre>";
+    // exit;
 
     // echo "TEST <br>";
     // echo $_POST['borrower'] . '<br>';
@@ -103,7 +104,7 @@ $loan = [
     $statementPayment->bindValue(':c_id', $_POST['collectorid']);
     $statementPayment->bindValue(':amount', $_POST['payment']);
     $statementPayment->bindValue(':type', $_POST['type']);
-    $statementPayment->bindValue(':date', "TEST");
+    $statementPayment->bindValue(':date', $_POST['date']);
 
     $statementPayment->execute();
     // END - ADD PAYMENT TO PAYMENTS TABLE

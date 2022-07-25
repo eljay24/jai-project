@@ -58,15 +58,16 @@
                     $('#mode').val(borrowerDetails[0]['mode']);
                     $('#term').val(borrowerDetails[0]['term']);
                     $('#collectorid').val(borrowerDetails[0]['c_id']);
-                    $('#type').val("Select");
-                    
+                    $('#type').val("");
+                    $('#date').val("");
+
                     document.getElementById("payment").readOnly = false;
                     $('#payment').val("");
-                    
+
 
                     // 1 hidden inputs:
                     $('#loanid').val(borrowerDetails[0]['l_id']);
-                    
+
                     // $('#payment').val(borrowerDetails[0]['amortization']);
                     payment.placeholder = borrowerDetails[0]['amortization'].toFixed(2);
 
@@ -93,6 +94,10 @@
                 document.getElementById("payment").readOnly = false;
             }
         }
+
+        $(function() {
+            $("#date").datepicker({dateFormat: 'yy-mm-dd'});
+        });
     </script>
 
     <input data-borrower-name="" type="text" name="name" id="namesearch" placeholder="Search for borrowers...">
@@ -146,28 +151,32 @@
         <input id="amortization" name="amortization" placeholder="Amortization" type="number" class="form-control" readonly required>
     </div>
     <div class="mb-3">
-        <label for="payment">Payment</label>
-        <input id="payment" name="payment" placeholder="Payment" type="number" class="form-control" required>
-    </div>
-    <div class="mb-3">
-        <label for="type">Type of Payment</label>
-        <select id="type" name="type" class="form-control" onchange="setToZero();" required>
-            <option value="Select" disabled selected>Select type</option>
-            <option value="Cash">Cash</option>
-            <option value="GCash">GCash</option>
-            <option value="Pass">Pass</option>
-        </select>
-    </div>
-    <div class="mb-3">
         <label for="collectorid">Collector</label>
         <select id="collectorid" name="collectorid" class="form-control">
-            <option value="Select" disabled selected>Select collector</option>
+            <option value="" disabled selected>Select collector</option>
             <?php
             foreach ($collectors as $i => $collector) {
                 echo '<option value="' . $collector['c_id'] . '">' . $collector['firstname'] . ' ' . $collector['middlename'] . ' ' . $collector['lastname'] . '</option>';
             }
             ?>
         </select>
+    </div>
+    <div class="mb-3">
+        <label for="type">Type of Payment</label>
+        <select id="type" name="type" class="form-control" onchange="setToZero();" required>
+            <option value="" disabled selected>Select type</option>
+            <option value="Cash">Cash</option>
+            <option value="GCash">GCash</option>
+            <option value="Pass">Pass</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="payment">Payment Amount</label>
+        <input id="payment" name="payment" placeholder="Payment amount" type="number" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label for="date">Date</label>
+        <input id="date" name="date" placeholder="Select date" type="text" class="form-control" onkeydown="return false" required>
     </div>
 
     <input id="loanid" name="loanid" hidden>
