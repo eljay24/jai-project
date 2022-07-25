@@ -69,9 +69,18 @@ $collectors = $statementCollector->fetchAll(PDO::FETCH_ASSOC);
     <input data-borrower-name="" type="text" name="name" id="namesearch" placeholder="Search for borrowers...">
     <br>
     <span></span>
-    <div id="borrower" name="borrower">
+    <!-- <div id="borrower" name="borrower"> -->
 
-    </div>
+    <!-- </div> -->
+
+    <select name="borrower" id="borrower" required>
+        <option value="" disabled selected>Select borrower</option>
+        <?php
+        foreach ($loans as $i => $loan) {
+            echo '<option value="' . $loan['b_id'] . '">#' . $loan['b_id'] . ' ' . ucwords(strtolower($loan['firstname'])) . ' ' . ucwords(strtolower($loan['middlename'])) . ' ' . ucwords(strtolower($loan['lastname'])) . '</option>';
+        }
+        ?>
+    </select>
 
     <!--
     <?php if ($borrower['picture']) { ?>
@@ -131,7 +140,7 @@ $collectors = $statementCollector->fetchAll(PDO::FETCH_ASSOC);
             <?php
 
             foreach ($collectors as $collector) {
-                echo '<option value="' . $collector['c_id'] . '">' . ucwords(strtolower($collector['firstname'])) . ' ' . ucwords(strtolower($collector['lastname'])) . '</option>';
+                echo '<option value="' . $collector['c_id'] . '">' . ucwords(strtolower($collector['firstname'])) . ' ' . ucwords(strtolower($collector['middlename'])) . ' ' . ucwords(strtolower($collector['lastname'])) . '</option>';
             }
 
             ?>

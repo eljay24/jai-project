@@ -148,7 +148,7 @@ $loan = [
 
     $statement2->execute();
 
-    header('Location: ../borrowers/index.php');
+    header('Location: ../loans/index.php');
   }
 
   ?>

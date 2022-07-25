@@ -55,8 +55,8 @@ try {
   <div class="jai-table">
     <div class="row">
       <div class="jai-col-ID">Loan ID</div>
-      <div class="col">Amount</div>
-      <div class="col">Payable</div>
+      <div class="col">Loan Details</div>
+      <div class="col">Payment Details</div>
       <div class="col">Amortization</div>
       <div class="col-1">Action</div>
     </div>
@@ -66,7 +66,7 @@ try {
       $loanID = $loan['l_id'];
 
       // GET TOTAL AMOUNT PAID     
-      $statementPayment = $conn->prepare("SELECT sum(amount) as amount, type
+      $statementPayment = $conn->prepare("SELECT sum(amount) as amount
                                           FROM jai_db.payments
                                           WHERE l_id = :l_id");
       $statementPayment->bindValue(':l_id', $loanID);
@@ -79,7 +79,6 @@ try {
 
       // GET EST. PASS AMOUNT
       $passAmount = $loan['amortization'] * $loan['passes'];
-
       // END - GET EST. PASS AMOUNT
 
 
@@ -108,6 +107,7 @@ try {
               <p class="jai-table-contact sub-font"> <span class="jai-table-label">Initial Loan Amount: </span><?= "₱ " . number_format($loan['amount'],2) ?></p>
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Payable: </span><?= "₱ " . number_format($loan['payable'],2) ?></p>
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Balance: </span><?= "₱ " . number_format($loan['balance'],2) ?></p>
+              <p class="jai-table-address sub-font"> <span class="jai-table-label">Amortization: </span><?= "₱ " . number_format($loan['amortization'],2) ?></p>
             </div>
           </div>
         </div>
