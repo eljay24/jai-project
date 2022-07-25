@@ -282,7 +282,7 @@ try {
               <div class="row">
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input placeholder="Comaker" type="text" class="form-control" name="comaker" value="" required>
+                    <input placeholder="Comaker Full Name" type="text" class="form-control" name="comaker" value="" required>
                   </div>
                 </div>
                 <div class="col">

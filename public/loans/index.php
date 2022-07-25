@@ -54,7 +54,7 @@ try {
 
   <div class="jai-table">
     <div class="row">
-      <div class="jai-col-ID">Loan ID</div>
+      <div class="jai-col-ID">ID</div>
       <div class="col">Loan Details</div>
       <div class="col">Payment Details</div>
       <div class="col">Amortization</div>
@@ -93,7 +93,7 @@ try {
     ?>
       <div class="row jai-data-row">
 
-        <div class="jai-col-ID"><?php echo $loan['l_id'] ?></div>
+        <div class="jai-col-ID"><?php echo $loan['b_id'] ?></div>
         <div class="col">
           <div class="row">
             <div class="jai-image-col">
@@ -103,7 +103,7 @@ try {
             </div>
             <div class="col">
               <p class="jai-table-name primary-font <?= $loan['firstname'] == 'Angelo' ? 'red' : ''; ?>
-                                              <?= $loan['firstname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Name:</span> <?= '#' . $loan['b_id'] . ' - ' . ucwords(strtolower($loan['firstname'])) . ' ' . ucwords(strtolower($loan['middlename'])) . ' ' . ucwords(strtolower($loan['lastname'])) ?></p>
+                                              <?= $loan['firstname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Loan Ref#</span> <?=  $loan['l_id'] . ' - ' . ucwords(strtolower($loan['firstname'])) . ' ' . ucwords(strtolower($loan['middlename'])) . ' ' . ucwords(strtolower($loan['lastname'])) ?></p>
               <p class="jai-table-contact sub-font"> <span class="jai-table-label">Initial Loan Amount: </span><?= "₱ " . number_format($loan['amount'],2) ?></p>
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Payable: </span><?= "₱ " . number_format($loan['payable'],2) ?></p>
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Balance: </span><?= "₱ " . number_format($loan['balance'],2) ?></p>
@@ -138,8 +138,8 @@ try {
           <textarea class="jai-table-input" type="text"></textarea>
         </div>
         <div class="col-1 d-flex align-items-center justify-content-around">
-          <a href="update.php?id=<?php echo $loan['l_id'] ?>" class="btn btn-primary btn-sm">Edit</a>
-          <button type="button" class="btn btn-danger btn-sm delete-borrower" data-toggle="modal" data-target="#deleteBorrower">Delete</button>
+          <a href="update.php?id=<?php echo $loan['l_id'] ?>" class="btn btn-primary btn-sm edit-btn">Edit</a>
+          <button type="button" class="btn btn-danger btn-sm delete-btn delete-borrower" data-toggle="modal" data-target="#deleteBorrower">Delete</button>
         </div>
       </div>
     <?php } ?>

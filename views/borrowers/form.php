@@ -36,7 +36,7 @@
         <input placeholder="Address" type="text" class="form-control" name="address" value="<?php echo $address ?>">
     </div>
     <div class="mb-3">
-        <input placeholder="Contact number" type="text" class="form-control" name="contactno" value="<?php echo $contactno ?>">
+        <input placeholder="Contact number" type="number" class="form-control" name="contactno" value="<?php echo $contactno ?>">
     </div>
     <div class="mb-3">
         <input placeholder="Birthday" type="text" class="form-control" name="birthday" value="<?php echo $birthday ?>">
@@ -48,10 +48,10 @@
         <input placeholder="Occupation" type="text" class="form-control" name="occupation" value="<?php echo $occupation ?>">
     </div>
     <div class="mb-3">
-        <input placeholder="Comaker" type="text" class="form-control" name="comaker" value="<?php echo $comaker ?>">
+        <input placeholder="Comaker Full Name" type="text" class="form-control" name="comaker" value="<?php echo $comaker ?>">
     </div>
     <div class="mb-3">
-        <input placeholder="Comaker Contact Number" type="text" class="form-control" name="comakerno" value="<?php echo $comakerno ?>">
+        <input placeholder="Comaker Contact Number" type="number" class="form-control" name="comakerno" value="<?php echo $comakerno ?>">
     </div>
     <div class="mb-3">
         <textarea placeholder="Remarks" type="text" class="form-control" name="remarks"><?php echo $remarks ?></textarea>
