@@ -176,7 +176,7 @@
     </div>
     <div class="mb-3">
         <label for="date">Date</label>
-        <input id="date" name="date" placeholder="Select date" type="text" class="form-control" onkeydown="return false" required>
+        <input id="date" name="date" placeholder="Select date of payment" type="text" class="form-control" onkeydown="return false" required>
     </div>
 
     <input id="loanid" name="loanid" hidden>
