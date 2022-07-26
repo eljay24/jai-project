@@ -72,6 +72,10 @@ textarea:-webkit-autofill:focus,
 textarea:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 30px white inset !important;
 }
+input.datepicker,
+textarea.datepicker {
+  cursor: pointer;
+}
 input.form-control,
 textarea.form-control {
   transition: all 300ms;
@@ -124,10 +128,10 @@ textarea.form-control {
   cursor: pointer;
 }
 .ui-datepicker .ui-datepicker-header .ui-corner-all.ui-datepicker-prev {
-  transform: rotate(-45deg);
+  transform: rotate(-45deg) translate(3px, 5px);
 }
 .ui-datepicker .ui-datepicker-header .ui-corner-all.ui-datepicker-next {
-  transform: rotate(135deg);
+  transform: rotate(135deg) translate(4px, 2px);
 }
 .ui-datepicker .ui-datepicker-header .ui-corner-all.ui-state-hover {
   border: none;

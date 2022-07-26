@@ -14,10 +14,10 @@
     .ui-corner-all {
       cursor: pointer;
       &.ui-datepicker-prev {
-        transform: rotate(-45deg);
+        transform: rotate(-45deg) translate(3px, 5px);
       }
       &.ui-datepicker-next {
-        transform: rotate(135deg);
+        transform: rotate(135deg) translate(4px, 2px);
       }
       &.ui-state-hover {
         border: none;
