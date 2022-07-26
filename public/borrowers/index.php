@@ -25,6 +25,7 @@ try {
                                  LEFT JOIN jai_db.loans as l
                                  ON b.b_id = l.b_id
                                  WHERE b.isdeleted = 0
+                                 GROUP BY b.b_id
                                  ");
 
     // $statement = $conn->prepare("SELECT b.isdeleted, b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
