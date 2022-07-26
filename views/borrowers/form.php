@@ -24,34 +24,34 @@
         <input type="file" name="picture">
     </div>
     <div class="mb-3">
-        <input placeholder="First name" type="text" class="form-control" name="firstname" value="<?php echo $firstname ?>">
+        <input placeholder="First name" type="text" class="form-control letters-only" name="firstname" value="<?php echo $firstname ?>">
     </div>
     <div class="mb-3">
-        <input placeholder="Middle name" type="text" class="form-control" name="middlename" value="<?php echo $middlename ?>">
+        <input placeholder="Middle name" type="text" class="form-control letters-only" name="middlename" value="<?php echo $middlename ?>">
     </div>
     <div class="mb-3">
-        <input placeholder="Last name" type="text" class="form-control" name="lastname" value="<?php echo $lastname ?>">
+        <input placeholder="Last name" type="text" class="form-control letters-only" name="lastname" value="<?php echo $lastname ?>">
     </div>
     <div class="mb-3">
-        <input placeholder="Address" type="text" class="form-control" name="address" value="<?php echo $address ?>">
+        <input placeholder="Address" type="text" class="form-control alphanumeric" name="address" value="<?php echo $address ?>">
     </div>
     <div class="mb-3">
-        <input placeholder="Contact number" type="number" class="form-control" name="contactno" value="<?php echo $contactno ?>">
+        <input placeholder="Contact number" type="text" class="form-control phone-number" name="contactno" value="<?php echo $contactno ?>">
     </div>
     <div class="mb-3">
         <input placeholder="Birthday" type="text" class="form-control" name="birthday" value="<?php echo $birthday ?>">
     </div>
     <div class="mb-3">
-        <input placeholder="Business name" type="text" class="form-control" name="businessname" value="<?php echo $businessname ?>">
+        <input placeholder="Business name" type="text" class="form-control alphanumeric" name="businessname" value="<?php echo $businessname ?>">
     </div>
     <div class="mb-3">
-        <input placeholder="Occupation" type="text" class="form-control" name="occupation" value="<?php echo $occupation ?>">
+        <input placeholder="Occupation" type="text" class="form-control letters-only" name="occupation" value="<?php echo $occupation ?>">
     </div>
     <div class="mb-3">
-        <input placeholder="Comaker Full Name" type="text" class="form-control" name="comaker" value="<?php echo $comaker ?>">
+        <input placeholder="Comaker Full Name" type="text" class="form-control letters-only" name="comaker" value="<?php echo $comaker ?>">
     </div>
     <div class="mb-3">
-        <input placeholder="Comaker Contact Number" type="number" class="form-control" name="comakerno" value="<?php echo $comakerno ?>">
+        <input placeholder="Comaker Contact Number" type="text" class="form-control phone-number" name="comakerno" value="<?php echo $comakerno ?>">
     </div>
     <div class="mb-3">
         <textarea placeholder="Remarks" type="text" class="form-control" name="remarks"><?php echo $remarks ?></textarea>

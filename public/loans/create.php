@@ -9,11 +9,11 @@ try {
   echo "Connection failed: " . $e->getMessage();
 }
 
-$statement = $conn->prepare("SELECT b.b_id, b.firstname, b.middlename, b.lastname
+$statement = $conn->prepare("SELECT DISTINCT b.b_id, b.firstname, b.middlename, b.lastname
                                 FROM jai_db.borrowers as b
                                 LEFT JOIN jai_db.loans as l
                                 ON b.b_id = l.b_id 
-                                WHERE (b.isdeleted = 0) AND (l.amount IS NULL)
+                                WHERE (b.isdeleted = 0 AND b.activeloan = 0)
                                 ORDER BY b.b_id ASC");
 $statement->execute();
 $loans = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -129,9 +129,9 @@ $loan = [
     }
 
     $statement2 = $conn->prepare("INSERT INTO jai_db.loans (b_id, amount, payable, balance, mode, term,
-                                                            interestrate, amortization, releasedate, duedate, status, c_id)
+                                                            interestrate, amortization, releasedate, duedate, status, c_id, activeloan)
                                                     VALUES (:b_id, :amount, :payable, :balance, :mode, :term,
-                                                            :interestrate, :amortization, :releasedate, :duedate, :status, :c_id)");
+                                                            :interestrate, :amortization, :releasedate, :duedate, :status, :c_id, 1)");
 
     $statement2->bindValue(':b_id', $_POST['borrower']);
     $statement2->bindValue(':c_id', $_POST['collector']);
@@ -148,7 +148,16 @@ $loan = [
 
     $statement2->execute();
 
+    $statementUpdateBorrower = $conn->prepare("UPDATE jai_db.borrowers
+                                               SET activeloan = 1
+                                               WHERE :b_id = b_id");
+
+    $statementUpdateBorrower->bindValue(':b_id', $_POST['borrower']);
+    $statementUpdateBorrower->execute();
+
     header('Location: ../loans/index.php');
+
+
   }
 
   ?>

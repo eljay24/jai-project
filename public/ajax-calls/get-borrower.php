@@ -15,7 +15,7 @@ if (isset($_POST['b_id'])) {
                                 ON b.b_id = l.b_id 
                                 INNER JOIN jai_db.collectors as c
                                 ON l.c_id = c.c_id
-                                WHERE b.b_id = :b_id AND (b.isdeleted = 0) AND (l.amount IS NOT NULL)");
+                                WHERE b.b_id = :b_id AND (b.isdeleted = 0) AND (l.amount IS NOT NULL) AND (l.status = 'Active')");
 
     $statement->bindValue(':b_id', $b_id);
     $statement->execute();

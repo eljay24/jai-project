@@ -8,7 +8,7 @@ try {
 
   if ($search) {
     $statement = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
-                                        b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
+                                        b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated, b.activeloan,
                                         l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
                                         l.releasedate, l.duedate, l.status, l.c_id
                                  FROM jai_db.borrowers as b
@@ -17,15 +17,14 @@ try {
                                  WHERE (isdeleted = 0) AND (firstname LIKE :search OR middlename LIKE :search OR lastname LIKE :search OR comaker LIKE :search OR b.b_id LIKE :search) ORDER BY b.b_id ASC");
     $statement->bindValue(':search', "%$search%");
   } else {
-    $statement = $conn->prepare("SELECT b.isdeleted, b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
-                                        b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
+    $statement = $conn->prepare("SELECT b.b_id, b.isdeleted, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
+                                        b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated, b.activeloan,
                                         l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
                                         l.releasedate, l.duedate, l.status, l.c_id
                                  FROM jai_db.borrowers as b
                                  LEFT JOIN jai_db.loans as l
                                  ON b.b_id = l.b_id
                                  WHERE b.isdeleted = 0
-                                 
                                  ");
 
     // $statement = $conn->prepare("SELECT b.isdeleted, b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
@@ -137,7 +136,7 @@ try {
           </div>
         </div>
         <div class="col">
-          <?php if (ucwords(strtolower($borrower['amount'])) == "") { ?>
+          <?php if ($borrower['activeloan'] == 0) { ?>
             <h4>
               No active loan
             </h4>

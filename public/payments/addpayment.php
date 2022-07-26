@@ -13,7 +13,7 @@ $statementBorrowers = $conn->prepare("SELECT b.b_id, b.firstname, b.middlename, 
                                 FROM jai_db.borrowers as b
                                 LEFT JOIN jai_db.loans as l
                                 ON b.b_id = l.b_id 
-                                WHERE (b.isdeleted = 0) AND (l.amount IS NOT NULL)
+                                WHERE (b.isdeleted = 0 AND l.status = 'Active' AND l.amount IS NOT NULL)
                                 ORDER BY b.b_id ASC");
 $statementBorrowers->execute();
 $borrowers = $statementBorrowers->fetchAll(PDO::FETCH_ASSOC);
@@ -112,6 +112,8 @@ $loan = [
 
 
     // UPDATE BALANCE ON LOANS TABLE
+
+    // CHECK IF PASS
     if ($_POST['type'] == 'Pass') {
       $pass = 1;
       $paymentsMade = 0;
@@ -132,6 +134,24 @@ $loan = [
 
     $statementUpdateLoan->execute();
     // END - UPDATE BALANCE ON LOANS TABLE
+
+    // CHECK IF LOAN FINISHED
+    $statementCheckFinished = $conn->prepare("UPDATE jai_db.loans as l
+                                              INNER JOIN jai_db.borrowers as b
+                                              ON l.b_id = b.b_id
+                                              SET l.status = 'Finished', l.activeloan= 0, b.activeloan = 0
+                                              WHERE (l.b_id = :b_id AND l.l_id = :l_id AND balance <= 0)
+    ");
+
+    $statementCheckFinished->bindValue(':b_id', $_POST['borrower']);
+    $statementCheckFinished->bindValue(':l_id', $_POST['loanid']);
+    $statementCheckFinished->execute();
+    // END - CHECK IF LOAN FINISHED
+
+    // UPDATE BORROWER ACTIVE LOAN
+    
+    // END - UPDATE BORROWER ACTIVE LOAN
+    
 
 
 
