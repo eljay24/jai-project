@@ -6,11 +6,17 @@ textarea {
   &:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 30px white inset !important;
   }
+  &.datepicker {
+    cursor: pointer;
+  }
   &.form-control {
     transition: all 300ms;
     padding-left: 20px;
     border-radius: 25px;
     min-height: 45px;
+    &[readonly] {
+      background-color: transparent;
+    }
     &:focus {
       box-shadow: none;
       border-color: $secondary-color;

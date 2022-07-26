@@ -248,7 +248,7 @@ try {
               <div class="row">
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input placeholder="Birthday" type="text" class="form-control" name="birthday" value="" required>
+                    <input readonly placeholder="Birthday" type="text" class="form-control datepicker" name="birthday" value="" required>
                   </div>
                 </div>
                 <div class="col">
@@ -306,10 +306,13 @@ try {
 
 
           </form>
+          <div class="success-message" style="display: none;">
+            Borrower has been updated.
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary btn-sm close-modal" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary btn-sm submit-edit">Edit</button>
+          <button type="button" class="btn btn-primary btn-sm submit-edit">Submit</button>
         </div>
       </div>
     </div>
