@@ -124,7 +124,7 @@ try {
           </div>
           <div class="row">
             <div class="col">
-              <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Total Amount Paid: </span> <b> <?= "₱ " . number_format($amount, 2) ?> </b> </p>
+              <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Total Paid: </span> <b> <?= "₱ " . number_format($amount, 2) ?> </b> </p>
               <p class="jai-table-mode sub-font"> <span class="jai-table-label">to follow: </span> TEST</p>
               <p class="jai-table-amort sub-font"> <span class="jai-table-label">to follow: </span> TEST</p>
             </div>
