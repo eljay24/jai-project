@@ -61,7 +61,18 @@ function editForm() {
           //   }
           // });
           //
-          $("#editBorrower").modal("toggle");
+          $(".edit-form").fadeOut(150, function (param) {
+            $(".success-message").fadeIn(150, function () {
+              setTimeout(function (param) {
+                if ($("body").hasClass("modal-open"))
+                  $("#editBorrower").modal("hide");
+                $(".edit-form").show(function () {
+                  $(".success-message").hide();
+                });
+              }, 4000);
+            });
+          });
+          // ;
         },
         error: function (response) {
           console.log("error");
