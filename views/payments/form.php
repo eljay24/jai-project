@@ -95,9 +95,7 @@
             }
         }
 
-        $(function() {
-            $("#date").datepicker({dateFormat: 'yy-mm-dd'});
-        });
+
     </script>
 
     <input data-borrower-name="" type="text" name="name" id="namesearch" placeholder="Search for borrowers...">
@@ -176,7 +174,7 @@
     </div>
     <div class="mb-3">
         <label for="date">Date</label>
-        <input id="date" name="date" placeholder="Select date of payment" type="text" class="form-control" onkeydown="return false" required>
+        <input id="date" class="datepicker" name="date" placeholder="Select date of payment" type="text" class="form-control" onkeydown="return false" required>
     </div>
 
     <input id="loanid" name="loanid" hidden>

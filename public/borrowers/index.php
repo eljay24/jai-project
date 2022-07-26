@@ -244,7 +244,7 @@ try {
               <div class="row">
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input placeholder="Birthday" type="text" class="form-control" name="birthday" value="" required>
+                    <input readonly placeholder="Birthday" type="text" class="form-control datepicker" name="birthday" value="" required>
                   </div>
                 </div>
                 <div class="col">
