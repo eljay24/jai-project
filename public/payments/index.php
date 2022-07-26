@@ -7,7 +7,7 @@ try {
   $search = $_GET['search'] ?? '';
 
   if ($search) {
-    $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, l.l_id,
+    $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, b.contactno, l.l_id, l.balance,
                                         p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
                                  FROM jai_db.payments as p
                                  INNER JOIN jai_db.collectors as c 
@@ -17,10 +17,11 @@ try {
                                  INNER JOIN jai_db.borrowers as b 
                                  ON b.b_id = l.b_id
                                  WHERE b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search OR b.b_id LIKE :search OR c.firstname LIKE :search
-                                 OR c.middlename LIKE :search OR c.lastname LIKE :search OR p.type LIKE :search");
+                                 OR c.middlename LIKE :search OR c.lastname LIKE :search OR p.type LIKE :search
+                                 ORDER BY p.date DESC");
     $statement->bindValue(':search', "%$search%");
   } else {
-    $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, l.l_id, l.balance,
+    $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, b.contactno, l.l_id, l.balance,
                                         p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
                                  FROM jai_db.payments as p
                                  INNER JOIN jai_db.collectors as c 
@@ -115,7 +116,8 @@ try {
             <div class="col">
               <p class="jai-table-name primary-font <?= $payment['borrowerfname'] == 'Angelo' ? 'red' : ''; ?>
                                                 <?= $payment['borrowerfname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label"></span> <?= '#' . $payment['b_id'] . ' ' . ucwords(strtolower($payment['borrowerfname'])) . ' ' . ucwords(strtolower($payment['borrowermname'])) . ' ' . ucwords(strtolower($payment['borrowerlname'])) ?></p>
-            </div>
+            <p class="sub-font">Contact: <?= $payment['contactno'] ?></p>
+                                              </div>
 
           </div>
         </div>
@@ -124,7 +126,7 @@ try {
             <div class="col">
               <p class="jai-table-comaker primary-font <?= $payment['borrowerfname'] == 'Angelo' ? 'red' : ''; ?>
                                                 <?= $payment['borrowerfname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Amount:</span> <?= "₱ " .  number_format($payment['amount'], 2) ?></p>
-              <p class="sub-font">Balance: <?= $payment['balance'] ?></p>
+              <p class="sub-font">Balance: <?= "₱ " .  number_format($payment['balance'],2) ?></p>
             </div>
             <div class="col">
               <p class="jai-table-contact primary-font"> <span class="jai-table-label">Type: </span><?php echo $payment['type'] ?></p>
