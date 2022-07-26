@@ -95,15 +95,11 @@
             }
         }
 
-<<<<<<< HEAD
         $(function() {
             $("#date").datepicker({
                 dateFormat: 'yy-mm-dd'
             });
         });
-=======
-
->>>>>>> LA-Branch
     </script>
 
     <input data-borrower-name="" type="text" name="name" id="namesearch" placeholder="Search for borrowers...">
