@@ -23,9 +23,10 @@ try {
                                         l.releasedate, l.duedate, l.status, l.c_id
                                  FROM jai_db.borrowers as b
                                  LEFT JOIN jai_db.loans as l
-                                 ON b.b_id = l.b_id
+                                 ON l.l_id = (SELECT MAX(l_id)
+                                              FROM jai_db.loans as l2
+                                              WHERE l2.b_id = b.b_id LIMIT 1) 
                                  WHERE b.isdeleted = 0
-                                 GROUP BY b.b_id
                                  ");
 
     // $statement = $conn->prepare("SELECT b.isdeleted, b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
