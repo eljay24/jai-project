@@ -282,11 +282,7 @@ try {
               <div class="row">
                 <div class="col">
                   <div class="jai-mb-2">
-<<<<<<< HEAD
-                    <input placeholder="Comaker Full Name" type="text" class="form-control" name="comaker" value="" required>
-=======
                     <input placeholder="Comaker" type="text" class="form-control letters-only" name="comaker" value="" required>
->>>>>>> LA-Branch
                   </div>
                 </div>
                 <div class="col">
