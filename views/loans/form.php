@@ -65,18 +65,18 @@ $collectors = $statementCollector->fetchAll(PDO::FETCH_ASSOC);
             });
         });
 
-        $(function() {
-            $("#releasedate").datepicker({
-                dateFormat: 'yy-mm-dd'
-            });
-        });
+        // $(function() {
+        //     $("#releasedate").datepicker({
+        //         dateFormat: 'yy-mm-dd'
+        //     });
+        // });
 
-        function addMonths() {
-            var dueDate = new Date(releaseDate.setMonth(releaseDate.getMonth() + 3));
-            var dueDate = new Date(releaseDate);
-            console.log(dueDate);
-            alert(dueDate);
-        }
+        // function addMonths() {
+        //     var dueDate = new Date(releaseDate.setMonth(releaseDate.getMonth() + 3));
+        //     var dueDate = new Date(releaseDate);
+        //     console.log(dueDate);
+        //     alert(dueDate);
+        // }
     </script>
 
     <input data-borrower-name="" type="text" name="name" id="namesearch" placeholder="Search for borrowers...">
@@ -112,11 +112,9 @@ $collectors = $statementCollector->fetchAll(PDO::FETCH_ASSOC);
         <select class="form-control" name="amount" required>
             <option value="" disabled selected>Select amount</option>
             <?php
-
             foreach ($amounts as $amount) {
                 echo "<option>" . $amount['amount'] . "</option>";
             }
-
             ?>
         </select>
     </div>
@@ -125,24 +123,20 @@ $collectors = $statementCollector->fetchAll(PDO::FETCH_ASSOC);
         <select class="form-control" name="mode" required>
             <option value="" disabled selected>Select mode</option>
             <?php
-
             foreach ($modes as $mode) {
                 echo "<option>" . ucwords(strtolower($mode['mode']))  . "</option>";
             }
-
             ?>
         </select>
     </div>
     <div class="mb-3">
         <label>Term</label>
-        <select class="form-control" name="term" required>
+        <select class="term form-control" name="term" required>
             <option value="" disabled selected>Select term</option>
             <?php
-
             foreach ($terms as $term) {
                 echo "<option>" . ucwords(strtolower($term['term']))  . "</option>";
             }
-
             ?>
         </select>
     </div>
@@ -151,17 +145,15 @@ $collectors = $statementCollector->fetchAll(PDO::FETCH_ASSOC);
         <select class="form-control" name="collector" required>
             <option value="" disabled selected>Select collector</option>
             <?php
-
             foreach ($collectors as $collector) {
                 echo '<option value="' . $collector['c_id'] . '">' . ucwords(strtolower($collector['firstname'])) . ' ' . ucwords(strtolower($collector['middlename'])) . ' ' . ucwords(strtolower($collector['lastname'])) . '</option>';
             }
-
             ?>
         </select>
     </div>
     <div class="mb-3">
         <label>Release Date</label>
-        <input id="releasedate" name="releasedate" placeholder="Release Date" type="text" class="form-control" onkeydown="return false" required>
+        <input id="releasedate" name="releasedate" placeholder="Release Date" type="text" class="datepicker form-control" onkeydown="return false" required>
     </div>
     <div class="mb-3">
         <label>Due Date</label>

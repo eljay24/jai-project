@@ -39,7 +39,7 @@
         <input placeholder="Contact number" type="text" class="form-control phone-number" name="contactno" value="<?php echo $contactno ?>">
     </div>
     <div class="mb-3">
-        <input placeholder="Birthday" type="text" class="form-control" name="birthday" value="<?php echo $birthday ?>">
+        <input placeholder="Birthday" type="text" class="datepicker form-control" name="birthday" value="<?php echo $birthday ?>" onkeydown="return false" >
     </div>
     <div class="mb-3">
         <input placeholder="Business name" type="text" class="form-control alphanumeric" name="businessname" value="<?php echo $businessname ?>">
