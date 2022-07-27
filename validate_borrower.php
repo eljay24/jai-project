@@ -71,11 +71,9 @@ if (empty($errors)) {
         }
         move_uploaded_file($picture['tmp_name'], __DIR__ . '/public/' . $picturePath);
     } elseif (!$picture['name']) {
-        // $picturePath = 'pictures/' . $fullname . '/picture-placeholder.png';
-        // if (!is_dir($picturePath)) {
-        //     mkdir(dirname(__DIR__ . '/public/' . $picturePath));
-        // }
-        // copy('public/pictures/Default/picture-placeholder.png', __DIR__ . '/public/' . $picturePath);
+        
+        // DEFAULT BORROWER PICTURE (IF NONE SELECTED)
+        $picturePath = 'assets/borrower-picture-placeholder.jpg';
 
         // echo "TEST";
         // echo "<pre>";
