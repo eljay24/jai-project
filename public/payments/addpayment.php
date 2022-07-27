@@ -91,18 +91,29 @@ $loan = [
 
     // ----------------------------------- END TEST ---------------------------------------------
 
-
+    // CHECK IF PASS
+    if ($_POST['type'] == 'Pass') {
+      $pass = 1;
+      $paymentsMade = 0;
+      $passAmount = $_POST['amortization'];
+    } else {
+      $pass = 0;
+      $paymentsMade = 1;
+      $passAmount = 0;
+    }
+    // END - CHECK IF PASS
 
     // ADD PAYMENT TO PAYMENTS TABLE
     $statementPayment = $conn->prepare("INSERT INTO jai_db.payments
-                                  (b_id, l_id, c_id, amount, type, date)
+                                  (b_id, l_id, c_id, amount, passamount, type, date)
                                   VALUES
-                                  (:b_id, :l_id, :c_id, :amount, :type, :date)");
+                                  (:b_id, :l_id, :c_id, :amount, :passamount, :type, :date)");
 
     $statementPayment->bindValue(':b_id', $_POST['borrower']);
     $statementPayment->bindValue(':l_id', $_POST['loanid']);
     $statementPayment->bindValue(':c_id', $_POST['collectorid']);
     $statementPayment->bindValue(':amount', $_POST['payment']);
+    $statementPayment->bindValue(':passamount', $passAmount);
     $statementPayment->bindValue(':type', $_POST['type']);
     $statementPayment->bindValue(':date', $_POST['date']);
 
@@ -112,16 +123,6 @@ $loan = [
 
 
     // UPDATE BALANCE ON LOANS TABLE
-
-    // CHECK IF PASS
-    if ($_POST['type'] == 'Pass') {
-      $pass = 1;
-      $paymentsMade = 0;
-    } else {
-      $pass = 0;
-      $paymentsMade = 1;
-    }
-
     $statementUpdateLoan = $conn->prepare("UPDATE jai_db.loans
                                             SET balance = balance - :paidamount, paymentsmade = paymentsmade + :paymentsmade, passes = passes + :passes
                                             WHERE b_id = :b_id AND l_id = :l_id");
@@ -149,9 +150,9 @@ $loan = [
     // END - CHECK IF LOAN FINISHED
 
     // UPDATE BORROWER ACTIVE LOAN
-    
+
     // END - UPDATE BORROWER ACTIVE LOAN
-    
+
 
 
 
