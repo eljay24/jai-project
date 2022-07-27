@@ -1,6 +1,7 @@
 .modal {
   &#editBorrower {
-    .modal-dialog {
+    .modal-dialog,
+    .success-message {
       max-width: 1200px;
     }
   }
@@ -9,6 +10,48 @@
       border-radius: 15px;
       .modal-body-label {
         padding-left: 15px;
+      }
+    }
+    .success-message {
+      position: relative;
+      border-radius: 15px;
+      height: 300px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background-color: white;
+      pointer-events: auto;
+      .close-container {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        cursor: pointer;
+        .close-button {
+          position: relative;
+          height: 25px;
+          width: 25px;
+          border-radius: 30px;
+          border: 2px solid $jai-black;
+          &::before,
+          &::after {
+            content: "";
+            content: "";
+            height: 2px;
+            width: 12px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            background-color: $jai-black;
+          }
+          &::before {
+            transform: translate(-50%, -50%) rotate(45deg);
+          }
+          &::after {
+            transform: translate(-50%, -50%) rotate(-45deg);
+          }
+        }
       }
     }
   }

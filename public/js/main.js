@@ -5,40 +5,31 @@ $(document).ready(function () {
   editForm();
   inputMask();
   createDatepicker();
+  validateInputs();
 });
 
-function validateForm(form) {
-  let messages = {
-    name: "Please enter a valid name",
-    firstname: "Please enter a valid first name",
-    middlename: "Please enter a valid middle name",
-    lastname: "Please enter a valid last name",
-    date: "Please enter a valid date",
-    phone: "Please enter a valid phone number",
-    occupation: "Please enter a occupation",
-    required: "This field is required",
-  };
+/*                                */
+/*         Global Variables       */
+/*                                */
 
-  $(form)
-    .find(
-      "input[required]:not([type='hidden']), select[required], textarea[required], checkbox[required]"
-    )
-    .each(function () {
-      $(this).removeClass("error");
-      $(this).next("span").remove();
+const validationMessages = {
+  name: "Please enter a valid name",
+  firstname: "Please enter a valid first name",
+  middlename: "Please enter a valid middle name",
+  lastname: "Please enter a valid last name",
+  date: "Please enter a valid date",
+  phone: "Please enter a valid phone number",
+  occupation: "Please enter a occupation",
+  required: "This field is required",
+};
 
-      if (!$(this).val()) {
-        $(this)
-          .addClass("error")
-          .after("<span>" + messages.required + "</span>");
-        console.log($(this));
-      }
-    });
-
-  return !$(form).find(".error").length;
-}
+/*                                */
+/*    Modal Related Functions     */
+/*                                */
 
 function editForm() {
+  let inputChanged = false;
+
   $(".submit-edit").on("click", function (event) {
     event.preventDefault();
     let formValues = $(".edit-form").serialize();
@@ -61,15 +52,15 @@ function editForm() {
           //   }
           // });
           //
-          $(".edit-form").fadeOut(150, function (param) {
-            $(".success-message").fadeIn(150, function () {
-              setTimeout(function (param) {
-                if ($("body").hasClass("modal-open"))
-                  $("#editBorrower").modal("hide");
-                $(".edit-form").show(function () {
-                  $(".success-message").hide();
-                });
-              }, 4000);
+          $("#editBorrower .modal-content").fadeOut(300, function (param) {
+            $(".success-message").fadeIn(300, function () {
+              // setTimeout(function (param) {
+              //   if ($("body").hasClass("modal-open"))
+              //     $("#editBorrower").modal("hide");
+              //   $(".edit-form").show(function () {
+              //     $(".success-message").hide();
+              //   });
+              // }, 4000);
             });
           });
           // ;
@@ -129,53 +120,44 @@ function openDelete(buttonName, modalName, thisValue) {
 }
 
 function closeModal() {
-  $(".close-modal").on("click", function (event) {
+  $(".close-modal, .close-container").on("click", function (event) {
     event.preventDefault();
     let modalName = "#" + $(this).parents(".modal.fade").attr("id");
     $(modalName).modal("toggle");
   });
-}
 
-function inputMask() {
-  $(".phone-number").mask("+63 000-000-0000");
-
-  $(".letters-only").mask("Z", {
-    translation: {
-      Z: {
-        pattern: /[a-zA-Z ]/,
-        recursive: true,
-      },
-    },
-  });
-
-  $(".alphanumeric").mask("X", {
-    translation: {
-      X: {
-        pattern: /[a-zA-Z0-9 ]/,
-        recursive: true,
-      },
-    },
+  $(".modal").on("hidden.bs.modal", function () {
+    if ($(".modal-content:hidden")) {
+      $(".modal-content").show();
+      $(".success-message").hide();
+    }
   });
 }
+
+/*                                */
+/*    Form Related Functions      */
+/*                                */
 
 function createDatepicker() {
+  let date = new Date();
   $(".datepicker").datepicker({
     dateFormat: "yy-mm-dd",
-    minDate: "1995-01-01",
+    minDate: "1940-01-01",
+    setDate: date,
     changeMonth: true,
     changeYear: true,
     maxDate: 0,
-    yearRange: "1995:c+nn",
+    yearRange: "1940:c+nn",
   });
 
-  $(".datepicker").on("click", function () {
+  $(".datepicker").on("click contextmenu", function () {
     if ($(".select-selected").length < 2) {
       customSelectMonth();
       customSelectYear();
     }
   });
   $(document).on(
-    "click",
+    "click contextmenu",
     ".select-items > div, .ui-datepicker-next, .ui-datepicker-prev",
     function () {
       customSelectMonth();
@@ -192,7 +174,7 @@ function customSelectMonth() {
     for (i = 0; i < l; i++) {
       selElmnt = x[i].getElementsByTagName("select")[0];
       ll = selElmnt.length;
-      console.log(ll);
+      // console.log(ll);
       a = document.createElement("DIV");
       a.setAttribute("class", "select-selected");
       a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
@@ -260,6 +242,7 @@ function customSelectMonth() {
     document.addEventListener("click", closeAllSelect);
   }
 }
+
 function customSelectYear() {
   if ($("ui-datepicker-title")) {
     var x, i, j, l, ll, selElmnt, a, b, c;
@@ -268,7 +251,7 @@ function customSelectYear() {
     for (i = 0; i < l; i++) {
       selElmnt = x[i].getElementsByTagName("select")[1];
       ll = selElmnt.length;
-      console.log(ll);
+      // console.log(ll);
       a = document.createElement("DIV");
       a.setAttribute("class", "select-selected");
       a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
@@ -335,4 +318,61 @@ function customSelectYear() {
     }
     document.addEventListener("click", closeAllSelect);
   }
+}
+
+function inputMask() {
+  $(".phone-number").mask("+63 000-000-0000");
+
+  $(".letters-only").mask("Z", {
+    translation: {
+      Z: {
+        pattern: /[a-zA-Z ]/,
+        recursive: true,
+      },
+    },
+  });
+
+  $(".alphanumeric").mask("X", {
+    translation: {
+      X: {
+        pattern: /[a-zA-Z0-9 ]/,
+        recursive: true,
+      },
+    },
+  });
+}
+
+function validateForm(form) {
+  $(form)
+    .find(
+      "input[required]:not([type='hidden']), select[required]:not([type='hidden']), textarea[required]:not([type='hidden']), checkbox[required]:not([type='hidden'])"
+    )
+    .each(function () {
+      clearErrors(this);
+      checkEmptyInput(this);
+    });
+
+  return !$(form).find(".error").length;
+}
+
+function validateInputs() {
+  $(
+    "input[required]:not([type='hidden']), select[required]:not([type='hidden']), textarea[required]:not([type='hidden']), checkbox[required]:not([type='hidden'])"
+  ).on("input", function (event) {
+    clearErrors(this);
+    checkEmptyInput(this);
+  });
+}
+
+function checkEmptyInput(thisInput) {
+  if (!$(thisInput).val()) {
+    $(thisInput)
+      .addClass("error")
+      .after("<span>" + validationMessages.required + "</span>");
+  }
+}
+
+function clearErrors(thisInput) {
+  $(thisInput).removeClass("error");
+  $(thisInput).next("span").remove();
 }

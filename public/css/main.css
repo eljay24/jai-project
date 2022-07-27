@@ -97,6 +97,10 @@ textarea.error {
   position: relative;
   border-color: #d32121;
 }
+input.error:focus,
+textarea.error:focus {
+  border-color: #d32121;
+}
 input.error + span,
 textarea.error + span {
   position: absolute;
@@ -344,7 +348,8 @@ textarea.form-control {
   flex: 0 0 120px;
 }
 
-.modal#editBorrower .modal-dialog {
+.modal#editBorrower .modal-dialog,
+.modal#editBorrower .success-message {
   max-width: 1200px;
 }
 .modal .modal-dialog .modal-content {
@@ -352,6 +357,47 @@ textarea.form-control {
 }
 .modal .modal-dialog .modal-content .modal-body-label {
   padding-left: 15px;
+}
+.modal .modal-dialog .success-message {
+  position: relative;
+  border-radius: 15px;
+  height: 300px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: white;
+  pointer-events: auto;
+}
+.modal .modal-dialog .success-message .close-container {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  cursor: pointer;
+}
+.modal .modal-dialog .success-message .close-container .close-button {
+  position: relative;
+  height: 25px;
+  width: 25px;
+  border-radius: 30px;
+  border: 2px solid #333;
+}
+.modal .modal-dialog .success-message .close-container .close-button::before, .modal .modal-dialog .success-message .close-container .close-button::after {
+  content: "";
+  content: "";
+  height: 2px;
+  width: 12px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background-color: #333;
+}
+.modal .modal-dialog .success-message .close-container .close-button::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.modal .modal-dialog .success-message .close-container .close-button::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 body.modal-open {

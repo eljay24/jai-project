@@ -25,6 +25,9 @@ textarea {
   &.error {
     position: relative;
     border-color: $jai-error;
+    &:focus {
+      border-color: $jai-error;
+    }
     + span {
       position: absolute;
       color: $jai-error;
