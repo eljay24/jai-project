@@ -21,7 +21,7 @@ try {
                                   INNER JOIN jai_db.loans as l
                                   ON b.b_id = l.b_id
                                   WHERE b.isdeleted = 0
-                                  ORDER BY b.b_id ASC");
+                                  ORDER BY l.l_id DESC");
   }
 
   $statement->execute();
