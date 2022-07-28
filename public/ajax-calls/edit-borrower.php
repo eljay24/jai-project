@@ -26,6 +26,19 @@ if (isset($_POST['b_id'])) {
     $comakerno = $_POST['comakerno'];
     $remarks = $_POST['remarks'];
 
+    $details = [
+        'firstname' => $firstname,
+        'middlename' => $middlename,
+        'lastname' => $lastname,
+        'birthday' => $birthday,
+        'contactno' => $contactno,
+        'address' => $address,
+        'occupation' => $occupation,
+        'businessname'  => $businessname,
+        'comaker' => $comaker,
+        'comakerno' => $comakerno,
+        'remarks' => $remarks,
+    ];
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -50,7 +63,7 @@ if (isset($_POST['b_id'])) {
 
             $statement->execute();
 
-            echo json_encode($_POST['b_id']);
+            echo json_encode($details);
         } else {
         }
     }

@@ -357,7 +357,7 @@ try {
           <h5 class="modal-title">Edit Borrower</h5>
         </div>
         <div class="modal-body">
-          <form class="edit-form" action="edit-borrower" method="post" enctype="multipart/form-data">
+          <form class="edit-form" autocomplete="off" action="edit-borrower" method="post" enctype="multipart/form-data">
             <input id="b_id" type="hidden" class="d-none" name="b_id" value="">
 
             <div class="container">
@@ -441,18 +441,21 @@ try {
                 </div>
               </div>
             </div>
-
-
-
           </form>
-          <div class="success-message" style="display: none;">
-            Borrower has been updated.
-          </div>
+
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary btn-sm close-modal" data-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-primary btn-sm submit-edit">Submit</button>
         </div>
+      </div>
+      <div class="success-message" style="display: none;">
+        <div class="close-container">
+          <div class="close-button"></div>
+        </div>
+        <h3>
+          Borrower has been updated.
+        </h3>
       </div>
     </div>
   </div>
