@@ -102,7 +102,7 @@
         });
     </script>
 
-    <input data-borrower-name="" type="text" name="name" id="namesearch" placeholder="Search for borrowers...">
+    <input data-borrower-name="" type="text" name="name" id="namesearch" placeholder="Search for borrowers..." autofocus>
     <br>
     <br>
     <span></span>

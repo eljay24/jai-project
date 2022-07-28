@@ -122,7 +122,7 @@ $loan = [
 
 
 
-    // UPDATE BALANCE ON LOANS TABLE
+    // UPDATE BALANCE & ARREARS? ON LOANS TABLE
     $statementUpdateLoan = $conn->prepare("UPDATE jai_db.loans
                                             SET balance = balance - :paidamount, paymentsmade = paymentsmade + :paymentsmade, passes = passes + :passes
                                             WHERE b_id = :b_id AND l_id = :l_id");
@@ -134,20 +134,20 @@ $loan = [
     $statementUpdateLoan->bindValue(':passes', $pass);
 
     $statementUpdateLoan->execute();
-    // END - UPDATE BALANCE ON LOANS TABLE
+    // END - UPDATE BALANCE & ARREARS? ON LOANS TABLE
 
-    // CHECK IF LOAN FINISHED
-    $statementCheckFinished = $conn->prepare("UPDATE jai_db.loans as l
+    // CHECK IF LOAN CLOSED
+    $statementCheckClosed = $conn->prepare("UPDATE jai_db.loans as l
                                               INNER JOIN jai_db.borrowers as b
                                               ON l.b_id = b.b_id
-                                              SET l.status = 'Finished', l.activeloan= 0, b.activeloan = 0
+                                              SET l.status = 'Closed', l.activeloan= 0, b.activeloan = 0
                                               WHERE (l.b_id = :b_id AND l.l_id = :l_id AND balance <= 0)
     ");
 
-    $statementCheckFinished->bindValue(':b_id', $_POST['borrower']);
-    $statementCheckFinished->bindValue(':l_id', $_POST['loanid']);
-    $statementCheckFinished->execute();
-    // END - CHECK IF LOAN FINISHED
+    $statementCheckClosed->bindValue(':b_id', $_POST['borrower']);
+    $statementCheckClosed->bindValue(':l_id', $_POST['loanid']);
+    $statementCheckClosed->execute();
+    // END - CHECK IF LOAN CLOSED
 
     // UPDATE BORROWER ACTIVE LOAN
 

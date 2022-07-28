@@ -4,6 +4,40 @@ try {
   /** @var $conn \PDO */
   require_once "../../dbconn.php";
 
+  //#region <PAGINATION>
+
+  // PAGE NUMBER
+  if (isset($_GET['page'])) {
+    $pageNum = $_GET['page'];
+  } else {
+    $pageNum = 1;
+  }
+
+  $numOfRowsPerPage = 10;
+
+  $offset = ($pageNum - 1) * $numOfRowsPerPage;
+  $previousPage = $pageNum - 1;
+  $nextPage = $pageNum + 1;
+  $adjacents = "2";
+
+  $statementTotalRows = $conn->prepare("SELECT COUNT(*) as count FROM jai_db.payments");
+  $statementTotalRows->execute();
+
+  $totalRows = $statementTotalRows->fetchAll(PDO::FETCH_ASSOC);
+  $totalPages = ceil($totalRows[0]["count"] / $numOfRowsPerPage);
+  $secondLast = $totalPages - 1;
+
+  // echo "<pre>";
+  // var_dump($totalRows);
+  // echo $totalPages;
+  // echo "<br>";
+  // echo $pageNum;
+  // echo "<br>";
+  // echo $offset;
+  // exit;
+
+  //#endregion
+
   $search = $_GET['search'] ?? '';
 
   if ($search) {
@@ -30,10 +64,12 @@ try {
                                  ON p.l_id = l.l_id
                                  INNER JOIN jai_db.borrowers as b 
                                  ON b.b_id = l.b_id
-                                 ORDER BY p.p_id DESC");
+                                 ORDER BY p.p_id DESC
+                                 LIMIT :offset, :numOfRowsPerPage");
   }
 
-
+  $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
+  $statement->bindValue(':numOfRowsPerPage', $numOfRowsPerPage, PDO::PARAM_INT); // "PDO::PARAM_INT" removes quotes from SQL
 
   $statement->execute();
   $payments = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -193,6 +229,97 @@ try {
       </div>
     </div>
   </div>
+
+   <!-- PAGE NAVIGATION -->
+   <div style='padding: 10px 20px 0px; border-top: dotted 1px #CCC;'>
+    <strong>Page <?php echo $pageNum . " of " . $totalPages; ?></strong>
+  </div>
+
+  <ul class="pagination">
+    <?php if ($pageNum > 1) {
+      echo "<li class='page-item'><a class='page-link' href='?page=1'>First Page</a></li>";
+    } ?>
+
+    <li <?php if ($pageNum <= 1) {
+          echo "class='page-link disabled'";
+        } ?>>
+      <a <?php if ($pageNum > 1) {
+            echo "class='page-link' href='?page=$previousPage'";
+          } ?>>Previous</a>
+    </li>
+
+    <?php
+    if ($totalPages <= 10) {
+      for ($counter = 1; $counter <= $totalPages; $counter++) {
+        if ($counter == $pageNum) {
+          echo "<li class='page-item active'><a class='page-link'>$counter</a></li>";
+        } else {
+          echo "<li class='page-item'><a class='page-link' href='?page=$counter'>$counter</a></li>";
+        }
+      }
+    } elseif ($totalPages > 10) {
+      if ($pageNum <= 4) {
+        for ($counter = 1; $counter < 8; $counter++) {
+          if ($counter == $pageNum) {
+            echo "<li class='page-item active'><a class='page-link'>$counter</a></li>";
+          } else {
+            echo "<li class='page-item'><a class='page-link' href='?page=$counter'>$counter</a></li>";
+          }
+        }
+        echo "<li class='page-item'><a class='page-link'>...</a></li>";
+        echo "<li class='page-item'><a class='page-link' href='?page=$secondLast'>$secondLast</a></li>";
+        echo "<li class='page-item'><a class='page-link' href='?page=$totalPages'>$totalPages</a></li>";
+      } elseif ($pageNum > 4 && $pageNum < $totalPages - 4) {
+        echo "<li class='page-item'><a class='page-link' href='?page=1'>1</a></li>";
+        echo "<li class='page-item'><a class='page-link' href='?page=2'>2</a></li>";
+        echo "<li class='page-item'><a class='page-link'>...</a></li>";
+        for (
+          $counter = $pageNum - $adjacents;
+          $counter <= $pageNum + $adjacents;
+          $counter++
+        ) {
+          if ($counter == $pageNum) {
+            echo "<li class='page-item active'><a class='page-link'>$counter</a></li>";
+          } else {
+            echo "<li class='page-item'><a class='page-link' href='?page=$counter'>$counter</a></li>";
+          }
+        }
+        echo "<li class='page-item'><a class='page-link'>...</a></li>";
+        echo "<li class='page-item'><a class='page-link' href='?page=$secondLast'>$secondLast</a></li>";
+        echo "<li class='page-item'><a class='page-link' href='?page=$totalPages'>$totalPages</a></li>";
+      } else {
+        echo "<li class='page-item'><a class='page-link' href='?page=1'>1</a></li>";
+        echo "<li class='page-item'><a class='page-link' href='?page=2'>2</a></li>";
+        echo "<li class='page-item'><a class='page-link'>...</a></li>";
+        for (
+          $counter = $totalPages - 6;
+          $counter <= $totalPages;
+          $counter++
+        ) {
+          if ($counter == $pageNum) {
+            echo "<li class='page-item active'><a class='page-link'>$counter</a></li>";
+          } else {
+            echo "<li class='page-item'><a class='page-link' href='?page=$counter'>$counter</a></li>";
+          }
+        }
+      }
+    }
+    ?>
+
+    <li <?php if ($pageNum >= $totalPages) {
+          echo "class='page-link disabled'";
+        } ?>>
+      <a <?php if ($pageNum < $totalPages) {
+            echo "class='page-link' href='?page=$nextPage'";
+          } ?>>Next</a>
+    </li>
+
+    <?php if ($pageNum < $totalPages) {
+      echo "<li class='page-item'><a class='page-link' href='?page=$totalPages'>Last &rsaquo;&rsaquo;</a></li>";
+    } ?>
+  </ul>
+
+  <!-- END - PAGE NAVIGATION -->
 
   <div class="modal fade" data-borrower="1" id="editBorrower" tabindex="-1" role="dialog" aria-labelledby="editBorrowerLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
