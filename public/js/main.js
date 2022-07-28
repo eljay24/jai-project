@@ -5,7 +5,7 @@ $(document).ready(function () {
    editForm();
    inputMask();
    createDatepicker();
-   setReleaseDate();
+   setDueDate();
 });
 
 function validateForm(form) {
@@ -187,19 +187,24 @@ function createDatepicker() {
    );
 }
 
-function setReleaseDate() {
-   $("input.datepicker").on("input", function () {
+function setDueDate() {
+   $("input.datepicker").on("change", function () {
       let rawDate = $("input.datepicker").val();
       let rawLoanDuration = $("select.term").val();
-      let loanDuration = rawLoanDuration.substr(0, 1);
-      let releaseDate = new Date(rawDate);
+      let dueDate = new Date(rawDate);
 
-      var d = releaseDate.getDate();
-      releaseDate.setMonth(releaseDate.getMonth() + +loanDuration);
-      if (releaseDate.getDate() != d) {
-         releaseDate.setDate(0);
+      if (rawLoanDuration != null) {
+         let loanDuration = rawLoanDuration.substr(0, 1);
+         var d = dueDate.getDate();
+         dueDate.setMonth(dueDate.getMonth() + +loanDuration);
+         if (dueDate.getDate() != d) {
+            dueDate.setDate(0);
+         }
+
+         console.log(dueDate);
+      } else {
+         console.log("TEST - rawLoanDuration is undefined");
       }
-      console.log(rawDate);
    });
 }
 
@@ -211,7 +216,7 @@ function customSelectMonth() {
       for (i = 0; i < l; i++) {
          selElmnt = x[i].getElementsByTagName("select")[0];
          ll = selElmnt.length;
-        //  console.log(ll);
+         //  console.log(ll);
          a = document.createElement("DIV");
          a.setAttribute("class", "select-selected");
          a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
@@ -290,7 +295,7 @@ function customSelectYear() {
       for (i = 0; i < l; i++) {
          selElmnt = x[i].getElementsByTagName("select")[1];
          ll = selElmnt.length;
-        //  console.log(ll);
+         //  console.log(ll);
          a = document.createElement("DIV");
          a.setAttribute("class", "select-selected");
          a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;

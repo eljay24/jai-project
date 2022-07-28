@@ -4,6 +4,49 @@ try {
   /** @var $conn \PDO */
   require_once "../../dbconn.php";
 
+  //#region <PAGINATION>
+
+  // PAGE NUMBER
+  if (isset($_GET['pageno'])) {
+    $pageNum = $_GET['pageno'];
+  } else {
+    $pageNum = 1;
+  }
+
+  $numOfRowsPerPage = 10;
+
+  $offset = ($pageNum - 1) * $numOfRowsPerPage;
+  $previousPage = $pageNum - 1;
+  $nextPage = $pageNum + 1;
+  $adjacents = "2";
+
+  $statementTotalRows = $conn->prepare("SELECT COUNT(*) as count FROM jai_db.borrowers");
+  $statementTotalRows->execute();
+
+  $totalRows = $statementTotalRows->fetchAll(PDO::FETCH_ASSOC);
+  $totalPages = ceil($totalRows[0]["count"] / $numOfRowsPerPage);
+  $secondLast = $totalPages - 1;
+
+  // echo "<pre>";
+  // var_dump($totalRows);
+  // echo $totalPages;
+  // echo "<br>";
+  // echo $pageNum;
+  // echo "<br>";
+  // echo $offset;
+  // exit;
+
+  //#endregion
+
+
+
+
+
+
+
+
+
+
   $search = $_GET['search'] ?? '';
 
   if ($search) {
@@ -16,7 +59,10 @@ try {
                                  ON l.l_id = (SELECT MAX(l_id)
                                               FROM jai_db.loans as l2
                                               WHERE l2.b_id = b.b_id LIMIT 1) 
-                                 WHERE (isdeleted = 0) AND (firstname LIKE :search OR middlename LIKE :search OR lastname LIKE :search OR comaker LIKE :search OR b.b_id LIKE :search) ORDER BY b.b_id ASC");
+                                 WHERE (isdeleted = 0) AND (firstname LIKE :search OR middlename LIKE :search OR lastname LIKE :search OR comaker LIKE :search OR b.b_id LIKE :search) ORDER BY b.b_id ASC
+                                 LIMIT :offset, :numOfRowsPerPage");
+    $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $statement->bindValue(':numOfRowsPerPage', $numOfRowsPerPage, PDO::PARAM_INT); // "PDO::PARAM_INT" removes quotes from SQL
     $statement->bindValue(':search', "%$search%");
   } else {
     $statement = $conn->prepare("SELECT b.b_id, b.isdeleted, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
@@ -28,7 +74,8 @@ try {
                                  ON l.l_id = (SELECT MAX(l_id)
                                               FROM jai_db.loans as l2
                                               WHERE l2.b_id = b.b_id LIMIT 1) 
-                                 WHERE b.isdeleted = 0");
+                                 WHERE b.isdeleted = 0
+                                 LIMIT :offset, :numOfRowsPerPage");
 
     // $statement = $conn->prepare("SELECT b.isdeleted, b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
     //                                     b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
@@ -49,7 +96,8 @@ try {
     //                              WHERE b.isdeleted = 0");
   }
 
-
+  $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
+  $statement->bindValue(':numOfRowsPerPage', $numOfRowsPerPage, PDO::PARAM_INT); // "PDO::PARAM_INT" removes quotes from SQL
 
   $statement->execute();
   $borrowers = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -194,6 +242,97 @@ try {
       $count++;
     } ?>
   </div>
+
+  <!-- PAGE NAVIGATION -->
+  <div style='padding: 10px 20px 0px; border-top: dotted 1px #CCC;'>
+    <strong>Page <?php echo $pageNum . " of " . $totalPages; ?></strong>
+  </div>
+
+  <ul class="pagination">
+    <?php if ($pageNum > 1) {
+      echo "<li><a href='?pageno=1'>First Page</a></li>";
+    } ?>
+
+    <li <?php if ($pageNum <= 1) {
+          echo "class='disabled'";
+        } ?>>
+      <a <?php if ($pageNum > 1) {
+            echo "href='?pageno=$previousPage'";
+          } ?>>Previous</a>
+    </li>
+
+    <?php
+    if ($totalPages <= 10) {
+      for ($counter = 1; $counter <= $totalPages; $counter++) {
+        if ($counter == $pageNum) {
+          echo "<li class='active'><a>$counter</a></li>";
+        } else {
+          echo "<li><a href='?pageno=$counter'>$counter</a></li>";
+        }
+      }
+    } elseif ($totalPages > 10) {
+      if ($pageNum <= 4) {
+        for ($counter = 1; $counter < 8; $counter++) {
+          if ($counter == $pageNum) {
+            echo "<li class='active'><a>$counter</a></li>";
+          } else {
+            echo "<li><a href='?pageno=$counter'>$counter</a></li>";
+          }
+        }
+        echo "<li><a>...</a></li>";
+        echo "<li><a href='?pageno=$secondLast'>$secondLast</a></li>";
+        echo "<li><a href='?pageno=$totalPages'>$totalPages</a></li>";
+      } elseif ($pageNum > 4 && $pageNum < $totalPages - 4) {
+        echo "<li><a href='?pageno=1'>1</a></li>";
+        echo "<li><a href='?pageno=2'>2</a></li>";
+        echo "<li><a>...</a></li>";
+        for (
+          $counter = $pageNum - $adjacents;
+          $counter <= $pageNum + $adjacents;
+          $counter++
+        ) {
+          if ($counter == $pageNum) {
+            echo "<li class='active'><a>$counter</a></li>";
+          } else {
+            echo "<li><a href='?pageno=$counter'>$counter</a></li>";
+          }
+        }
+        echo "<li><a>...</a></li>";
+        echo "<li><a href='?pageno=$secondLast'>$secondLast</a></li>";
+        echo "<li><a href='?pageno=$totalPages'>$totalPages</a></li>";
+      } else {
+        echo "<li><a href='?pageno=1'>1</a></li>";
+        echo "<li><a href='?pageno=2'>2</a></li>";
+        echo "<li><a>...</a></li>";
+        for (
+          $counter = $totalPages - 6;
+          $counter <= $totalPages;
+          $counter++
+        ) {
+          if ($counter == $pageNum) {
+            echo "<li class='active'><a>$counter</a></li>";
+          } else {
+            echo "<li><a href='?pageno=$counter'>$counter</a></li>";
+          }
+        }
+      }
+    }
+    ?>
+
+    <li <?php if ($pageNum >= $totalPages) {
+          echo "class='disabled'";
+        } ?>>
+      <a <?php if ($pageNum < $totalPages) {
+            echo "href='?pageno=$nextPage'";
+          } ?>>Next</a>
+    </li>
+
+    <?php if ($pageNum < $totalPages) {
+      echo "<li><a href='?pageno=$totalPages'>Last &rsaquo;&rsaquo;</a></li>";
+    } ?>
+  </ul>
+
+  <!-- END - PAGE NAVIGATION -->
 
   <div class="modal fade" data-borrower="1" id="deleteBorrower" tabindex="-1" role="dialog" aria-labelledby="deleteBorrowerLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
