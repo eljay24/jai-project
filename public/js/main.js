@@ -2,10 +2,12 @@ $(document).ready(function () {
   closeModal();
   openModal(".edit-btn", "#editBorrower", openEdit);
   openModal(".delete-borrower", "#deleteBorrower", openDelete);
+  openModal(".create-borrower", "#createBorrower", false);
   editForm();
   inputMask();
   createDatepicker();
   validateInputs();
+  createForm();
 });
 
 /*                                */
@@ -26,52 +28,6 @@ const validationMessages = {
 /*                                */
 /*    Modal Related Functions     */
 /*                                */
-
-function editForm() {
-  let inputChanged = false;
-
-  $(".submit-edit").on("click", function (event) {
-    event.preventDefault();
-    let formValues = $(".edit-form").serialize();
-
-    if (validateForm(".edit-form"))
-      $.ajax({
-        url: "../ajax-calls/edit-borrower.php",
-        method: "POST",
-        data: formValues,
-        dataType: "json",
-        beforeSend: function () {},
-        success: function (data) {
-          console.log(data);
-
-          // $(".row").each(function () {
-          //   if ($(this).attr("data-row-id") == b_id) {
-          //     $(this)
-          //       .find(".jai-table-name")
-          //       .text("Name: " + data);
-          //   }
-          // });
-          //
-          $("#editBorrower .modal-content").fadeOut(300, function (param) {
-            $(".success-message").fadeIn(300, function () {
-              // setTimeout(function (param) {
-              //   if ($("body").hasClass("modal-open"))
-              //     $("#editBorrower").modal("hide");
-              //   $(".edit-form").show(function () {
-              //     $(".success-message").hide();
-              //   });
-              // }, 4000);
-            });
-          });
-          // ;
-        },
-        error: function (response) {
-          console.log("error");
-          console.log(response);
-        },
-      });
-  });
-}
 
 function openModal(buttonName, modalName, modalFunction) {
   $(buttonName).on("click", function (event) {
@@ -138,6 +94,74 @@ function closeModal() {
 /*    Form Related Functions      */
 /*                                */
 
+function editForm() {
+  let inputChanged = false;
+
+  $(".submit-edit").on("click", function (event) {
+    event.preventDefault();
+    let formValues = $(".edit-form").serialize();
+
+    if (validateForm(".edit-form"))
+      $.ajax({
+        url: "../ajax-calls/edit-borrower.php",
+        method: "POST",
+        data: formValues,
+        dataType: "json",
+        beforeSend: function () {},
+        success: function (data) {
+          console.log(data);
+
+          $("#editBorrower .modal-content").fadeOut(300, function (param) {
+            $(".success-message").fadeIn(300, function () {
+              setTimeout(function () {
+                if ($("body").hasClass("modal-open"))
+                  $("#editBorrower").modal("hide");
+              }, 2000);
+            });
+          });
+        },
+        error: function (response) {
+          console.log("error");
+          console.log(response);
+        },
+      });
+  });
+}
+
+function createForm() {
+  let inputChanged = false;
+
+  $(".submit-create").on("click", function (event) {
+    event.preventDefault();
+    let formValues = $(".create-form").serialize();
+
+    if (validateForm(".create-form"))
+      $.ajax({
+        url: "../ajax-calls/create-borrower.php",
+        method: "POST",
+        data: formValues,
+        dataType: "json",
+        beforeSend: function () {},
+        success: function (data) {
+          console.log(data);
+
+          $("#createBorrower .modal-content").fadeOut(300, function (param) {
+            $(".success-message").fadeIn(300, function () {
+              setTimeout(function () {
+                if ($("body").hasClass("modal-open"))
+                  $("#createBorrower").modal("hide");
+              }, 2000);
+            });
+          });
+        },
+        error: function (response) {
+          console.log("error");
+          console.log(response);
+        },
+      });
+  });
+}
+
 function createDatepicker() {
   let date = new Date();
   $(".datepicker").datepicker({
@@ -174,7 +198,6 @@ function customSelectMonth() {
     for (i = 0; i < l; i++) {
       selElmnt = x[i].getElementsByTagName("select")[0];
       ll = selElmnt.length;
-      // console.log(ll);
       a = document.createElement("DIV");
       a.setAttribute("class", "select-selected");
       a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
@@ -251,7 +274,6 @@ function customSelectYear() {
     for (i = 0; i < l; i++) {
       selElmnt = x[i].getElementsByTagName("select")[1];
       ll = selElmnt.length;
-      // console.log(ll);
       a = document.createElement("DIV");
       a.setAttribute("class", "select-selected");
       a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
