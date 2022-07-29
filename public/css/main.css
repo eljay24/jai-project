@@ -241,6 +241,7 @@ textarea.form-control {
   position: sticky;
   top: 0;
   left: 0;
+  z-index: 1000;
 }
 .sticky-header .nav-container {
   position: absolute;
@@ -349,7 +350,8 @@ textarea.form-control {
 }
 
 .modal#editBorrower .modal-dialog,
-.modal#editBorrower .success-message {
+.modal#editBorrower .success-message, .modal#createBorrower .modal-dialog,
+.modal#createBorrower .success-message {
   max-width: 1200px;
 }
 .modal .modal-dialog .modal-content {
