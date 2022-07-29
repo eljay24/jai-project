@@ -4,8 +4,9 @@ try {
   /** @var $conn \PDO */
   require_once "../../dbconn.php";
 
-  //#region <PAGINATION>
+  $search = $_GET['search'] ?? '';
 
+  //#region <PAGINATION>
   // PAGE NUMBER
   if (isset($_GET['page'])) {
     $pageNum = $_GET['page'];
@@ -13,14 +14,21 @@ try {
     $pageNum = 1;
   }
 
-  $numOfRowsPerPage = 10;
+  $numOfRowsPerPage = 5;
 
   $offset = ($pageNum - 1) * $numOfRowsPerPage;
   $previousPage = $pageNum - 1;
   $nextPage = $pageNum + 1;
   $adjacents = "2";
 
-  $statementTotalRows = $conn->prepare("SELECT COUNT(*) as count FROM jai_db.borrowers");
+  if ($search) {
+    $statementTotalRows = $conn->prepare("SELECT COUNT(*) as count FROM jai_db.borrowers as b
+                                          WHERE (isdeleted = 0) AND (firstname LIKE :search OR middlename LIKE :search OR lastname LIKE :search OR comaker LIKE :search OR b.b_id LIKE :search) ORDER BY b.b_id ASC
+                                          ");
+    $statementTotalRows->bindValue(':search', "%$search%");
+  } else {
+    $statementTotalRows = $conn->prepare("SELECT COUNT(*) as count FROM jai_db.borrowers");
+  }
   $statementTotalRows->execute();
 
   $totalRows = $statementTotalRows->fetchAll(PDO::FETCH_ASSOC);
@@ -47,7 +55,7 @@ try {
 
 
 
-  $search = $_GET['search'] ?? '';
+  
 
   if ($search) {
     $statement = $conn->prepare("SELECT b.b_id, b.isdeleted, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
@@ -127,6 +135,7 @@ try {
   <div class="d-flex justify-content-between">
     <a href="create.php" type="button" class="btn btn-outline-success">Create new borrower</a>
 
+
     <form>
       <div class="input-group">
         <input type="text" class="form-control" placeholder="Search for borrowers" name="search" value="<?php echo $search; ?>">
@@ -156,16 +165,18 @@ try {
               </div>
             </div>
             <div class="col">
-              <p class="jai-table-name primary-font <?= $borrower['firstname'] == 'Angelo' ? 'red' : ''; ?>
+              <div class="row">
+                <p class="jai-table-name primary-font <?= $borrower['firstname'] == 'Angelo' ? 'red' : ''; ?>
                                                 <?= $borrower['firstname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Name:</span> <?= ucwords(strtolower($borrower['firstname'])) . ' ' . ucwords(strtolower($borrower['middlename'])) . ' ' . ucwords(strtolower($borrower['lastname'])) ?></p>
-              <p class="jai-table-contact sub-font"> <span class="jai-table-label">Contact: </span><?php echo $borrower['contactno'] ?></p>
-              <p class="jai-table-address sub-font"> <span class="jai-table-label">Address: </span><?php echo $borrower['address'] ?></p>
+                <p class="jai-table-contact primary-font"> <span class="jai-table-label">Contact: </span><?php echo $borrower['contactno'] ?></p>
+              </div>
             </div>
-            <div class="col">
-              <p class="jai-table-comaker primary-font <?= $borrower['firstname'] == 'Angelo' ? 'red' : ''; ?>
+          </div>
+          <div class="row">
+            <p class="jai-table-address sub-font"> <span class="jai-table-label">Address: </span><?php echo $borrower['address'] ?></p>
+            <p class="jai-table-comaker sub-font <?= $borrower['firstname'] == 'Angelo' ? 'red' : ''; ?>
                                                 <?= $borrower['firstname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Comaker:</span> <?= ucwords(strtolower($borrower['comaker'])) ?></p>
-              <p class="jai-table-contact sub-font"> <span class="jai-table-label">Contact: </span><?php echo $borrower['comakerno'] ?></p>
-            </div>
+            <p class="jai-table-contact sub-font"> <span class="jai-table-label">Contact: </span><?php echo $borrower['comakerno'] ?></p>
           </div>
         </div>
         <div class="col">

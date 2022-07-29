@@ -105,7 +105,7 @@ try {
               <p class="jai-table-name primary-font <?= $loan['firstname'] == 'Angelo' ? 'red' : ''; ?>
                                               <?= $loan['firstname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Loan Ref#</span> <?= $loan['l_id'] . ' - ' . ucwords(strtolower($loan['firstname'])) . ' ' . ucwords(strtolower($loan['middlename'])) . ' ' . ucwords(strtolower($loan['lastname'])) ?></p>
               <p class="jai-table-name primary-font"><?= $loan['status'] ?></p>
-              <p class="jai-table-contact sub-font"> <span class="jai-table-label">Initial Loan Amount: </span><?= "₱ " . number_format($loan['amount'], 2) ?></p>
+              <p class="jai-table-contact sub-font"> <span class="jai-table-label">Loan Amount: </span><?= "₱ " . number_format($loan['amount'], 2) ?></p>
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Payable: </span><?= "₱ " . number_format($loan['payable'], 2) ?></p>
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Balance: </span><?= "₱ " . number_format($loan['balance'], 2) ?></p>
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Amortization: </span><?= "₱ " . number_format($loan['amortization'], 2) ?></p>
