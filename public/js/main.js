@@ -34,15 +34,15 @@ function editForm() {
     event.preventDefault();
     let formValues = $(".edit-form").serialize();
 
-      if (validateForm(".edit-form"))
-         $.ajax({
-            url: "../ajax-calls/edit-borrower.php",
-            method: "POST",
-            data: formValues,
-            dataType: "json",
-            beforeSend: function () {},
-            success: function (data) {
-               console.log(data);
+    if (validateForm(".edit-form"))
+      $.ajax({
+        url: "../ajax-calls/edit-borrower.php",
+        method: "POST",
+        data: formValues,
+        dataType: "json",
+        beforeSend: function () {},
+        success: function (data) {
+          console.log(data);
 
           // $(".row").each(function () {
           //   if ($(this).attr("data-row-id") == b_id) {
@@ -74,49 +74,49 @@ function editForm() {
 }
 
 function openModal(buttonName, modalName, modalFunction) {
-   $(buttonName).on("click", function (event) {
-      event.preventDefault();
-      if (modalFunction) {
-         modalFunction(buttonName, modalName, $(this));
-      }
-      $(modalName).modal("toggle");
-   });
+  $(buttonName).on("click", function (event) {
+    event.preventDefault();
+    if (modalFunction) {
+      modalFunction(buttonName, modalName, $(this));
+    }
+    $(modalName).modal("toggle");
+  });
 }
 
 function openEdit(buttonName, modalName, thisValue) {
-   let formValues = $(thisValue)
-         .parent()
-         .siblings(".hidden-field")
-         .find(".hidden-form")
-         .serializeArray(),
-      modalInput = $(modalName).find("form.edit-form input");
+  let formValues = $(thisValue)
+      .parent()
+      .siblings(".hidden-field")
+      .find(".hidden-form")
+      .serializeArray(),
+    modalInput = $(modalName).find("form.edit-form input");
 
-   modalInput.each(function () {
-      let inputName = $(this).attr("name"),
-         input = $(this);
+  modalInput.each(function () {
+    let inputName = $(this).attr("name"),
+      input = $(this);
 
-      $(formValues).each(function () {
-         if (inputName == this["name"]) {
-            input.val(this["value"]);
-         }
-      });
-   });
+    $(formValues).each(function () {
+      if (inputName == this["name"]) {
+        input.val(this["value"]);
+      }
+    });
+  });
 }
 
 function openDelete(buttonName, modalName, thisValue) {
-   let modalParent = $("#deleteBorrower"),
-      constText = "Are you sure you want to delete ",
-      modalBody = modalParent.find(".modal-body"),
-      modalID = thisValue.parents(".jai-data-row").find(".jai-col-ID").text(),
-      deleteID = modalParent.find(".delete-form input"),
-      modalBorrName = thisValue
-         .parents(".jai-data-row")
-         .find(".jai-table-name")
-         .text();
+  let modalParent = $("#deleteBorrower"),
+    constText = "Are you sure you want to delete ",
+    modalBody = modalParent.find(".modal-body"),
+    modalID = thisValue.parents(".jai-data-row").find(".jai-col-ID").text(),
+    deleteID = modalParent.find(".delete-form input"),
+    modalBorrName = thisValue
+      .parents(".jai-data-row")
+      .find(".jai-table-name")
+      .text();
 
-   modalBody.text(constText + modalBorrName.replace("Name:", "") + "?");
-   deleteID.attr("value", modalID);
-   modalParent.modal("toggle");
+  modalBody.text(constText + modalBorrName.replace("Name:", "") + "?");
+  deleteID.attr("value", modalID);
+  modalParent.modal("toggle");
 }
 
 function closeModal() {
@@ -202,15 +202,45 @@ function customSelectMonth() {
               $(".ui-datepicker-month").val(i).trigger("change");
               break;
             }
-         }
-         for (i = 0; i < xl; i++) {
-            if (arrNo.indexOf(i)) {
-               x[i].classList.add("select-hide");
-            }
-         }
+          }
+          h.click();
+        });
+        b.appendChild(c);
       }
-      document.addEventListener("click", closeAllSelect);
-   }
+      x[i].appendChild(b);
+      a.addEventListener("click", function (e) {
+        e.stopPropagation();
+        closeAllSelect(this);
+        this.nextSibling.classList.toggle("select-hide");
+        this.classList.toggle("select-arrow-active");
+      });
+    }
+    function closeAllSelect(elmnt) {
+      var x,
+        y,
+        i,
+        xl,
+        yl,
+        arrNo = [];
+      x = document.getElementsByClassName("select-items");
+      y = document.getElementsByClassName("select-selected");
+      xl = x.length;
+      yl = y.length;
+      for (i = 0; i < yl; i++) {
+        if (elmnt == y[i]) {
+          arrNo.push(i);
+        } else {
+          y[i].classList.remove("select-arrow-active");
+        }
+      }
+      for (i = 0; i < xl; i++) {
+        if (arrNo.indexOf(i)) {
+          x[i].classList.add("select-hide");
+        }
+      }
+    }
+    document.addEventListener("click", closeAllSelect);
+  }
 }
 
 function customSelectYear() {
@@ -249,15 +279,45 @@ function customSelectYear() {
               $(".ui-datepicker-year").val(this.innerHTML).trigger("change");
               break;
             }
-         }
-         for (i = 0; i < xl; i++) {
-            if (arrNo.indexOf(i)) {
-               x[i].classList.add("select-hide");
-            }
-         }
+          }
+          h.click();
+        });
+        b.appendChild(c);
       }
-      document.addEventListener("click", closeAllSelect);
-   }
+      x[i].appendChild(b);
+      a.addEventListener("click", function (e) {
+        e.stopPropagation();
+        closeAllSelect(this);
+        this.nextSibling.classList.toggle("select-hide");
+        this.classList.toggle("select-arrow-active");
+      });
+    }
+    function closeAllSelect(elmnt) {
+      var x,
+        y,
+        i,
+        xl,
+        yl,
+        arrNo = [];
+      x = document.getElementsByClassName("select-items");
+      y = document.getElementsByClassName("select-selected");
+      xl = x.length;
+      yl = y.length;
+      for (i = 0; i < yl; i++) {
+        if (elmnt == y[i]) {
+          arrNo.push(i);
+        } else {
+          y[i].classList.remove("select-arrow-active");
+        }
+      }
+      for (i = 0; i < xl; i++) {
+        if (arrNo.indexOf(i)) {
+          x[i].classList.add("select-hide");
+        }
+      }
+    }
+    document.addEventListener("click", closeAllSelect);
+  }
 }
 
 function inputMask() {
