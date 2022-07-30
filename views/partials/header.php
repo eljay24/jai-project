@@ -31,9 +31,9 @@
           <h2>JAI Fair Loan</h2>
         </div>
 
-        <div class="nav-link-container"><a href="../../public/pages/borrowers.php" class="nav-link">Borrowers</a></div>
-        <div class="nav-link-container"><a href="../../public/pages/loans.php" class="nav-link">Loans</a></div>
-        <div class="nav-link-container"><a href="../../public/pages/payments.php" class="nav-link">Payments</a></div>
+        <div class="nav-link-container"><a href="../../public/pages/borrowers" class="nav-link">Borrowers</a></div>
+        <div class="nav-link-container"><a href="../../public/pages/loans" class="nav-link">Loans</a></div>
+        <div class="nav-link-container"><a href="../../public/pages/payments" class="nav-link">Payments</a></div>
       </nav>
     </div>
   </header>
