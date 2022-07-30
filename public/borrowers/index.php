@@ -305,7 +305,7 @@ try {
           echo "class='page-link disabled'";
         } ?>>
       <a <?php if ($pageNum < $totalPages) {
-            echo "class='page-link' href='?page=$nextPage'";
+            echo "class='page-link' href='?page=$nextPage&search=$search'";
           } ?>>Next</a>
     </li>
 
