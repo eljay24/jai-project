@@ -2,7 +2,7 @@
 
 try {
     /** @var $conn \PDO */
-    require_once "../../dbconn.php";
+    require_once "../../views/includes/dbconn.php";
 
     } 
     catch(PDOException $e) {

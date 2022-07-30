@@ -9,15 +9,15 @@
 
   <!------------------------------------------ BOOTSTRAP LINK-------------------------------------------------->
   <link rel="stylesheet" href="../css/jquery-ui.css" />
-  <link href="../css/bootstrap.min.css" rel="stylesheet">
-  <link href="../css/main.css" rel="stylesheet">
+  <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/css/main.css" rel="stylesheet">
 
 
-  <script src="../js/jquery-3.6.0.min.js"></script>
-  <script src="../js/jquery-ui.min.js"></script>
-  <script src="../js/inputmask.js"></script>
-  <script src="../js/bootstrap.min.js"></script>
-  <script src="../js/main.js"></script>
+  <script src="../assets/js/jquery-3.6.0.min.js"></script>
+  <script src="../assets/js/jquery-ui.min.js"></script>
+  <script src="../assets/js/inputmask.js"></script>
+  <script src="../assets/js/bootstrap.min.js"></script>
+  <script src="../assets/js/main.js"></script>
 
 
 </head>
@@ -31,9 +31,9 @@
           <h2>JAI Fair Loan</h2>
         </div>
 
-        <div class="nav-link-container"><a href="../../public/borrowers/index.php" class="nav-link">Borrowers</a></div>
-        <div class="nav-link-container"><a href="../../public/loans/index.php" class="nav-link">Loans</a></div>
-        <div class="nav-link-container"><a href="../../public/payments/index.php" class="nav-link">Payments</a></div>
+        <div class="nav-link-container"><a href="../../public/pages/borrowers.php" class="nav-link">Borrowers</a></div>
+        <div class="nav-link-container"><a href="../../public/pages/loans.php" class="nav-link">Loans</a></div>
+        <div class="nav-link-container"><a href="../../public/pages/payments.php" class="nav-link">Payments</a></div>
       </nav>
     </div>
   </header>

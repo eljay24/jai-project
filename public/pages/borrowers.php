@@ -2,7 +2,7 @@
 
 try {
   /** @var $conn \PDO */
-  require_once "../../dbconn.php";
+  require_once "../../views/includes/dbconn.php";
 
   $search = $_GET['search'] ?? '';
 
@@ -150,7 +150,7 @@ try {
           <div class="row">
             <div class="jai-image-col">
               <div class="jai-picture">
-                <img src="/<?= 'JAI/public/' . $borrower['picture']; ?>" class="thumb-image2">
+                <img src="../<?= $borrower['picture']; ?>" class="thumb-image2">
               </div>
             </div>
             <div class="col">

@@ -59,10 +59,10 @@ body * {
   width: 42px;
 }
 .btn.edit-btn {
-  background-image: url(../assets/edit-icon.png);
+  background-image: url(../icons/edit-icon.png);
 }
 .btn.delete-btn {
-  background-image: url(../assets/delete-icon.png);
+  background-image: url(../icons/delete-icon.png);
 }
 
 input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active,
