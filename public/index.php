@@ -5,7 +5,7 @@
 		$uri = 'http://';
 	}
 	$uri .= $_SERVER['HTTP_HOST'];
-	header('Location: '.$uri.'/JAI/public/pages/borrowers.php');
+	header('Location: '.$uri.'/JAI/public/pages/borrowers');
 	exit;
 ?>
 Something is wrong with the XAMPP installation :-(
