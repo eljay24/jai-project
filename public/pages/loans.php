@@ -21,7 +21,7 @@ try {
                                   INNER JOIN jai_db.loans as l
                                   ON b.b_id = l.b_id
                                   WHERE b.isdeleted = 0
-                                  ORDER BY l.l_id DESC");
+                                  ORDER BY l.activeloan DESC, l.l_id DESC");
   }
 
   $statement->execute();
@@ -63,7 +63,28 @@ try {
     <?php
     foreach ($loans as $i => $loan) {
 
+      // SELECT LAST PAYMENT OF LOAN      
+      $statementLastPayment = $conn->prepare("SELECT l_id, amount, type, date
+                                              FROM jai_db.payments
+                                              WHERE l_id = :loanid AND date = (SELECT MAX(date)
+                                                                               FROM jai_db.payments
+                                                                               WHERE l_id = :loanid)");
+      $statementLastPayment->bindValue(":loanid", $loan['l_id']);
+      $statementLastPayment->execute();
+
+      $lastPayment = $statementLastPayment->fetch(PDO::FETCH_ASSOC);
+      // END - SELECT LAST PAYMENT OF LOAN
+
+      // GET (MONTHLY)/INTEREST RATE
       $loanID = $loan['l_id'];
+
+      $loanPayable = $loan['payable'];
+      $loanAmount = $loan['amount'];
+      $loanDuration = (int)substr($loan['term'], 0, 1);
+
+      $interestRate = ($loanPayable / $loanAmount) - 1;
+      $monthlyInterestRate = $interestRate / $loanDuration;
+      // END - GET (MONTHLY)/INTEREST RATE
 
       // GET TOTAL AMOUNT PAID     
       $statementPayment = $conn->prepare("SELECT sum(amount) as amount
@@ -105,10 +126,23 @@ try {
               <p class="jai-table-name primary-font <?= $loan['firstname'] == 'Angelo' ? 'red' : ''; ?>
                                               <?= $loan['firstname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Loan Ref#</span> <?= $loan['l_id'] . ' - ' . ucwords(strtolower($loan['firstname'])) . ' ' . ucwords(strtolower($loan['middlename'])) . ' ' . ucwords(strtolower($loan['lastname'])) ?></p>
               <p class="jai-table-name primary-font"><?= $loan['status'] ?></p>
-              <p class="jai-table-contact sub-font"> <span class="jai-table-label">Loan Amount: </span><?= "₱ " . number_format($loan['amount'], 2) ?></p>
+
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p class="jai-table-contact sub-font"> <span class="jai-table-label">Amount: </span><?= "₱ " . number_format($loan['amount'], 2) ?></p>
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Payable: </span><?= "₱ " . number_format($loan['payable'], 2) ?></p>
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Balance: </span><?= "₱ " . number_format($loan['balance'], 2) ?></p>
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Amortization: </span><?= "₱ " . number_format($loan['amortization'], 2) ?></p>
+
+            </div>
+            <div class="col">
+              <p class="jai-table-address sub-font"> <?= ucwords(strtolower($loan['mode'])) . ', ' . $loan['term'] ?></p>
+              <p class="jai-table-address sub-font">Interest rate: <?= number_format($interestRate * 100, 2) . '%' ?></p>
+              <p class="jai-table-address sub-font">Montly interest rate: <?= number_format($monthlyInterestRate * 100, 2) . '%' ?></p>
+
+
             </div>
           </div>
         </div>
@@ -119,7 +153,6 @@ try {
             </div>
             <div class="col">
               <p class="jai-table-payable primary-font"> <span class="jai-table-label">Passes: </span> <?php echo $loan['passes'] ?></p>
-
             </div>
           </div>
           <div class="row">
@@ -133,6 +166,12 @@ try {
               <p class="jai-table-release sub-font"> <span class="jai-table-label">Release Date: </span> 01/01/22</p>
               <p class="jai-table-due sub-font"> <span class="jai-table-label">Due Date: </span> 01/01/22</p>
             </div>
+          </div>
+          <div class="row">
+            <p class="primary-font">Last Payment</p>
+            <p class="sub-font"> <span class="jai-table-label">Date: </span> <?= ($lastPayment == 0) ? "NA" : $lastPayment['date'] ?></p>
+            <p class="sub-font"> <span class="jai-table-label">Type: </span> <?= ($lastPayment == 0) ? "NA" : $lastPayment['type'] ?></p>
+            <p class="sub-font"> <span class="jai-table-label">Amount: </span> <?= ($lastPayment == 0) ? "NA" : "₱ " . number_format($lastPayment['amount'], 2) ?></p>
           </div>
         </div>
         <div class="col position-relative">

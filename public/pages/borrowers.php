@@ -73,6 +73,7 @@ try {
                                               FROM jai_db.loans as l2
                                               WHERE l2.b_id = b.b_id LIMIT 1) 
                                  WHERE b.isdeleted = 0
+                                 ORDER BY b.activeloan DESC, b.b_id ASC
                                  LIMIT :offset, :numOfRowsPerPage");
   }
 

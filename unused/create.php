@@ -2,7 +2,7 @@
 
 try {
   /** @var $conn \PDO */
-  require_once "../../views/includes/dbconn.php";
+  require_once "../views/includes/dbconn.php";
 
   // echo "DB connected successfully";
 } catch (PDOException $e) {
@@ -81,7 +81,7 @@ $loan = [
 
 ?>
 
-<?php include_once "../../views/partials/header.php"; ?>
+<?php include_once "../views/partials/header.php"; ?>
 
 <div class="content-container">
   <p>
@@ -175,7 +175,7 @@ $loan = [
   </script> -->
 
 
-  <?php include_once "../../views/loans/form.php" ?>
+  <?php include_once "../views/loans/form.php" ?>
 
   </body>
 
