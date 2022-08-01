@@ -99,7 +99,12 @@ function editForm() {
 
   $(".submit-edit").on("click", function (event) {
     event.preventDefault();
-    let formValues = $(".edit-form").serialize();
+    let formValues = $(".edit-form").serialize(),
+      newValues = $('.edit-form').serializeArray();
+      rowId = $(this)
+        .parents(".modal-content")
+        .find('input[name="data-row"]')
+        .val();
 
     if (validateForm(".edit-form"))
       $.ajax({
@@ -109,7 +114,36 @@ function editForm() {
         dataType: "json",
         beforeSend: function () {},
         success: function (data) {
-          console.log(data);
+          let borrower =
+              data.firstname + " " + data.middlename + " " + data.lastname,
+            contactno = data.contactno,
+            address = data.address,
+            comaker = data.comaker,
+            comakerno = data.comakerno;
+          console.log(rowId);
+
+          $(".jai-data-row").each(function () {
+            if ($(this).data("row") == rowId) {
+              $(this).find(".jai-table-name .value").text(borrower);
+              $(this).find(".jai-table-contact .value").text(contactno);
+              $(this).find(".jai-table-address .value").text(address);
+              $(this).find(".jai-table-comaker .value").text(comaker);
+              $(this).find(".jai-table-comakerno .value").text(comakerno);
+
+              $(this)
+                .find(".hidden-form input")
+                .each(function () {
+                  let inputName = $(this).attr("name"),
+                    input = $(this);
+
+                  $(newValues).each(function () {
+                    if (inputName == this["name"]) {
+                      input.val(this["value"]);
+                    }
+                  });
+                });
+            }
+          });
 
           $("#editBorrower .modal-content").fadeOut(300, function (param) {
             $(".success-message").fadeIn(300, function () {

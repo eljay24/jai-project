@@ -8,7 +8,7 @@
 
 
   <!------------------------------------------ BOOTSTRAP LINK-------------------------------------------------->
-  <link rel="stylesheet" href="../css/jquery-ui.css" />
+  <link rel="stylesheet" href="../assets/css/jquery-ui.css" />
   <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
   <link href="../assets/css/main.css" rel="stylesheet">
 

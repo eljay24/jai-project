@@ -46,7 +46,7 @@ try {
 
   //#endregion
 
-  
+
   if ($search) {
     $statement = $conn->prepare("SELECT b.b_id, b.isdeleted, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
                                         b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated, b.activeloan,
@@ -127,13 +127,13 @@ try {
 
     <form>
       <div class="input-group">
-        <input type="text" class="form-control" placeholder="Search for borrowers" name="search" value="<?php echo $search; ?>">
+        <input type="text" class="form-control" placeholder="Search for borrowers" name="search" value="<?= $search; ?>">
         <button class="btn btn-outline-secondary" type="submit">Search</button>
       </div>
     </form>
   </div>
 
-  <div class="jai-table">
+  <div class="jai-table" name="">
     <div class="row">
       <div class="jai-col-ID">ID</div>
       <div class="col">Borrower Details</div>
@@ -144,8 +144,8 @@ try {
     <?php
     $count = 1;
     foreach ($borrowers as $i => $borrower) { ?>
-      <div data-row-id="<?php echo $borrower['b_id'] ?>" class="row jai-data-row">
-        <div class="jai-col-ID"><?php echo $borrower['b_id'] ?></div>
+      <div class="row jai-data-row" data-row="row-<?= $borrower['b_id'] ?>">
+        <div class="jai-col-ID"><?= $borrower['b_id'] ?></div>
         <div class="col">
           <div class="row">
             <div class="jai-image-col">
@@ -156,16 +156,16 @@ try {
             <div class="col">
               <div class="row">
                 <p class="jai-table-name primary-font <?= $borrower['firstname'] == 'Angelo' ? 'red' : ''; ?>
-                                                <?= $borrower['firstname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Name:</span> <?= ucwords(strtolower($borrower['firstname'])) . ' ' . ucwords(strtolower($borrower['middlename'])) . ' ' . ucwords(strtolower($borrower['lastname'])) ?></p>
-                <p class="jai-table-contact primary-font"> <span class="jai-table-label">Contact: </span><?php echo $borrower['contactno'] ?></p>
+                                                <?= $borrower['firstname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Name:</span> <span class="value"><?= ucwords(strtolower($borrower['firstname'])) . ' ' . ucwords(strtolower($borrower['middlename'])) . ' ' . ucwords(strtolower($borrower['lastname'])) ?></span></p>
+                <p class="jai-table-contact primary-font"> <span class="jai-table-label">Contact: </span> <span class="value"><?= $borrower['contactno'] ?></span></p>
               </div>
             </div>
           </div>
           <div class="row">
-            <p class="jai-table-address sub-font"> <span class="jai-table-label">Address: </span><?php echo $borrower['address'] ?></p>
+            <p class="jai-table-address sub-font"> <span class="jai-table-label">Address: </span> <span class="value"><?= $borrower['address'] ?></span></p>
             <p class="jai-table-comaker sub-font <?= $borrower['firstname'] == 'Angelo' ? 'red' : ''; ?>
-                                                <?= $borrower['firstname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Comaker:</span> <?= ucwords(strtolower($borrower['comaker'])) ?></p>
-            <p class="jai-table-contact sub-font"> <span class="jai-table-label">Contact: </span><?php echo $borrower['comakerno'] ?></p>
+                                                <?= $borrower['firstname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Comaker:</span> <span class="value"><?= ucwords(strtolower($borrower['comaker'])) ?></span></p>
+            <p class="jai-table-comakerno sub-font"> <span class="jai-table-label">Contact: </span> <span class="value"><?= $borrower['comakerno'] ?></span></p>
           </div>
         </div>
         <div class="col">
@@ -176,17 +176,17 @@ try {
           <?php } else { ?>
             <div class="row">
               <div class="col">
-                <p class="jai-table-amount primary-font"><span class="jai-table-label">Amount:</span> <?= "₱ " . number_format($borrower['amount'], 2); ?></p>
+                <p class="jai-table-amount primary-font"><span class="jai-table-label">Amount:</span> <span class="value"><?= "₱ " . number_format($borrower['amount'], 2); ?></span></p>
               </div>
               <div class="col">
-                <p class="jai-table-payable primary-font"> <span class="jai-table-label">Balance: </span> <?= "₱ " . number_format($borrower['balance'], 2) ?></p>
+                <p class="jai-table-payable primary-font"> <span class="jai-table-label">Balance: </span> <span class="value"><?= "₱ " . number_format($borrower['balance'], 2) ?></span></p>
               </div>
             </div>
             <div class="row">
               <div class="col">
-                <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Payable: </span> <?= "₱ " . number_format($borrower['payable'], 2) ?></p>
-                <p class="jai-table-mode sub-font"> <span class="jai-table-label">Mode & Term: </span> <?= ucwords(strtolower($borrower['mode'] . ', ' . $borrower['term'])) ?></p>
-                <p class="jai-table-amort sub-font"> <span class="jai-table-label">Amortization: </span> <?= "₱ " . number_format($borrower['amortization'], 2) ?></p>
+                <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Payable: </span> <span class="value"><?= "₱ " . number_format($borrower['payable'], 2) ?></span></p>
+                <p class="jai-table-mode sub-font"> <span class="jai-table-label">Mode & Term: </span> <span class="value"><?= ucwords(strtolower($borrower['mode'] . ', ' . $borrower['term'])) ?></span></p>
+                <p class="jai-table-amort sub-font"> <span class="jai-table-label">Amortization: </span> <span class="value"><?= "₱ " . number_format($borrower['amortization'], 2) ?></span></p>
               </div>
               <div class="col">
                 <p class="jai-table-release sub-font"> <span class="jai-table-label">Release Date: </span> 01/01/22</p>
@@ -206,6 +206,7 @@ try {
         </div>
         <div class="d-none hidden-field">
           <form id="hidden-form-<?= $count; ?>" class="hidden-form" action="">
+            <input type="hidden" name="data-row" value='row-<?= $borrower['b_id'] ?>'>
             <input type="hidden" name="b_id" value="<?= ucwords(strtolower($borrower['b_id'])) ?>">
             <input type="hidden" name="firstname" value="<?= ucwords(strtolower($borrower['firstname'])) ?>">
             <input type="hidden" name="middlename" value="<?= ucwords(strtolower($borrower['middlename'])) ?>">
@@ -227,7 +228,7 @@ try {
 
   <!-- PAGE NAVIGATION -->
   <div style='padding: 10px 20px 0px; border-top: dotted 1px #CCC;'>
-    <strong>Page <?php echo $pageNum . " of " . $totalPages; ?></strong>
+    <strong>Page <?= $pageNum . " of " . $totalPages; ?></strong>
   </div>
 
   <ul class="pagination">
@@ -340,7 +341,8 @@ try {
         </div>
         <div class="modal-body">
           <form class="create-form" autocomplete="off" action="create-borrower" method="post" enctype="multipart/form-data">
-            <input id="b_id" type="hidden" class="d-none" name="b_id" value="">
+            <input type="hidden" class="d-none" name="b_id" value="">
+            <input name="data-row" type="hidden" class="d-none" value=''>
 
             <div class="container">
               <div class="row">
@@ -451,6 +453,7 @@ try {
         <div class="modal-body">
           <form class="edit-form" autocomplete="off" action="edit-borrower" method="post" enctype="multipart/form-data">
             <input id="b_id" type="hidden" class="d-none" name="b_id" value="">
+            <input name="data-row" type="hidden" class="d-none" value=''>
 
             <div class="container">
               <div class="row">
