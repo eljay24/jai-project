@@ -42,7 +42,7 @@ try {
     <h1>Loans</h1>
   </div>
   <div class="d-flex justify-content-between">
-    <a href="create.php" type="button" class="btn btn-outline-success">New loan</a>
+    <a href="create.php" type="button" class="btn btn-outline-success btn-new-loan">New loan</a>
 
     <form>
       <div class="input-group">
@@ -201,6 +201,81 @@ try {
           <button type="submit" class="btn btn-danger btn-sm">Delete</button>
         </form>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" data-loan="1" id="createloan" tabindex="-1" role="dialog" aria-labelledby="createloanLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Create Loan</h5>
+      </div>
+      <div class="modal-body">
+        <form class="create-form" autocomplete="off" action="create-loan" method="post" enctype="multipart/form-data">
+          <input type="hidden" class="d-none" name="b_id" value="">
+          <input name="data-row" type="hidden" class="d-none" value=''>
+
+          <div class="container">
+            <div class="row">
+              <div class="col">
+                <h5 class="modal-body-label">Loan</h5>
+              </div>
+            </div>
+            <div class="row">
+
+              <div class="col">
+                <div class="jai-mb-2">
+                  <input placeholder="Amount" type="text" class="form-control money" name="amount" value="" required>
+                </div>
+              </div>
+              <div class="col">
+                <div class="jai-mb-2">
+                  <input placeholder="Mode" type="text" class="form-control letters-only" name="mode" value="" required>
+                </div>
+              </div>
+              <div class="col">
+                <div class="jai-mb-2">
+                  <input placeholder="Term" type="text" class="form-control alphanumeric" name="term" value="" required>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="jai-mb-2">
+                  <input readonly placeholder="Collector" type="text" class="form-control letters-only" name="collector" value="" required>
+                </div>
+              </div>
+              <div class="col">
+                <div class="jai-mb-2">
+                  <input placeholder="Release Date" type="text" class="form-control datepicker no-limit" name="contactno" value="" readonly>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="jai-mb-2">
+                  <input placeholder="Due Date" type="text" class="form-control" name="address" value="" readonly>
+                </div>
+              </div>
+            </div>
+          
+          </div>
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm close-modal" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary btn-sm submit-create-loan">Submit</button>
+      </div>
+    </div>
+    <div class="success-message" style="display: none;">
+      <div class="close-container">
+        <div class="close-button"></div>
+      </div>
+      <h3>
+        Loan Created.
+      </h3>
     </div>
   </div>
 </div>

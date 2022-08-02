@@ -3,6 +3,7 @@ $(document).ready(function () {
   openModal(".edit-btn", "#editBorrower", openEdit);
   openModal(".delete-borrower", "#deleteBorrower", openDelete);
   openModal(".create-borrower", "#createBorrower", false);
+  openModal(".btn-new-loan", "#createloan", false);
   editForm();
   inputMask();
   createDatepicker();
@@ -100,11 +101,11 @@ function editForm() {
   $(".submit-edit").on("click", function (event) {
     event.preventDefault();
     let formValues = $(".edit-form").serialize(),
-      newValues = $('.edit-form').serializeArray();
-      rowId = $(this)
-        .parents(".modal-content")
-        .find('input[name="data-row"]')
-        .val();
+      newValues = $(".edit-form").serializeArray();
+    rowId = $(this)
+      .parents(".modal-content")
+      .find('input[name="data-row"]')
+      .val();
 
     if (validateForm(".edit-form"))
       $.ajax({
@@ -197,15 +198,22 @@ function createForm() {
 }
 
 function createDatepicker() {
-  let date = new Date();
-  $(".datepicker").datepicker({
-    dateFormat: "yy-mm-dd",
-    minDate: "1940-01-01",
-    setDate: date,
-    changeMonth: true,
-    changeYear: true,
-    maxDate: 0,
-    yearRange: "1940:c+nn",
+  let date = new Date(),
+    maxDate = 0,
+    maxYear = "1940:c+nn";
+  $(".datepicker").each(function () {
+    maxDate = $(this).hasClass("no-limit") ? null : 0;
+    maxYear = $(this).hasClass("no-limit") ? '1940:c+10' : '1940:c+nn';
+
+    $(this).datepicker({
+      dateFormat: "yy-mm-dd",
+      minDate: "1940-01-01",
+      setDate: date,
+      changeMonth: true,
+      changeYear: true,
+      maxDate: maxDate,
+      yearRange: maxYear,
+    });
   });
 
   $(".datepicker").on("click contextmenu", function () {
@@ -396,6 +404,8 @@ function inputMask() {
       },
     },
   });
+
+  $(".money").mask("000,000,000,000");
 }
 
 function validateForm(form) {
