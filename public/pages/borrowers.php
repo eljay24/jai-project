@@ -150,7 +150,7 @@ try {
         <div class="col">
           <div class="row">
             <div class="jai-image-col">
-              <div class="jai-picture">
+              <div class="jai-picture zoom">
                 <img src="../<?= $borrower['picture']; ?>" class="thumb-image2">
               </div>
             </div>

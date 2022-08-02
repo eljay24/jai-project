@@ -154,7 +154,7 @@ try {
               <p class="sub-font">Contact: <?= $payment['contactno'] ?></p>
             </div>
             <div class="col">
-              <p class="primary-font">Loan ID: <?= $payment['l_id'] ?></p>
+              <p class="primary-font">Loan Ref# <?= $payment['l_id'] ?></p>
             </div>
 
           </div>

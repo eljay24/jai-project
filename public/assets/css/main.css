@@ -407,4 +407,17 @@ body.modal-open {
   padding-right: 0 !important;
 }
 
+.zoom {
+  padding: 15px;
+  background-color: transparent;
+  transition: transform .2s;
+  margin: 0 auto;
+}
+
+.zoom:hover {
+  -ms-transform: scale(2); /* IE 9 */
+  -webkit-transform: scale(2); /* Safari 3-8 */
+  transform: scale(2); 
+}
+
 /*# sourceMappingURL=main.css.map */

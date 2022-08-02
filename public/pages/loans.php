@@ -55,9 +55,9 @@ try {
   <div class="jai-table">
     <div class="row">
       <div class="jai-col-ID">ID</div>
+      <div class="col">Borrower</div>
       <div class="col">Loan Details</div>
       <div class="col">Payment Details</div>
-      <div class="col">Amortization</div>
       <div class="col-1">Action</div>
     </div>
     <?php
@@ -118,19 +118,23 @@ try {
         <div class="col">
           <div class="row">
             <div class="jai-image-col">
-              <div class="jai-picture">
+              <div class="jai-picture zoom">
                 <img src="/<?= 'JAI/public/' . $loan['picture']; ?>" class="thumb-image2">
               </div>
             </div>
             <div class="col">
               <p class="jai-table-name primary-font <?= $loan['firstname'] == 'Angelo' ? 'red' : ''; ?>
-                                              <?= $loan['firstname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Loan Ref#</span> <?= $loan['l_id'] . ' - ' . ucwords(strtolower($loan['firstname'])) . ' ' . ucwords(strtolower($loan['middlename'])) . ' ' . ucwords(strtolower($loan['lastname'])) ?></p>
+                                              <?= $loan['firstname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label"></span> <?= ucwords(strtolower($loan['firstname'])) . ' ' . ucwords(strtolower($loan['middlename'])) . ' ' . ucwords(strtolower($loan['lastname'])) ?></p>
               <p class="jai-table-name primary-font"><?= $loan['status'] ?></p>
 
             </div>
           </div>
-          <div class="row">
+         
+        </div>
+        <div class="col">
+        <div class="row">
             <div class="col">
+              <p class="jai-table-name primary-font"><span class="jai-table-label">Loan Reference # <?= $loan['l_id'] ?></span></p>
               <p class="jai-table-contact sub-font"> <span class="jai-table-label">Amount: </span><?= "₱ " . number_format($loan['amount'], 2) ?></p>
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Payable: </span><?= "₱ " . number_format($loan['payable'], 2) ?></p>
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Balance: </span><?= "₱ " . number_format($loan['balance'], 2) ?></p>
@@ -138,16 +142,17 @@ try {
 
             </div>
             <div class="col">
+              <br>
               <p class="jai-table-address sub-font"> <?= ucwords(strtolower($loan['mode'])) . ', ' . $loan['term'] ?></p>
-              <p class="jai-table-address sub-font">Interest rate: <?= number_format($interestRate * 100, 2) . '%' ?></p>
-              <p class="jai-table-address sub-font">Montly interest rate: <?= number_format($monthlyInterestRate * 100, 2) . '%' ?></p>
+              <p class="jai-table-address sub-font">Interest: <?= number_format($interestRate * 100, 2) . '%' ?></p>
+              <p class="jai-table-address sub-font">Monthly interest: <?= number_format($monthlyInterestRate * 100, 2) . '%' ?></p>
 
 
             </div>
           </div>
         </div>
-        <div class="col">
-          <div class="row">
+        <div class="col position-relative">
+        <div class="row">
             <div class="col">
               <p class="jai-table-amount primary-font"><span class="jai-table-label">Payments made:</span> <?php echo $loan['paymentsmade'] ?></p>
             </div>
@@ -157,12 +162,12 @@ try {
           </div>
           <div class="row">
             <div class="col">
-              <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Total Paid: </span> <b> <?= "₱ " . number_format($amount, 2) ?> </b> </p>
+              <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Total Paid: </span>  <?= "₱ " . number_format($amount, 2) ?> </p>
               <p class="jai-table-mode sub-font"> <span class="jai-table-label">to follow: </span> TEST</p>
               <p class="jai-table-amort sub-font"> <span class="jai-table-label">to follow: </span> TEST</p>
             </div>
             <div class="col">
-              <p class="jai-table-release sub-font"> <span class="jai-table-label">Estimated Loss: </span> <b> <?= "₱ " . number_format($passAmount, 2) ?> </b> </p>
+              <p class="jai-table-release sub-font"> <span class="jai-table-label">Est. Loss: </span> <?= "₱ " . number_format($passAmount, 2) ?> </p>
               <p class="jai-table-release sub-font"> <span class="jai-table-label">Release Date: </span> 01/01/22</p>
               <p class="jai-table-due sub-font"> <span class="jai-table-label">Due Date: </span> 01/01/22</p>
             </div>
@@ -173,9 +178,7 @@ try {
             <p class="sub-font"> <span class="jai-table-label">Type: </span> <?= ($lastPayment == 0) ? "NA" : $lastPayment['type'] ?></p>
             <p class="sub-font"> <span class="jai-table-label">Amount: </span> <?= ($lastPayment == 0) ? "NA" : "₱ " . number_format($lastPayment['amount'], 2) ?></p>
           </div>
-        </div>
-        <div class="col position-relative">
-          <textarea class="jai-table-input" type="text"></textarea>
+          <!-- <textarea class="jai-table-input" type="text"></textarea> -->
         </div>
         <div class="col-1 d-flex align-items-center justify-content-around">
           <a href="update.php?id=<?php echo $loan['l_id'] ?>" class="btn btn-primary btn-sm edit-btn">Edit</a>
