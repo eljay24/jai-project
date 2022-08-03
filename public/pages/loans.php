@@ -3,6 +3,7 @@
 try {
   /** @var $conn \PDO */
   require_once "../../views/includes/dbconn.php";
+  require_once "../../views/includes/loanform.php";
 
   $search = $_GET['search'] ?? '';
 
@@ -129,10 +130,10 @@ try {
 
             </div>
           </div>
-         
+
         </div>
         <div class="col">
-        <div class="row">
+          <div class="row">
             <div class="col">
               <p class="jai-table-name primary-font"><span class="jai-table-label">Loan Reference # <?= $loan['l_id'] ?></span></p>
               <p class="jai-table-contact sub-font"> <span class="jai-table-label">Amount: </span><?= "₱ " . number_format($loan['amount'], 2) ?></p>
@@ -152,7 +153,7 @@ try {
           </div>
         </div>
         <div class="col position-relative">
-        <div class="row">
+          <div class="row">
             <div class="col">
               <p class="jai-table-amount primary-font"><span class="jai-table-label">Payments made:</span> <?php echo $loan['paymentsmade'] ?></p>
             </div>
@@ -162,7 +163,7 @@ try {
           </div>
           <div class="row">
             <div class="col">
-              <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Total Paid: </span>  <?= "₱ " . number_format($amount, 2) ?> </p>
+              <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Total Paid: </span> <?= "₱ " . number_format($amount, 2) ?> </p>
               <p class="jai-table-mode sub-font"> <span class="jai-table-label">to follow: </span> TEST</p>
               <p class="jai-table-amort sub-font"> <span class="jai-table-label">to follow: </span> TEST</p>
             </div>
@@ -172,12 +173,14 @@ try {
               <p class="jai-table-due sub-font"> <span class="jai-table-label">Due Date: </span> 01/01/22</p>
             </div>
           </div>
-          <div class="row">
-            <p class="primary-font">Last Payment</p>
-            <p class="sub-font"> <span class="jai-table-label">Date: </span> <?= ($lastPayment == 0) ? "NA" : $lastPayment['date'] ?></p>
-            <p class="sub-font"> <span class="jai-table-label">Type: </span> <?= ($lastPayment == 0) ? "NA" : $lastPayment['type'] ?></p>
-            <p class="sub-font"> <span class="jai-table-label">Amount: </span> <?= ($lastPayment == 0) ? "NA" : "₱ " . number_format($lastPayment['amount'], 2) ?></p>
-          </div>
+          <?php if ($lastPayment != 0) { ?>
+            <div class="row">
+              <p class="primary-font">Latest Payment</p>
+              <p class="sub-font"> <span class="jai-table-label">Date: </span> <?= $lastPayment['date'] ?></p>
+              <p class="sub-font"> <span class="jai-table-label">Type: </span> <?= $lastPayment['type'] ?></p>
+              <p class="sub-font"> <span class="jai-table-label">Amount: </span> <?= number_format($lastPayment['amount'], 2) ?></p>
+            </div>
+          <?php } ?>
           <!-- <textarea class="jai-table-input" type="text"></textarea> -->
         </div>
         <div class="col-1 d-flex align-items-center justify-content-around">
@@ -223,27 +226,69 @@ try {
               </div>
             </div>
             <div class="row">
+              <div class="col">
+                <div class="jai-mb-2">
+                  <select name="borrower" id="borrower" class="form-control" required>
+                    <option value="" disabled selected>Select borrower</option>
+                    <?php
+                    foreach ($borrowers as $i => $borrower) {
+                      echo '<option value="' . $borrower['b_id'] . '">#' . $borrower['b_id'] . ' ' . ucwords(strtolower($borrower['firstname'])) . ' ' . ucwords(strtolower($borrower['middlename'])) . ' ' . ucwords(strtolower($borrower['lastname'])) . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
 
               <div class="col">
                 <div class="jai-mb-2">
-                  <input placeholder="Amount" type="text" class="form-control money" name="amount" value="" required>
+                  <select placeholder="Amount" class="form-control" name="amount" required>
+                    <option value="" disabled selected>Amount</option>
+                    <?php
+                    foreach ($amounts as $amount) {
+                      echo "<option value='" . $amount['amount'] . "'> ₱ " . number_format($amount['amount'], 2) . "</option>";
+                    }
+                    ?>
+                  </select>
                 </div>
               </div>
               <div class="col">
                 <div class="jai-mb-2">
-                  <input placeholder="Mode" type="text" class="form-control letters-only" name="mode" value="" required>
+                  <select placeholder="Mode" type="text" class="form-control" name="mode" value="" required>
+                    <option value="" disabled selected>Mode</option>
+                    <?php
+                    foreach ($modes as $mode) {
+                      echo "<option>" . ucwords(strtolower($mode['mode']))  . "</option>";
+                    }
+                    ?>
+                  </select>
                 </div>
               </div>
               <div class="col">
                 <div class="jai-mb-2">
-                  <input placeholder="Term" type="text" class="form-control alphanumeric" name="term" value="" required>
+                  <select class="form-control" name="term" required>
+                    <option value="" disabled selected>Term</option>
+                    <?php
+                    foreach ($terms as $term) {
+                      echo "<option>" . ucwords(strtolower($term['term']))  . "</option>";
+                    }
+                    ?>
+                  </select>
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="col">
                 <div class="jai-mb-2">
-                  <input readonly placeholder="Collector" type="text" class="form-control letters-only" name="collector" value="" required>
+                  <select class="form-control" name="collector" required>
+                    <option value="" disabled selected>Collector</option>
+                    <?php
+                    foreach ($collectors as $collector) {
+                      echo '<option value="' . $collector['c_id'] . '">' . ucwords(strtolower($collector['firstname'])) . ' ' . ucwords(strtolower($collector['middlename'])) . ' ' . ucwords(strtolower($collector['lastname'])) . '</option>';
+                    }
+                    ?>
+                  </select>
                 </div>
               </div>
               <div class="col">
@@ -259,7 +304,7 @@ try {
                 </div>
               </div>
             </div>
-          
+
           </div>
         </form>
 

@@ -234,14 +234,22 @@ try {
 
   <ul class="pagination">
     <?php if ($pageNum > 1) {
-      echo "<li class='page-item'><a class='page-link' href='?page=1'>First Page</a></li>";
+      if (!$search) {
+        echo "<li class='page-item'><a class='page-link' href='?page=1'>First Page</a></li>";
+      } else {
+        echo "<li class='page-item'><a class='page-link' href='?page=1&search=$search'>First Page</a></li>";
+      }
     } ?>
 
     <li <?php if ($pageNum <= 1) {
           echo "class='page-link disabled'";
         } ?>>
       <a <?php if ($pageNum > 1) {
-            echo "class='page-link' href='?page=$previousPage'";
+            if (!$search) {
+              echo "class='page-link' href='?page=$previousPage'";
+            } else {
+              echo "class='page-link' href='?page=$previousPage&search=$search'";
+            }
           } ?>>Previous</a>
     </li>
 
@@ -251,7 +259,11 @@ try {
         if ($counter == $pageNum) {
           echo "<li class='page-item active'><a class='page-link'>$counter</a></li>";
         } else {
-          echo "<li class='page-item'><a class='page-link' href='?page=$counter'>$counter</a></li>";
+          if (!$search) {
+            echo "<li class='page-item'><a class='page-link' href='?page=$counter'>$counter</a></li>";
+          } else {
+            echo "<li class='page-item'><a class='page-link' href='?page=$counter&search=$search'>$counter</a></li>";
+          }
         }
       }
     } elseif ($totalPages > 10) {
@@ -260,15 +272,31 @@ try {
           if ($counter == $pageNum) {
             echo "<li class='page-item active'><a class='page-link'>$counter</a></li>";
           } else {
-            echo "<li class='page-item'><a class='page-link' href='?page=$counter'>$counter</a></li>";
+            if (!$search) {
+              echo "<li class='page-item'><a class='page-link' href='?page=$counter'>$counter</a></li>";
+            } else {
+              echo "<li class='page-item'><a class='page-link' href='?page=$counter&search=$search'>$counter</a></li>";
+            }
           }
         }
         echo "<li class='page-item'><a class='page-link'>...</a></li>";
-        echo "<li class='page-item'><a class='page-link' href='?page=$secondLast'>$secondLast</a></li>";
-        echo "<li class='page-item'><a class='page-link' href='?page=$totalPages'>$totalPages</a></li>";
+        if (!$search) {
+          echo "<li class='page-item'><a class='page-link' href='?page=$secondLast'>$secondLast</a></li>";
+          echo "<li class='page-item'><a class='page-link' href='?page=$totalPages'>$totalPages</a></li>";
+        } else {
+          echo "<li class='page-item'><a class='page-link' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
+          echo "<li class='page-item'><a class='page-link' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
+        }
       } elseif ($pageNum > 4 && $pageNum < $totalPages - 4) {
-        echo "<li class='page-item'><a class='page-link' href='?page=1'>1</a></li>";
-        echo "<li class='page-item'><a class='page-link' href='?page=2'>2</a></li>";
+        if (!$search) {
+          echo "<li class='page-item'><a class='page-link' href='?page=1'>1</a></li>";
+          echo "<li class='page-item'><a class='page-link' href='?page=2'>2</a></li>";
+        } else {
+          echo "<li class='page-item'><a class='page-link' href='?page=1&search=$search'>1</a></li>";
+          echo "<li class='page-item'><a class='page-link' href='?page=2&search=$search'>2</a></li>";
+        }
+
+
         echo "<li class='page-item'><a class='page-link'>...</a></li>";
         for (
           $counter = $pageNum - $adjacents;
@@ -278,15 +306,29 @@ try {
           if ($counter == $pageNum) {
             echo "<li class='page-item active'><a class='page-link'>$counter</a></li>";
           } else {
-            echo "<li class='page-item'><a class='page-link' href='?page=$counter'>$counter</a></li>";
+            if (!$search) {
+              echo "<li class='page-item'><a class='page-link' href='?page=$counter'>$counter</a></li>";
+            } else {
+              echo "<li class='page-item'><a class='page-link' href='?page=$counter&search=$search'>$counter</a></li>";
+            }
           }
         }
         echo "<li class='page-item'><a class='page-link'>...</a></li>";
-        echo "<li class='page-item'><a class='page-link' href='?page=$secondLast'>$secondLast</a></li>";
-        echo "<li class='page-item'><a class='page-link' href='?page=$totalPages'>$totalPages</a></li>";
+        if (!$search) {
+          echo "<li class='page-item'><a class='page-link' href='?page=$secondLast'>$secondLast</a></li>";
+          echo "<li class='page-item'><a class='page-link' href='?page=$totalPages'>$totalPages</a></li>";
+        } else {
+          echo "<li class='page-item'><a class='page-link' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
+          echo "<li class='page-item'><a class='page-link' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
+        }
       } else {
-        echo "<li class='page-item'><a class='page-link' href='?page=1'>1</a></li>";
-        echo "<li class='page-item'><a class='page-link' href='?page=2'>2</a></li>";
+        if (!$search) {
+          echo "<li class='page-item'><a class='page-link' href='?page=1'>1</a></li>";
+          echo "<li class='page-item'><a class='page-link' href='?page=2'>2</a></li>";
+        } else {
+          echo "<li class='page-item'><a class='page-link' href='?page=1&search=$search'>1</a></li>";
+          echo "<li class='page-item'><a class='page-link' href='?page=2&search=$search'>2</a></li>";
+        }
         echo "<li class='page-item'><a class='page-link'>...</a></li>";
         for (
           $counter = $totalPages - 6;
@@ -296,7 +338,11 @@ try {
           if ($counter == $pageNum) {
             echo "<li class='page-item active'><a class='page-link'>$counter</a></li>";
           } else {
-            echo "<li class='page-item'><a class='page-link' href='?page=$counter'>$counter</a></li>";
+            if (!$search) {
+              echo "<li class='page-item'><a class='page-link' href='?page=$counter'>$counter</a></li>";
+            } else {
+              echo "<li class='page-item'><a class='page-link' href='?page=$counter&search=$search'>$counter</a></li>";
+            }
           }
         }
       }
@@ -307,12 +353,20 @@ try {
           echo "class='page-link disabled'";
         } ?>>
       <a <?php if ($pageNum < $totalPages) {
-            echo "class='page-link' href='?page=$nextPage&search=$search'";
+            if (!$search) {
+              echo "class='page-link' href='?page=$nextPage'";
+            } else {
+              echo "class='page-link' href='?page=$nextPage&search=$search'";
+            }
           } ?>>Next</a>
     </li>
 
     <?php if ($pageNum < $totalPages) {
-      echo "<li class='page-item'><a class='page-link' href='?page=$totalPages'>Last &rsaquo;&rsaquo;</a></li>";
+      if (!$search) {
+        echo "<li class='page-item'><a class='page-link' href='?page=$totalPages'>Last &rsaquo;&rsaquo;</a></li>";
+      } else {
+        echo "<li class='page-item'><a class='page-link' href='?page=$totalPages&search=$search'>Last &rsaquo;&rsaquo;</a></li>";
+      }
     } ?>
   </ul>
 
