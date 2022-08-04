@@ -18,6 +18,7 @@
   <script src="../assets/js/inputmask.js"></script>
   <script src="../assets/js/bootstrap.min.js"></script>
   <script src="../assets/js/main.js"></script>
+  <script src="../assets/js/chart.js"></script>
 
 
 </head>
@@ -31,6 +32,7 @@
           <h2>JAI Fair Loan</h2>
         </div>
 
+        <div class="nav-link-container"><a href="../../public/pages/dashboard" class="nav-link">Dashboard</a></div>
         <div class="nav-link-container"><a href="../../public/pages/borrowers" class="nav-link">Borrowers</a></div>
         <div class="nav-link-container"><a href="../../public/pages/loans" class="nav-link">Loans</a></div>
         <div class="nav-link-container"><a href="../../public/pages/payments" class="nav-link">Payments</a></div>
