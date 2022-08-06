@@ -420,4 +420,8 @@ body.modal-open {
   transform: scale(2); 
 }
 
+.chart-div {
+  width: 1000px;
+}
+
 /*# sourceMappingURL=main.css.map */

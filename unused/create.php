@@ -150,7 +150,7 @@ $loan = [
 
     $statementUpdateBorrower = $conn->prepare("UPDATE jai_db.borrowers
                                                SET activeloan = 1
-                                               WHERE :b_id = b_id");
+                                               WHERE b_id = :b_id");
 
     $statementUpdateBorrower->bindValue(':b_id', $_POST['borrower']);
     $statementUpdateBorrower->execute();
