@@ -62,6 +62,7 @@ try {
       <div class="col-1">Action</div>
     </div>
     <?php
+    $count = 1;
     foreach ($loans as $i => $loan) {
 
       // SELECT LAST PAYMENT OF LOAN      
@@ -187,6 +188,15 @@ try {
           <a href="update.php?id=<?php echo $loan['l_id'] ?>" class="btn btn-primary btn-sm edit-btn">Edit</a>
           <button type="button" class="btn btn-danger btn-sm delete-btn delete-borrower" data-toggle="modal" data-target="#deleteBorrower">Delete</button>
         </div>
+        <div class="d-none hidden-field">
+          <form id="hidden-form-<?= $count; ?>" class="hidden-form" action="">
+            <input type="hidden" name="data-row" value='row-<?= $loan['b_id'] ?>'>
+            <input type="hidden" name="b_id" value="<?= ucwords(strtolower($loan['b_id'])) ?>">
+            <input type="hidden" name="amount" value="<?= ucwords(strtolower($loan['amount'])) ?>">
+            <input type="hidden" name="mode" value="<?= ucwords(strtolower($loan['mode'])) ?>">
+            <input type="hidden" name="term" value="<?= ucwords(strtolower($loan['term'])) ?>">
+          </form>
+        </div>
       </div>
     <?php } ?>
   </div>
@@ -293,14 +303,14 @@ try {
               </div>
               <div class="col">
                 <div class="jai-mb-2">
-                  <input placeholder="Release Date" type="text" class="form-control datepicker no-limit" name="contactno" value="" readonly>
+                  <input placeholder="Release Date" type="text" class="form-control datepicker no-limit" name="release-date" value="" readonly>
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="col">
                 <div class="jai-mb-2">
-                  <input placeholder="Due Date" type="text" class="form-control" name="address" value="" readonly>
+                  <!-- <input placeholder="Due Date" type="text" class="form-control" name="due-date" value="" readonly> -->
                 </div>
               </div>
             </div>
@@ -311,7 +321,7 @@ try {
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary btn-sm close-modal" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary btn-sm submit-create-loan">Submit</button>
+        <button type="button" class="btn btn-primary btn-sm submit-loan">Submit</button>
       </div>
     </div>
     <div class="success-message" style="display: none;">

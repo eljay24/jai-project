@@ -9,6 +9,7 @@ $(document).ready(function () {
   createDatepicker();
   validateInputs();
   createForm();
+  createLoan();
 });
 
 /*                                */
@@ -197,13 +198,51 @@ function createForm() {
   });
 }
 
+function createLoan() {
+  let inputChanged = false;
+
+  $(".submit-loan").on("click", function (event) {
+    event.preventDefault();
+    let formValues = $(".create-form").serialize();
+
+    console.log(formValues);
+
+    if (validateForm(".create-form"))
+      $.ajax({
+        url: "../ajax-calls/create-loan.php",
+        method: "POST",
+        data: formValues,
+        dataType: "json",
+        beforeSend: function (xhr, data) {
+          // console.log(data);
+        },
+        success: function (data) {
+          console.log(data);
+
+          // $("#createBorrower .modal-content").fadeOut(300, function (param) {
+          //   $(".success-message").fadeIn(300, function () {
+          //     setTimeout(function () {
+          //       if ($("body").hasClass("modal-open"))
+          //         $("#createBorrower").modal("hide");
+          //     }, 2000);
+          //   });
+          // });
+        },
+        error: function (response, status) {
+          console.log("error");
+          console.log(status);
+        },
+      });
+  });
+}
+
 function createDatepicker() {
   let date = new Date(),
     maxDate = 0,
     maxYear = "1940:c+nn";
   $(".datepicker").each(function () {
     maxDate = $(this).hasClass("no-limit") ? null : 0;
-    maxYear = $(this).hasClass("no-limit") ? '1940:c+10' : '1940:c+nn';
+    maxYear = $(this).hasClass("no-limit") ? "1940:c+10" : "1940:c+nn";
 
     $(this).datepicker({
       dateFormat: "yy-mm-dd",
