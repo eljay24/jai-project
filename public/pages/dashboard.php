@@ -12,7 +12,7 @@ require_once "../../views/partials/header.php";
     </div>
 
     <?php
-    $statementTest = $conn->prepare("SELECT CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) as bname, p.l_id, p.l_id, sum(p.amount) as amount
+    $statementTest = $conn->prepare("SELECT CONCAT(b.firstname, ' ', b.lastname) as bname, p.l_id, p.l_id, sum(p.amount) as amount
                                      FROM jai_db.payments as p
                                      INNER JOIN jai_db.borrowers as b
                                      ON b.b_id = p.b_id
