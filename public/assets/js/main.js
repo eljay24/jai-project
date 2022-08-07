@@ -4,12 +4,17 @@ $(document).ready(function () {
   openModal(".delete-borrower", "#deleteBorrower", openDelete);
   openModal(".create-borrower", "#createBorrower", false);
   openModal(".btn-new-loan", "#createloan", false);
+  openModal(".btn-new-loan", "#createloan", false);
+  openModal(".open-payment-modal", "#paymentModal", false);
   editForm();
   inputMask();
   createDatepicker();
   validateInputs();
   createForm();
   createLoan();
+  autoFillBorrower();
+  fillInputs();
+  // createCustomSelect();
 });
 
 /*                                */
@@ -95,6 +100,141 @@ function closeModal() {
 /*                                */
 /*    Form Related Functions      */
 /*                                */
+function autoFillBorrower() {
+  $("#namesearch").on("input", function () {
+    $(this).next().addClass("show-results");
+    var name = $("#namesearch").val(),
+      thisInput = $(this);
+    $.ajax({
+      url: "../ajax-calls/suggestions.php",
+      method: "POST",
+      dataType: "json",
+      data: {
+        suggestion: name,
+      },
+      dataType: "html",
+      beforeSend: function () {},
+      success: function (data) {
+        //response (data);
+        console.log(data);
+        thisInput.next().html(data);
+      },
+      error: function (response) {
+        console.log(response);
+      },
+    });
+  });
+
+  $(document).on("click", function (e) {
+    console.log($(e.target));
+
+    let target = $(e.target);
+    if (!target.is(".autocomplete-input")) {
+      $(".suggestions-container").removeClass("show-results");
+    }
+  });
+
+  $(document).on("click", ".suggestion-container", function () {
+    console.log("clicked!");
+    $(this).parent().prev().val($(this).text());
+    $(this).parent().siblings(".borrower-id").val($(this).data("borrower"));
+  });
+}
+
+function fillInputs() {
+  // var selectBox = document.getElementById("borrower");
+  // var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+  // var payment = document.getElementById("payment");
+
+  // console.log(selectedValue);
+  $.ajax({
+    url: "../ajax-calls/get-borrower.php",
+    method: "POST",
+    data: {
+      b_id: '3',
+    },
+    dataType: "json",
+    success: function (borrowerDetails) {
+      console.log("test");
+      console.log(borrowerDetails);
+
+      // $("#loanamount").val(borrowerDetails[0]["amount"].toFixed(2));
+      // $("#payable").val(borrowerDetails[0]["payable"].toFixed(2));
+      // $("#remainingbalance").val(borrowerDetails[0]["balance"].toFixed(2));
+      // $("#amortization").val(borrowerDetails[0]["amortization"].toFixed(2));
+      // $("#mode").val(borrowerDetails[0]["mode"]);
+      // $("#term").val(borrowerDetails[0]["term"]);
+      // $("#collectorid").val(borrowerDetails[0]["c_id"]);
+      // $("#type").val("");
+      // $("#date").val("");
+
+      // document.getElementById("payment").readOnly = false;
+      // $("#payment").val("");
+
+      // // 1 hidden inputs:
+      // $("#loanid").val(borrowerDetails[0]["l_id"]);
+
+      // $('#payment').val(borrowerDetails[0]['amortization']);
+      // payment.placeholder = borrowerDetails[0]["amortization"].toFixed(2);
+    },
+    error: function (errorData) {
+      console.log(errorData);
+    },
+  });
+}
+
+function createCustomSelect() {
+  $("select").each(function () {
+    var $this = $(this),
+      numberOfOptions = $(this).children("option").length;
+
+    $this.addClass("select-hidden");
+    $this.wrap('<div class="select"></div>');
+    $this.after('<div class="select-styled"></div>');
+
+    var $styledSelect = $this.next("div.select-styled");
+    $styledSelect.text($this.children("option").eq(0).text());
+
+    var $list = $("<ul />", {
+      class: "select-options",
+    }).insertAfter($styledSelect);
+
+    for (var i = 0; i < numberOfOptions; i++) {
+      $("<li />", {
+        text: $this.children("option").eq(i).text(),
+        rel: $this.children("option").eq(i).val(),
+      }).appendTo($list);
+      //if ($this.children('option').eq(i).is(':selected')){
+      //  $('li[rel="' + $this.children('option').eq(i).val() + '"]').addClass('is-selected')
+      //}
+    }
+
+    var $listItems = $list.children("li");
+
+    $styledSelect.click(function (e) {
+      e.stopPropagation();
+      $("div.select-styled.active")
+        .not(this)
+        .each(function () {
+          $(this).removeClass("active").next("ul.select-options").hide();
+        });
+      $(this).toggleClass("active").next("ul.select-options").toggle();
+    });
+
+    $listItems.click(function (e) {
+      e.stopPropagation();
+      $styledSelect.text($(this).text()).removeClass("active");
+      $this.val($(this).attr("rel"));
+      $list.hide();
+      //console.log($this.val());
+    });
+
+    $(document).click(function () {
+      $styledSelect.removeClass("active");
+      $list.hide();
+    });
+  });
+}
 
 function editForm() {
   let inputChanged = false;
@@ -169,7 +309,8 @@ function createForm() {
 
   $(".submit-create").on("click", function (event) {
     event.preventDefault();
-    let formValues = $(".create-form").serialize();
+    let form = $(".create-form"),
+      formValues = form.serialize();
 
     if (validateForm(".create-form"))
       $.ajax({
@@ -203,7 +344,8 @@ function createLoan() {
 
   $(".submit-loan").on("click", function (event) {
     event.preventDefault();
-    let formValues = $(".create-form").serialize();
+    let form = $(".create-form"),
+      formValues = form.serialize();
 
     console.log(formValues);
 
@@ -219,14 +361,16 @@ function createLoan() {
         success: function (data) {
           console.log(data);
 
-          // $("#createBorrower .modal-content").fadeOut(300, function (param) {
-          //   $(".success-message").fadeIn(300, function () {
-          //     setTimeout(function () {
-          //       if ($("body").hasClass("modal-open"))
-          //         $("#createBorrower").modal("hide");
-          //     }, 2000);
-          //   });
-          // });
+          form[0].reset();
+
+          $("#createloan .modal-content").fadeOut(300, function (param) {
+            $(".success-message").fadeIn(300, function () {
+              setTimeout(function () {
+                if ($("body").hasClass("modal-open"))
+                  $("#createloan").modal("hide");
+              }, 2000);
+            });
+          });
         },
         error: function (response, status) {
           console.log("error");

@@ -28,6 +28,36 @@ body {
   }
 }
 
+.autocomplete {
+  position: relative;
+  .suggestions-container {
+    display: none;
+    position: absolute;
+    top: 40px;
+    left: 0;
+    z-index: 1000;
+    background-color: white;
+    border: 1px solid $jai-black;
+    border-radius: 15px;
+    overflow: hidden;
+    &.show-results {
+      display: block;
+      &:empty {
+        display: none;
+      }
+    }
+    .suggestion-container {
+      padding: 10px 15px;
+      cursor: pointer;
+      transition: all 150ms;
+      &:hover {
+        background-color: $primary-color;
+        color: white;
+      }
+    }
+  }
+}
+
 .jai-mb-1 {
   margin-bottom: 15px;
 }

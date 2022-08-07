@@ -116,7 +116,7 @@ try {
   </div>
 
   <div class="d-flex justify-content-between">
-    <a href="addpayment.php" type="button" class="btn btn-outline-success">Add new payment</a>
+    <a href="addpayment.php" type="button" class="btn btn-outline-success open-payment-modal">Add new payment</a>
 
     <form>
       <div class="input-group">
@@ -229,8 +229,118 @@ try {
     </div>
   </div>
 
-   <!-- PAGE NAVIGATION -->
-   <div style='padding: 10px 20px 0px; border-top: dotted 1px #CCC;'>
+  <div class="modal fade" data-loan="1" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Create Payment</h5>
+        </div>
+        <div class="modal-body">
+          <form class="payment-form" autocomplete="off" action="payment-loan" method="post" enctype="multipart/form-data">
+            <input type="hidden" class="d-none" name="b_id" value="">
+            <input name="data-row" type="hidden" class="d-none" value=''>
+
+            <div class="container">
+              <div class="row">
+                <div class="col">
+                  <h5 class="modal-body-label">Payment</h5>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="jai-mb-2 autocomplete">
+                    <input type="hidden" class="borrower-id" name="borrower-id" placeholder="Search for borrowers..." autofocus>
+                    <input type="text" name="name" id="namesearch" class="autocomplete-input" placeholder="Search for borrowers..." autofocus>
+                    <div class="suggestions-container">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="jai-mb-2">
+                    <input id="loanamount" name="loanamount" placeholder="Loan Amount" type="text" class="form-control" readonly required>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+
+                <div class="col">
+                  <div class="jai-mb-2">
+                    <input id="remainingbalance" name="remainingbalance" placeholder="Remaining Balance" type="text" class="form-control" readonly required>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="jai-mb-2">
+                    <input id="mode" name="mode" placeholder="Mode" type="text" class="form-control" readonly required>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="jai-mb-2">
+                    <input id="term" name="term" placeholder="Term" type="text" class="form-control" readonly required>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="jai-mb-2">
+                    <select id="collectorid" name="collectorid" class="form-control">
+                      <option value="" disabled selected>Select collector</option>
+                      <?php
+                      foreach ($collectors as $i => $collector) {
+                        echo '<option value="' . $collector['c_id'] . '">' . $collector['firstname'] . ' ' . $collector['middlename'] . ' ' . $collector['lastname'] . '</option>';
+                      }
+                      ?>
+                    </select>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="jai-mb-2">
+                    <select id="type" name="type" class="form-control" onchange="setToZero();" required>
+                      <option value="" disabled selected>Select type</option>
+                      <option value="Cash">Cash</option>
+                      <option value="GCash">GCash</option>
+                      <option value="Pass">Pass</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="jai-mb-2">
+                    <input id="payment" name="payment" placeholder="Payment amount" type="text" class="form-control" required>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="jai-mb-2">
+                    <input id="date" class="datepicker form-control" name="date" placeholder="Select date of payment" type="text" class="form-control" onkeydown="return false" required>
+                  </div>
+                </div>
+              </div>
+              <input id="loanid" name="loanid" hidden>
+
+            </div>
+          </form>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm close-modal" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm submit-payment">Submit</button>
+        </div>
+      </div>
+      <div class="success-message" style="display: none;">
+        <div class="close-container">
+          <div class="close-button"></div>
+        </div>
+        <h3>
+          Loan Created.
+        </h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE NAVIGATION -->
+  <div style='padding: 10px 20px 0px; border-top: dotted 1px #CCC;'>
     <strong>Page <?php echo $pageNum . " of " . $totalPages; ?></strong>
   </div>
 
@@ -360,7 +470,7 @@ try {
                 </div>
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input placeholder="Contact number" type="number" class="form-control" name="contactno" value="">
+                    <input placeholder="Contact number" type="text" class="form-control" name="contactno" value="">
                   </div>
                 </div>
               </div>
@@ -397,7 +507,7 @@ try {
                 </div>
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input placeholder="Comaker Contact Number" type="number" class="form-control" name="comakerno" value="">
+                    <input placeholder="Comaker Contact Number" type="text" class="form-control" name="comakerno" value="">
                   </div>
                 </div>
               </div>

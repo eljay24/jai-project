@@ -38,6 +38,36 @@ body * {
   margin: 0;
 }
 
+.autocomplete {
+  position: relative;
+}
+.autocomplete .suggestions-container {
+  display: none;
+  position: absolute;
+  top: 40px;
+  left: 0;
+  z-index: 1000;
+  background-color: white;
+  border: 1px solid #333;
+  border-radius: 15px;
+  overflow: hidden;
+}
+.autocomplete .suggestions-container.show-results {
+  display: block;
+}
+.autocomplete .suggestions-container.show-results:empty {
+  display: none;
+}
+.autocomplete .suggestions-container .suggestion-container {
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: all 150ms;
+}
+.autocomplete .suggestions-container .suggestion-container:hover {
+  background-color: #06283d;
+  color: white;
+}
+
 .jai-mb-1 {
   margin-bottom: 15px;
 }
@@ -111,6 +141,80 @@ textarea.error + span {
 
 textarea.form-control {
   border-radius: 15px;
+}
+
+.select-hidden {
+  display: none;
+  visibility: hidden;
+  padding-right: 10px;
+}
+
+.select {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  font-size: 16px;
+  color: #06283d;
+  width: 220px;
+  height: 40px;
+}
+
+.select-styled {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: white;
+  padding: 8px 15px;
+  transition: all 0.2s ease-in;
+}
+.select-styled:after {
+  content: "";
+  width: 0;
+  height: 0;
+  border: 7px solid transparent;
+  border-color: #06283d transparent transparent transparent;
+  position: absolute;
+  top: 16px;
+  right: 10px;
+}
+.select-styled:hover {
+  background-color: #fafafa;
+}
+.select-styled:active, .select-styled.active {
+  background-color: #f2f2f2;
+}
+.select-styled:active:after, .select-styled.active:after {
+  top: 9px;
+  border-color: transparent transparent #06283d transparent;
+}
+
+.select-options {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  z-index: 999;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background-color: #f2f2f2;
+}
+.select-options li {
+  margin: 0;
+  padding: 12px 0;
+  text-indent: 15px;
+  border-top: 1px solid #e6e6e6;
+  transition: all 0.15s ease-in;
+}
+.select-options li:hover, .select-options li.is-selected {
+  color: white;
+  background: #06283d;
+}
+.select-options li[rel=hide] {
+  display: none;
 }
 
 .ui-datepicker {
@@ -405,23 +509,6 @@ textarea.form-control {
 body.modal-open {
   overflow: visible !important;
   padding-right: 0 !important;
-}
-
-.zoom {
-  padding: 15px;
-  background-color: transparent;
-  transition: transform .2s;
-  margin: 0 auto;
-}
-
-.zoom:hover {
-  -ms-transform: scale(2); /* IE 9 */
-  -webkit-transform: scale(2); /* Safari 3-8 */
-  transform: scale(2); 
-}
-
-.chart-div {
-  width: 1000px;
 }
 
 /*# sourceMappingURL=main.css.map */
