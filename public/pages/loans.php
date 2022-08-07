@@ -8,10 +8,18 @@ try {
   $search = $_GET['search'] ?? '';
 
   if ($search) {
-    $statement = $conn->prepare("SELECT * FROM jai_db.borrowers AS b
-                                  INNER JOIN jai_db.loans AS l
-                                  ON b.b_id = l.b_id
-                                  WHERE (b.isdeleted = 0) AND (b.b_id LIKE :search OR b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search) ORDER BY l.l_id ASC");
+    $statement = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
+                                        b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
+                                        l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
+                                        l.releasedate, l.duedate, l.status, l.c_id, l.paymentsmade, l.passes
+                                 FROM jai_db.borrowers AS b
+                                 INNER JOIN jai_db.loans AS l
+                                 ON b.b_id = l.b_id
+                                 WHERE (b.isdeleted = 0) AND (b.b_id LIKE :search OR b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search
+                                        OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
+                                        OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
+                                        OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search)
+                                 ORDER BY l.activeloan DESC, l.l_id DESC");
     $statement->bindValue(':search', "%$search%");
   } else {
     $statement = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
@@ -125,8 +133,8 @@ try {
               </div>
             </div>
             <div class="col">
-              <p class="jai-table-name primary-font <?= $loan['firstname'] == 'Angelo' ? 'red' : ''; ?>
-                                              <?= $loan['firstname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label"></span> <?= ucwords(strtolower($loan['firstname'])) . ' ' . ucwords(strtolower($loan['middlename'])) . ' ' . ucwords(strtolower($loan['lastname'])) ?></p>
+              <p class="jai-table-name primary-font <?= $loan['passes'] >= 5 ? 'red' : ''; ?>
+                                              <?= $loan['passes'] <5 ? 'green' : '' ?>"><span class="jai-table-label"></span> <?= ucwords(strtolower($loan['firstname'])) . ' ' . ucwords(strtolower($loan['middlename'])) . ' ' . ucwords(strtolower($loan['lastname'])) ?></p>
               <p class="jai-table-name primary-font"><?= $loan['status'] ?></p>
 
             </div>
@@ -145,7 +153,7 @@ try {
             </div>
             <div class="col">
               <br>
-              <p class="jai-table-address sub-font"> <?= ucwords(strtolower($loan['mode'])) . ', ' . $loan['term'] ?></p>
+              <p class="jai-table-address sub-font"> <?= ucwords(strtolower($loan['term'])) . ', ' . ucwords(strtolower($loan['mode'])) ?></p>
               <p class="jai-table-address sub-font">Interest: <?= number_format($interestRate * 100, 2) . '%' ?></p>
               <p class="jai-table-address sub-font">Monthly interest: <?= number_format($monthlyInterestRate * 100, 2) . '%' ?></p>
 
@@ -176,7 +184,7 @@ try {
           </div>
           <?php if ($lastPayment != 0) { ?>
             <div class="row">
-              <p class="primary-font">Latest Payment</p>
+              <p class="primary-font"><?= ($loan['status'] == 'Active') ? 'Latest Payment' : 'Final Payment' ?></p>
               <p class="sub-font"> <span class="jai-table-label">Date: </span> <?= $lastPayment['date'] ?></p>
               <p class="sub-font"> <span class="jai-table-label">Type: </span> <?= $lastPayment['type'] ?></p>
               <p class="sub-font"> <span class="jai-table-label">Amount: </span> <?= number_format($lastPayment['amount'], 2) ?></p>
