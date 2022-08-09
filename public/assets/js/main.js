@@ -13,7 +13,8 @@ $(document).ready(function () {
   createForm();
   createLoan();
   autoFillBorrower();
-  fillInputs();
+  submitForm(".submit-payment", ".payment-form", "add-payment.php");
+  // fillInputs();
   // createCustomSelect();
 });
 
@@ -101,7 +102,7 @@ function closeModal() {
 /*    Form Related Functions      */
 /*                                */
 function autoFillBorrower() {
-  $("#namesearch").on("input", function () {
+  $("#namesearch").on("input focus", function () {
     $(this).next().addClass("show-results");
     var name = $("#namesearch").val(),
       thisInput = $(this);
@@ -116,7 +117,7 @@ function autoFillBorrower() {
       beforeSend: function () {},
       success: function (data) {
         //response (data);
-        console.log(data);
+        // console.log(data);
         thisInput.next().html(data);
       },
       error: function (response) {
@@ -126,7 +127,7 @@ function autoFillBorrower() {
   });
 
   $(document).on("click", function (e) {
-    console.log($(e.target));
+    // console.log($(e.target));
 
     let target = $(e.target);
     if (!target.is(".autocomplete-input")) {
@@ -135,15 +136,15 @@ function autoFillBorrower() {
   });
 
   $(document).on("click", ".suggestion-container", function () {
-    console.log("clicked!");
+    // console.log("clicked!");
     $(this).parent().prev().val($(this).text());
     $(this).parent().siblings(".borrower-id").val($(this).data("borrower"));
+    fillInputs($(this).data("borrower"));
   });
 }
 
-function fillInputs() {
+function fillInputs(id) {
   // var selectBox = document.getElementById("borrower");
-  // var selectedValue = selectBox.options[selectBox.selectedIndex].value;
   // var payment = document.getElementById("payment");
 
   // console.log(selectedValue);
@@ -151,20 +152,28 @@ function fillInputs() {
     url: "../ajax-calls/get-borrower.php",
     method: "POST",
     data: {
-      b_id: '3',
+      action: "get-borrower",
+      b_id: id,
     },
     dataType: "json",
-    success: function (borrowerDetails) {
-      console.log("test");
+    success: function (borrowerDetails, status, success) {
+      // console.log("test");
       console.log(borrowerDetails);
+      // console.log(status);
+      // console.log(success);
 
-      // $("#loanamount").val(borrowerDetails[0]["amount"].toFixed(2));
-      // $("#payable").val(borrowerDetails[0]["payable"].toFixed(2));
-      // $("#remainingbalance").val(borrowerDetails[0]["balance"].toFixed(2));
-      // $("#amortization").val(borrowerDetails[0]["amortization"].toFixed(2));
-      // $("#mode").val(borrowerDetails[0]["mode"]);
-      // $("#term").val(borrowerDetails[0]["term"]);
-      // $("#collectorid").val(borrowerDetails[0]["c_id"]);
+      $("#loanamount").val(borrowerDetails[0]["amount"]);
+      $("#payable").val(borrowerDetails[0]["payable"]);
+      $("#remainingbalance").val(borrowerDetails[0]["balance"]);
+      $("#amortization").val(borrowerDetails[0]["amortization"]);
+      $("#mode").val(borrowerDetails[0]["mode"]);
+      $("#term").val(borrowerDetails[0]["term"]);
+      $("#collectorid").val(borrowerDetails[0]["c_id"]);
+      $("#collectorname").val(borrowerDetails[0]["c_id"]);
+      $("#loanid").val(borrowerDetails[0]["l_id"]);
+      $("#name").val(
+        borrowerDetails[0]["cfname"] + " " + borrowerDetails[0]["clname"]
+      );
       // $("#type").val("");
       // $("#date").val("");
 
@@ -177,8 +186,10 @@ function fillInputs() {
       // $('#payment').val(borrowerDetails[0]['amortization']);
       // payment.placeholder = borrowerDetails[0]["amortization"].toFixed(2);
     },
-    error: function (errorData) {
-      console.log(errorData);
+    error: function (xghr, status, error) {
+      console.log(xghr);
+      console.log(status);
+      console.log(error);
     },
   });
 }
@@ -397,6 +408,11 @@ function createDatepicker() {
       maxDate: maxDate,
       yearRange: maxYear,
     });
+
+    if ($(this).hasClass("today"))
+      $(this).val(
+        date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()
+      );
   });
 
   $(".datepicker").on("click contextmenu", function () {
@@ -624,4 +640,42 @@ function checkEmptyInput(thisInput) {
 function clearErrors(thisInput) {
   $(thisInput).removeClass("error");
   $(thisInput).next("span").remove();
+}
+
+function submitForm(submitBtn, thisForm, ajaxFile, ajaxAction) {
+  $(submitBtn).on("click", function (event) {
+    event.preventDefault();
+    let form = $(thisForm),
+      formValues = form.serialize();
+
+    console.log(form.serializeArray());
+    if (validateForm(thisForm))
+      $.ajax({
+        url: "../ajax-calls/" + ajaxFile,
+        method: "POST",
+        data: formValues,
+        dataType: "html",
+        beforeSend: function () {},
+        success: function (data) {
+          console.log(data);
+
+          if (ajaxAction) ajaxAction;
+
+          // $(".form-modal .modal-content").fadeOut(300, function (param) {
+          //   $(".success-message").fadeIn(300, function () {
+          //     setTimeout(function () {
+          //       if ($("body").hasClass("modal-open"))
+          //         $(".form-modal").modal("hide");
+          //     }, 2000);
+          //   });
+          // });
+        },
+        error: function (response, xhr, data) {
+          console.log("error");
+          console.log(response);
+          console.log(xhr);
+          console.log(data);
+        },
+      });
+  });
 }

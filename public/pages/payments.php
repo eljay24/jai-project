@@ -73,6 +73,12 @@ try {
   $statement->execute();
   $payments = $statement->fetchAll(PDO::FETCH_ASSOC);
 
+  $statementCollectors = $conn->prepare("SELECT *
+                                       FROM jai_db.collectors
+                                       ORDER BY c_id ASC");
+  $statementCollectors->execute();
+  $collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
+
 
 
   // echo "DB connected successfully";
@@ -229,7 +235,7 @@ try {
     </div>
   </div>
 
-  <div class="modal fade" data-loan="1" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+  <div class="modal fade form-modal" data-loan="1" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -250,7 +256,7 @@ try {
                 <div class="col">
                   <div class="jai-mb-2 autocomplete">
                     <input type="hidden" class="borrower-id" name="borrower-id" placeholder="Search for borrowers..." autofocus>
-                    <input type="text" name="name" id="namesearch" class="autocomplete-input" placeholder="Search for borrowers..." autofocus>
+                    <input type="text" name="borrower-name" id="namesearch" class="autocomplete-input form-control" placeholder="Search for borrowers..." autofocus>
                     <div class="suggestions-container">
                     </div>
                   </div>
@@ -259,7 +265,7 @@ try {
               <div class="row">
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input id="loanamount" name="loanamount" placeholder="Loan Amount" type="text" class="form-control" readonly required>
+                    <input id="loanamount" name="loan-amount" placeholder="Loan Amount" type="text" class="form-control" readonly required>
                   </div>
                 </div>
               </div>
@@ -267,7 +273,7 @@ try {
 
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input id="remainingbalance" name="remainingbalance" placeholder="Remaining Balance" type="text" class="form-control" readonly required>
+                    <input id="remainingbalance" name="remaining-balance" placeholder="Remaining Balance" type="text" class="form-control" readonly required>
                   </div>
                 </div>
                 <div class="col">
@@ -284,7 +290,8 @@ try {
               <div class="row">
                 <div class="col">
                   <div class="jai-mb-2">
-                    <select id="collectorid" name="collectorid" class="form-control">
+                    <input type="hidden" id="collectorid" name="collector-id" value="">
+                    <select id="collectorname" name="collector-name" class="form-control">
                       <option value="" disabled selected>Select collector</option>
                       <?php
                       foreach ($collectors as $i => $collector) {
@@ -296,10 +303,10 @@ try {
                 </div>
                 <div class="col">
                   <div class="jai-mb-2">
-                    <select id="type" name="type" class="form-control" onchange="setToZero();" required>
+                    <select id="type" name="type" class="form-control" required>
                       <option value="" disabled selected>Select type</option>
-                      <option value="Cash">Cash</option>
-                      <option value="GCash">GCash</option>
+                      <option value="1">Cash</option>
+                      <option value="1">GCash</option>
                       <option value="Pass">Pass</option>
                     </select>
                   </div>
@@ -313,11 +320,11 @@ try {
                 </div>
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input id="date" class="datepicker form-control" name="date" placeholder="Select date of payment" type="text" class="form-control" onkeydown="return false" required>
+                    <input id="date" class="datepicker form-control today" name="date" placeholder="Select date of payment" type="text" class="form-control" onkeydown="return false" required>
                   </div>
                 </div>
               </div>
-              <input id="loanid" name="loanid" hidden>
+              <input id="loanid" name="loanid" value="" hidden>
 
             </div>
           </form>

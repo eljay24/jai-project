@@ -33,13 +33,16 @@ body {
   .suggestions-container {
     display: none;
     position: absolute;
-    top: 40px;
+    top: 55px;
     left: 0;
     z-index: 1000;
     background-color: white;
-    border: 1px solid $jai-black;
+    border: 1px solid #333;
     border-radius: 15px;
+    max-height: 222px;
     overflow: hidden;
+    overflow-y: overlay;
+    @include custom-scrollbar();
     &.show-results {
       display: block;
       &:empty {

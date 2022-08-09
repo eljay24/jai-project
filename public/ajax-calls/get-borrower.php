@@ -3,7 +3,7 @@
 require "../../views/includes/dbconn.php";
 
 
-if (isset($_POST['b_id'])) {
+if (isset($_POST['action'])) {
 
     $b_id = $_POST['b_id'];
 

@@ -44,13 +44,27 @@ body * {
 .autocomplete .suggestions-container {
   display: none;
   position: absolute;
-  top: 40px;
+  top: 55px;
   left: 0;
   z-index: 1000;
   background-color: white;
   border: 1px solid #333;
   border-radius: 15px;
+  max-height: 222px;
   overflow: hidden;
+  overflow-y: overlay;
+}
+.autocomplete .suggestions-container::-webkit-scrollbar {
+  width: 6px;
+}
+.autocomplete .suggestions-container::-webkit-scrollbar-thumb {
+  background: gray;
+  border-radius: 10px;
+}
+.autocomplete .suggestions-container::-webkit-scrollbar-track {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border-radius: 10px;
 }
 .autocomplete .suggestions-container.show-results {
   display: block;
