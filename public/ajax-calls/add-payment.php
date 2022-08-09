@@ -63,7 +63,7 @@ if (isset($_POST['borrower-name'])) {
                                           SET balance = balance - :paidamount, paymentsmade = paymentsmade + :paymentsmade, passes = passes + :passes
                                           WHERE b_id = :b_id AND l_id = :l_id");
 
-  $statementUpdateLoan->bindValue(':b_id', $_POST['borrower']);
+  $statementUpdateLoan->bindValue(':b_id', $_POST['borrower-id']);
   $statementUpdateLoan->bindValue(':l_id', $_POST['loanid']);
   $statementUpdateLoan->bindValue(':paidamount', $_POST['payment']);
   $statementUpdateLoan->bindValue(':paymentsmade', $paymentsMade);
@@ -80,7 +80,7 @@ if (isset($_POST['borrower-name'])) {
                                             WHERE (l.b_id = :b_id AND l.l_id = :l_id AND balance <= 0)
   ");
 
-  $statementCheckClosed->bindValue(':b_id', $_POST['borrower']);
+  $statementCheckClosed->bindValue(':b_id', $_POST['borrower-id']);
   $statementCheckClosed->bindValue(':l_id', $_POST['loanid']);
   $statementCheckClosed->execute();
   // END - CHECK IF LOAN CLOSED

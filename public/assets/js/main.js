@@ -661,14 +661,14 @@ function submitForm(submitBtn, thisForm, ajaxFile, ajaxAction) {
 
           if (ajaxAction) ajaxAction;
 
-          // $(".form-modal .modal-content").fadeOut(300, function (param) {
-          //   $(".success-message").fadeIn(300, function () {
-          //     setTimeout(function () {
-          //       if ($("body").hasClass("modal-open"))
-          //         $(".form-modal").modal("hide");
-          //     }, 2000);
-          //   });
-          // });
+          $(".form-modal .modal-content").fadeOut(300, function (param) {
+            $(".success-message").fadeIn(300, function () {
+              setTimeout(function () {
+                if ($("body").hasClass("modal-open"))
+                  $(".form-modal").modal("hide");
+              }, 2000);
+            });
+          });
         },
         error: function (response, xhr, data) {
           console.log("error");
