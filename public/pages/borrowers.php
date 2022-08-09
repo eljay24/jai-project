@@ -57,7 +57,10 @@ try {
                                  ON l.l_id = (SELECT MAX(l_id)
                                               FROM jai_db.loans as l2
                                               WHERE l2.b_id = b.b_id LIMIT 1) 
-                                 WHERE (isdeleted = 0) AND (firstname LIKE :search OR middlename LIKE :search OR lastname LIKE :search OR comaker LIKE :search OR b.b_id LIKE :search) ORDER BY b.b_id ASC
+                                 WHERE (isdeleted = 0) AND (firstname LIKE :search OR middlename LIKE :search OR lastname LIKE :search OR comaker LIKE :search OR b.b_id LIKE :search
+                                        OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
+                                        OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
+                                        OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search) ORDER BY b.b_id ASC
                                  LIMIT :offset, :numOfRowsPerPage");
     $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
     $statement->bindValue(':numOfRowsPerPage', $numOfRowsPerPage, PDO::PARAM_INT); // "PDO::PARAM_INT" removes quotes from SQL
