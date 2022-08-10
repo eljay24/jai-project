@@ -14,6 +14,7 @@ $(document).ready(function () {
   createLoan();
   autoFillBorrower();
   submitForm(".submit-payment", ".payment-form", "add-payment.php");
+  setToZero();
   // fillInputs();
   // createCustomSelect();
 });
@@ -162,10 +163,10 @@ function fillInputs(id) {
       // console.log(status);
       // console.log(success);
 
-      $("#loanamount").val(borrowerDetails[0]["amount"]);
-      $("#payable").val(borrowerDetails[0]["payable"]);
-      $("#remainingbalance").val(borrowerDetails[0]["balance"]);
-      $("#amortization").val(borrowerDetails[0]["amortization"]);
+      $("#loanamount").val(borrowerDetails[0]["amount"].toFixed(2));
+      $("#payable").val(borrowerDetails[0]["payable"].toFixed(2));
+      $("#remainingbalance").val(borrowerDetails[0]["balance"].toFixed(2));
+      $("#amortization").val(borrowerDetails[0]["amortization"].toFixed(2));
       $("#mode").val(borrowerDetails[0]["mode"]);
       $("#term").val(borrowerDetails[0]["term"]);
       $("#collectorid").val(borrowerDetails[0]["c_id"]);
@@ -174,6 +175,7 @@ function fillInputs(id) {
       $("#name").val(
         borrowerDetails[0]["cfname"] + " " + borrowerDetails[0]["clname"]
       );
+      $("#type").val("");
       // $("#type").val("");
       // $("#date").val("");
 
@@ -184,7 +186,7 @@ function fillInputs(id) {
       // $("#loanid").val(borrowerDetails[0]["l_id"]);
 
       // $('#payment').val(borrowerDetails[0]['amortization']);
-      // payment.placeholder = borrowerDetails[0]["amortization"].toFixed(2);
+      payment.placeholder = borrowerDetails[0]["amortization"].toFixed(2);
     },
     error: function (xghr, status, error) {
       console.log(xghr);
@@ -192,6 +194,23 @@ function fillInputs(id) {
       console.log(error);
     },
   });
+}
+
+function setToZero() {
+  var selectBox = document.getElementById("type");
+  var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+  if (selectedValue == "Pass") {
+      $('#payment').val(0);
+      document.getElementById("payment").readOnly = true;
+  } else {
+      var paymentAmount = $('#payment').val();
+      if (paymentAmount != 0) {
+          $('#payment').val(paymentAmount);
+      } else {
+          $('#payment').val("");
+      }
+      document.getElementById("payment").readOnly = false;
+  }
 }
 
 function createCustomSelect() {
