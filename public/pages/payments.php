@@ -3,6 +3,10 @@
 try {
   /** @var $conn \PDO */
   require_once "../../views/includes/dbconn.php";
+  
+
+  $search = $_GET['search'] ?? '';
+
   //#region <PAGINATION>
 
   // PAGE NUMBER
@@ -19,7 +23,25 @@ try {
   $nextPage = $pageNum + 1;
   $adjacents = "2";
 
-  $statementTotalRows = $conn->prepare("SELECT COUNT(*) as count FROM jai_db.payments");
+  if ($search) {
+    $statementTotalRows = $conn->prepare("SELECT COUNT(*) as count
+                                          FROM jai_db.payments as p
+                                          INNER JOIN jai_db.collectors as c
+                                          ON p.c_id = c.c_id
+                                          INNER JOIN jai_db.loans as l
+                                          ON p.l_id = l.l_id
+                                          INNER JOIN jai_db.borrowers as b
+                                          ON b.b_id = l.b_id
+                                          WHERE (b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search OR b.comaker LIKE :search OR b.b_id LIKE :search
+                                                 OR c.firstname LIKE :search OR c.middlename LIKE :search OR c.lastname LIKE :search OR p.type LIKE :search
+                                                 OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
+                                                 OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
+                                                 OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search) ORDER BY p.p_id ASC
+                                          ");
+    $statementTotalRows->bindValue(':search', "%$search%");
+  } else {
+    $statementTotalRows = $conn->prepare("SELECT COUNT(*) as count FROM jai_db.payments");
+  }
   $statementTotalRows->execute();
 
   $totalRows = $statementTotalRows->fetchAll(PDO::FETCH_ASSOC);
@@ -37,8 +59,6 @@ try {
 
   //#endregion
 
-  $search = $_GET['search'] ?? '';
-
   if ($search) {
     $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, b.contactno, l.l_id, l.mode, l.balance, l.status,
                                         p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
@@ -50,8 +70,14 @@ try {
                                  INNER JOIN jai_db.borrowers as b 
                                  ON b.b_id = l.b_id
                                  WHERE b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search OR b.b_id LIKE :search OR c.firstname LIKE :search
-                                 OR c.middlename LIKE :search OR c.lastname LIKE :search OR p.type LIKE :search
-                                 ORDER BY p.p_id DESC");
+                                       OR c.middlename LIKE :search OR c.lastname LIKE :search OR p.type LIKE :search
+                                       OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
+                                       OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
+                                       OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
+                                 ORDER BY p.p_id DESC
+                                 LIMIT :offset, :numOfRowsPerPage");
+    $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $statement->bindValue(':numOfRowsPerPage', $numOfRowsPerPage, PDO::PARAM_INT); // "PDO::PARAM_INT" removes quotes from SQL
     $statement->bindValue(':search', "%$search%");
   } else {
     $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, b.contactno, l.l_id, l.mode, l.balance, l.status,
@@ -126,7 +152,7 @@ try {
 
     <form>
       <div class="input-group">
-        <input type="text" class="form-control" placeholder="Search..." name="search" value="<?php echo $search; ?>">
+        <input type="text" class="form-control" placeholder="Search..." name="search" value="<?php echo $search; ?>" autofocus>
         <button class="btn btn-outline-secondary" type="submit">Search</button>
       </div>
     </form>
@@ -268,14 +294,13 @@ try {
                     <input id="loanamount" name="loan-amount" placeholder="Loan Amount" type="text" class="form-control" readonly required>
                   </div>
                 </div>
-              </div>
-              <div class="row">
-
                 <div class="col">
                   <div class="jai-mb-2">
                     <input id="remainingbalance" name="remaining-balance" placeholder="Remaining Balance" type="text" class="form-control" readonly required>
                   </div>
                 </div>
+              </div>
+              <div class="row">
                 <div class="col">
                   <div class="jai-mb-2">
                     <input id="mode" name="mode" placeholder="Mode" type="text" class="form-control" readonly required>
@@ -284,6 +309,11 @@ try {
                 <div class="col">
                   <div class="jai-mb-2">
                     <input id="term" name="term" placeholder="Term" type="text" class="form-control" readonly required>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="jai-mb-2">
+                    <input id="amortization" name="amortization" placeholder="Amortization" type="text" class="form-control" readonly required>
                   </div>
                 </div>
               </div>
@@ -303,10 +333,10 @@ try {
                 </div>
                 <div class="col">
                   <div class="jai-mb-2">
-                    <select id="type" name="type" class="form-control" required>
+                    <select id="type" name="type" class="form-control" onchange="setToZero();" required>
                       <option value="" disabled selected>Select type</option>
-                      <option value="1">Cash</option>
-                      <option value="1">GCash</option>
+                      <option value="Cash">Cash</option>
+                      <option value="GCash">GCash</option>
                       <option value="Pass">Pass</option>
                     </select>
                   </div>
@@ -340,7 +370,7 @@ try {
           <div class="close-button"></div>
         </div>
         <h3>
-          Loan Created.
+          Payment created.
         </h3>
       </div>
     </div>
@@ -348,19 +378,27 @@ try {
 
   <!-- PAGE NAVIGATION -->
   <div style='padding: 10px 20px 0px; border-top: dotted 1px #CCC;'>
-    <strong>Page <?php echo $pageNum . " of " . $totalPages; ?></strong>
+    <strong>Page <?= $pageNum . " of " . $totalPages; ?></strong>
   </div>
 
   <ul class="pagination">
     <?php if ($pageNum > 1) {
-      echo "<li class='page-item'><a class='page-link' href='?page=1'>First Page</a></li>";
+      if (!$search) {
+        echo "<li class='page-item'><a class='page-link' href='?page=1'>First Page</a></li>";
+      } else {
+        echo "<li class='page-item'><a class='page-link' href='?page=1&search=$search'>First Page</a></li>";
+      }
     } ?>
 
     <li <?php if ($pageNum <= 1) {
           echo "class='page-link disabled'";
         } ?>>
       <a <?php if ($pageNum > 1) {
-            echo "class='page-link' href='?page=$previousPage'";
+            if (!$search) {
+              echo "class='page-link' href='?page=$previousPage'";
+            } else {
+              echo "class='page-link' href='?page=$previousPage&search=$search'";
+            }
           } ?>>Previous</a>
     </li>
 
@@ -370,7 +408,11 @@ try {
         if ($counter == $pageNum) {
           echo "<li class='page-item active'><a class='page-link'>$counter</a></li>";
         } else {
-          echo "<li class='page-item'><a class='page-link' href='?page=$counter'>$counter</a></li>";
+          if (!$search) {
+            echo "<li class='page-item'><a class='page-link' href='?page=$counter'>$counter</a></li>";
+          } else {
+            echo "<li class='page-item'><a class='page-link' href='?page=$counter&search=$search'>$counter</a></li>";
+          }
         }
       }
     } elseif ($totalPages > 10) {
@@ -379,15 +421,31 @@ try {
           if ($counter == $pageNum) {
             echo "<li class='page-item active'><a class='page-link'>$counter</a></li>";
           } else {
-            echo "<li class='page-item'><a class='page-link' href='?page=$counter'>$counter</a></li>";
+            if (!$search) {
+              echo "<li class='page-item'><a class='page-link' href='?page=$counter'>$counter</a></li>";
+            } else {
+              echo "<li class='page-item'><a class='page-link' href='?page=$counter&search=$search'>$counter</a></li>";
+            }
           }
         }
         echo "<li class='page-item'><a class='page-link'>...</a></li>";
-        echo "<li class='page-item'><a class='page-link' href='?page=$secondLast'>$secondLast</a></li>";
-        echo "<li class='page-item'><a class='page-link' href='?page=$totalPages'>$totalPages</a></li>";
+        if (!$search) {
+          echo "<li class='page-item'><a class='page-link' href='?page=$secondLast'>$secondLast</a></li>";
+          echo "<li class='page-item'><a class='page-link' href='?page=$totalPages'>$totalPages</a></li>";
+        } else {
+          echo "<li class='page-item'><a class='page-link' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
+          echo "<li class='page-item'><a class='page-link' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
+        }
       } elseif ($pageNum > 4 && $pageNum < $totalPages - 4) {
-        echo "<li class='page-item'><a class='page-link' href='?page=1'>1</a></li>";
-        echo "<li class='page-item'><a class='page-link' href='?page=2'>2</a></li>";
+        if (!$search) {
+          echo "<li class='page-item'><a class='page-link' href='?page=1'>1</a></li>";
+          echo "<li class='page-item'><a class='page-link' href='?page=2'>2</a></li>";
+        } else {
+          echo "<li class='page-item'><a class='page-link' href='?page=1&search=$search'>1</a></li>";
+          echo "<li class='page-item'><a class='page-link' href='?page=2&search=$search'>2</a></li>";
+        }
+
+
         echo "<li class='page-item'><a class='page-link'>...</a></li>";
         for (
           $counter = $pageNum - $adjacents;
@@ -397,15 +455,29 @@ try {
           if ($counter == $pageNum) {
             echo "<li class='page-item active'><a class='page-link'>$counter</a></li>";
           } else {
-            echo "<li class='page-item'><a class='page-link' href='?page=$counter'>$counter</a></li>";
+            if (!$search) {
+              echo "<li class='page-item'><a class='page-link' href='?page=$counter'>$counter</a></li>";
+            } else {
+              echo "<li class='page-item'><a class='page-link' href='?page=$counter&search=$search'>$counter</a></li>";
+            }
           }
         }
         echo "<li class='page-item'><a class='page-link'>...</a></li>";
-        echo "<li class='page-item'><a class='page-link' href='?page=$secondLast'>$secondLast</a></li>";
-        echo "<li class='page-item'><a class='page-link' href='?page=$totalPages'>$totalPages</a></li>";
+        if (!$search) {
+          echo "<li class='page-item'><a class='page-link' href='?page=$secondLast'>$secondLast</a></li>";
+          echo "<li class='page-item'><a class='page-link' href='?page=$totalPages'>$totalPages</a></li>";
+        } else {
+          echo "<li class='page-item'><a class='page-link' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
+          echo "<li class='page-item'><a class='page-link' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
+        }
       } else {
-        echo "<li class='page-item'><a class='page-link' href='?page=1'>1</a></li>";
-        echo "<li class='page-item'><a class='page-link' href='?page=2'>2</a></li>";
+        if (!$search) {
+          echo "<li class='page-item'><a class='page-link' href='?page=1'>1</a></li>";
+          echo "<li class='page-item'><a class='page-link' href='?page=2'>2</a></li>";
+        } else {
+          echo "<li class='page-item'><a class='page-link' href='?page=1&search=$search'>1</a></li>";
+          echo "<li class='page-item'><a class='page-link' href='?page=2&search=$search'>2</a></li>";
+        }
         echo "<li class='page-item'><a class='page-link'>...</a></li>";
         for (
           $counter = $totalPages - 6;
@@ -415,7 +487,11 @@ try {
           if ($counter == $pageNum) {
             echo "<li class='page-item active'><a class='page-link'>$counter</a></li>";
           } else {
-            echo "<li class='page-item'><a class='page-link' href='?page=$counter'>$counter</a></li>";
+            if (!$search) {
+              echo "<li class='page-item'><a class='page-link' href='?page=$counter'>$counter</a></li>";
+            } else {
+              echo "<li class='page-item'><a class='page-link' href='?page=$counter&search=$search'>$counter</a></li>";
+            }
           }
         }
       }
@@ -426,12 +502,20 @@ try {
           echo "class='page-link disabled'";
         } ?>>
       <a <?php if ($pageNum < $totalPages) {
-            echo "class='page-link' href='?page=$nextPage'";
+            if (!$search) {
+              echo "class='page-link' href='?page=$nextPage'";
+            } else {
+              echo "class='page-link' href='?page=$nextPage&search=$search'";
+            }
           } ?>>Next</a>
     </li>
 
     <?php if ($pageNum < $totalPages) {
-      echo "<li class='page-item'><a class='page-link' href='?page=$totalPages'>Last &rsaquo;&rsaquo;</a></li>";
+      if (!$search) {
+        echo "<li class='page-item'><a class='page-link' href='?page=$totalPages'>Last &rsaquo;&rsaquo;</a></li>";
+      } else {
+        echo "<li class='page-item'><a class='page-link' href='?page=$totalPages&search=$search'>Last &rsaquo;&rsaquo;</a></li>";
+      }
     } ?>
   </ul>
 
