@@ -110,7 +110,7 @@ try {
 
     <form>
       <div class="input-group">
-        <input type="text" class="form-control" placeholder="Search..." name="search" value="<?php echo $search; ?>" autofocus>
+        <input type="text" class="form-control" placeholder="Search..." name="search" value="<?php echo $search; ?>" autofocus onfocus="this.select()">
         <button class="btn btn-outline-secondary" type="submit">Search</button>
       </div>
     </form>
@@ -199,7 +199,7 @@ try {
         <div class="col">
           <div class="row">
             <div class="col">
-              <p class="jai-table-name primary-font"><span class="jai-table-label">Loan Reference # <?= $loan['l_id'] ?></span></p>
+              <p class="jai-table-name primary-font"><span class="jai-table-label">Loan Reference #<?= $loan['l_id'] ?></span></p>
               <p class="jai-table-contact sub-font"> <span class="jai-table-label">Amount: </span><?= "₱ " . number_format($loan['amount'], 2) ?></p>
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Payable: </span><?= "₱ " . number_format($loan['payable'], 2) ?></p>
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Balance: </span><?= "₱ " . number_format($loan['balance'], 2) ?></p>
@@ -514,7 +514,7 @@ try {
               </div>
               <div class="col">
                 <div class="jai-mb-2">
-                  <input placeholder="Release Date" type="text" class="form-control datepicker no-limit" name="release-date" value="" readonly>
+                  <input placeholder="Release Date" type="text" class="form-control datepicker no-limit" name="release-date" value="" readonly required>
                 </div>
               </div>
             </div>

@@ -152,7 +152,7 @@ try {
 
     <form>
       <div class="input-group">
-        <input type="text" class="form-control" placeholder="Search..." name="search" value="<?php echo $search; ?>" autofocus>
+        <input type="text" class="form-control" placeholder="Search..." name="search" value="<?php echo $search; ?>" autofocus onfocus="this.select()">
         <button class="btn btn-outline-secondary" type="submit">Search</button>
       </div>
     </form>
