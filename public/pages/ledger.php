@@ -72,10 +72,9 @@ class PDF extends FPDF
 
             $this->SetFont('Courier', '', 14);
             $this->Cell(195.9, 6, 'Ledger', 0, 1, 'C');
-            
+
             $this->SetFont('Courier', '', 22);
             $this->Cell(195.9, 50, 'NO PAYMENTS ON RECORD', 0, 1, 'C');
-
         }
     }
 
@@ -124,9 +123,10 @@ if ($payments) {
 
     $pdf->Cell(195.9, 0, '', 0, 1, 'C');
     $pdf->Cell(195.9, 3, '------------------------------- NOTHING FOLLOWS -------------------------------', 0, 0, 'C');
-
-   
 }
 
-$pdf->Output('I','#'.$payments[0]['b_id'].'-'.$payments[0]['name'].'-LEDGER-'.date('Y-m-d'));
- ?>
+if ($payments) {
+    $pdf->Output('I', '#' . $payments[0]['b_id'] . '-' . $payments[0]['name'] . '-LEDGER-' . date('Y-m-d'));
+} else {
+    $pdf->Output('I', 'Blank Ledger');
+}
