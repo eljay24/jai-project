@@ -84,10 +84,10 @@ try {
                                   ORDER BY l.activeloan DESC, l.l_id DESC
                                   LIMIT :offset, :numOfRowsPerPage");
   }
-  
+
   $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
   $statement->bindValue(':numOfRowsPerPage', $numOfRowsPerPage, PDO::PARAM_INT); // "PDO::PARAM_INT" removes quotes from SQL
-    
+
   $statement->execute();
   $loans = $statement->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -189,7 +189,7 @@ try {
             </div>
             <div class="col">
               <p class="jai-table-name primary-font <?= $loan['passes'] >= 5 ? 'red' : ''; ?>
-                                              <?= $loan['passes'] <5 ? 'green' : '' ?>"><span class="jai-table-label"></span> <?= ucwords(strtolower($loan['firstname'])) . ' ' . ucwords(strtolower($loan['middlename'])) . ' ' . ucwords(strtolower($loan['lastname'])) ?></p>
+                                              <?= $loan['passes'] < 5 ? 'green' : '' ?>"><span class="jai-table-label"></span> <?= ucwords(strtolower($loan['firstname'])) . ' ' . ucwords(strtolower($loan['middlename'])) . ' ' . ucwords(strtolower($loan['lastname'])) ?></p>
               <p class="jai-table-name primary-font"><?= $loan['status'] ?></p>
 
             </div>
@@ -250,6 +250,10 @@ try {
         <div class="col-1 d-flex align-items-center justify-content-around">
           <a href="update.php?id=<?php echo $loan['l_id'] ?>" class="btn btn-primary btn-sm edit-btn">Edit</a>
           <button type="button" class="btn btn-danger btn-sm delete-btn delete-borrower" data-toggle="modal" data-target="#deleteBorrower">Delete</button>
+          
+          <form method="get" action="ledger.php">
+            <input type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $loan['l_id'] ?>"></input>
+          </form>
         </div>
         <div class="d-none hidden-field">
           <form id="hidden-form-<?= $count; ?>" class="hidden-form" action="">
