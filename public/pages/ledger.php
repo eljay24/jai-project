@@ -31,7 +31,7 @@ class PDF extends FPDF
         if ($payments) {
 
             $this->SetFont('Courier', 'B', 14);
-            $this->Cell(118.54, 6, 'JAI Fair Loan', 0, 0, 'R');
+            $this->Cell(118.54, 6, 'JAI FAIR LOAN', 0, 0, 'R');
 
             $this->SetFont('Courier', '', 11);
             $this->Cell(77.36, 6, 'Date: ' . date('Y-m-d'), 0, 1, 'R');
@@ -43,7 +43,7 @@ class PDF extends FPDF
 
             $this->SetFont('Courier', '', 11);
             $this->Cell(97.95, 6, 'Borrower No.: ' . $payments[0]['b_id'], 0, 1);
-            $this->Cell(97.95, 6, 'Name: ' . $payments[0]['name'], 0, 0);
+            $this->Cell(97.95, 6, 'Name: ' . ucwords(strtolower($payments[0]['name'])), 0, 0);
             $this->Cell(97.95, 6, 'Loan Status: ' . $payments[0]['status'], 0, 1, 'R');
 
 
@@ -82,7 +82,7 @@ class PDF extends FPDF
     function Footer()
     {
         $this->SetY(-15);
-        $this->SetFont('Courier', '', 8);
+        $this->SetFont('Courier', '', 10);
         $this->Cell(0, 10, 'Page ' . $this->PageNo() . " of {pages}", 0, 0, 'C');
     }
 }
@@ -128,4 +128,5 @@ if ($payments) {
    
 }
 
-$pdf->Output();
+$pdf->Output('I','#'.$payments[0]['b_id'].'-'.$payments[0]['name'].'-LEDGER-'.date('Y-m-d'));
+ ?>
