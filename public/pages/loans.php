@@ -251,8 +251,8 @@ try {
           <a title="Edit" href="update.php?id=<?php echo $loan['l_id'] ?>" class="btn btn-primary btn-sm edit-btn">Edit</a>
           <button title="Delete" type="button" class="btn btn-danger btn-sm delete-btn delete-borrower" data-toggle="modal" data-target="#deleteBorrower">Delete</button>
           
-          <form method="get" action="ledger.php">
-            <input title="View ledger" type="submit" target="_blank" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $loan['l_id'] ?>" <?= ($loan['paymentsmade'] || $loan['passes']) == 0 ? 'disabled' : '' ?>></input>
+          <form method="get" action="ledger.php" target="_blank">
+            <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $loan['l_id'] ?>" <?= ($loan['paymentsmade'] || $loan['passes']) == 0 ? 'disabled' : '' ?>></input>
           </form>
         </div>
         <div class="d-none hidden-field">
