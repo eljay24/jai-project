@@ -61,7 +61,7 @@ try {
 
   if ($search) {
     $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, b.contactno, l.l_id, l.mode, l.balance, l.status,
-                                        p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
+                                        l.paymentsmade, l.passes, p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
                                  FROM jai_db.payments as p
                                  INNER JOIN jai_db.collectors as c 
                                  ON p.c_id = c.c_id
@@ -81,7 +81,7 @@ try {
     $statement->bindValue(':search', "%$search%");
   } else {
     $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, b.contactno, l.l_id, l.mode, l.balance, l.status,
-                                        p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
+                                        l.paymentsmade, l.passes, p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
                                  FROM jai_db.payments as p
                                  INNER JOIN jai_db.collectors as c 
                                  ON p.c_id = c.c_id
@@ -235,8 +235,12 @@ try {
         <div class="col-1 d-flex align-items-center justify-content-around">
           <!-- <a href="update.php?id=<?php //echo $borrower['b_id'] 
                                       ?>" class="btn btn-primary btn-sm edit-btn">Edit</a> -->
-          <a href="#" class="btn btn-primary btn-sm edit-btn">Edit</a>
-          <button type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower">Delete</button>
+          <a title="Edit" href="#" class="btn btn-primary btn-sm edit-btn">Edit</a>
+          <button title="Delete" type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower">Delete</button>
+          <form method="get" action="ledger.php">
+            <input title="View ledger" type="submit" target="_blank" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $payment['l_id'] ?>" <?= ($payment['paymentsmade'] || $payment['passes']) == 0 ? 'disabled' : '' ?>></input>
+          </form>
+       
         </div>
         <div class="d-none hidden-field">
           <input type="hidden" data-jai-firstname="<?= ucwords(strtolower($borrower['firstname'])) ?>" data-jai-middlename="<?= ucwords(strtolower($borrower['middlename'])) ?>" data-jai-lastname="<?= ucwords(strtolower($borrower['lastname'])) ?>" data-jai-address="<?= ucwords(strtolower($borrower['address'])) ?>" data-jai-contactno="<?= ucwords(strtolower($borrower['contactno'])) ?>" data-jai-birthday="<?= ucwords(strtolower($borrower['birthday'])) ?>" data-jai-businessname="<?= ucwords(strtolower($borrower['businessname'])) ?>" data-jai-occupation="<?= ucwords(strtolower($borrower['occupation'])) ?>" data-jai-comaker="<?= ucwords(strtolower($borrower['comaker'])) ?>" data-jai-comakerno="<?= ucwords(strtolower($borrower['comakerno'])) ?>">
@@ -282,7 +286,7 @@ try {
                 <div class="col">
                   <div class="jai-mb-2 autocomplete">
                     <input type="hidden" class="borrower-id" name="borrower-id" placeholder="Search for borrowers..." autofocus>
-                    <input type="text" name="borrower-name" id="namesearch" class="autocomplete-input form-control" placeholder="Search for borrowers..." autofocus>
+                    <input type="text" name="borrower-name" id="namesearch" class="autocomplete-input form-control" placeholder="Search for borrowers..." onclick="this.select()" autofocus>
                     <div class="suggestions-container">
                     </div>
                   </div>
@@ -370,7 +374,7 @@ try {
           <div class="close-button"></div>
         </div>
         <h3>
-          Payment created.
+          Payment recorded.
         </h3>
       </div>
     </div>

@@ -248,11 +248,11 @@ try {
           <!-- <textarea class="jai-table-input" type="text"></textarea> -->
         </div>
         <div class="col-1 d-flex align-items-center justify-content-around">
-          <a href="update.php?id=<?php echo $loan['l_id'] ?>" class="btn btn-primary btn-sm edit-btn">Edit</a>
-          <button type="button" class="btn btn-danger btn-sm delete-btn delete-borrower" data-toggle="modal" data-target="#deleteBorrower">Delete</button>
+          <a title="Edit" href="update.php?id=<?php echo $loan['l_id'] ?>" class="btn btn-primary btn-sm edit-btn">Edit</a>
+          <button title="Delete" type="button" class="btn btn-danger btn-sm delete-btn delete-borrower" data-toggle="modal" data-target="#deleteBorrower">Delete</button>
           
           <form method="get" action="ledger.php">
-            <input type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $loan['l_id'] ?>"></input>
+            <input title="View ledger" type="submit" target="_blank" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $loan['l_id'] ?>" <?= ($loan['paymentsmade'] || $loan['passes']) == 0 ? 'disabled' : '' ?>></input>
           </form>
         </div>
         <div class="d-none hidden-field">
