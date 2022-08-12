@@ -176,6 +176,8 @@ function fillInputs(id) {
         borrowerDetails[0]["cfname"] + " " + borrowerDetails[0]["clname"]
       );
       $("#type").val("");
+      $("#payment").val("");
+
       // $("#type").val("");
       // $("#date").val("");
 
