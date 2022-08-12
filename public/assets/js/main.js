@@ -395,6 +395,7 @@ function createDatepicker() {
   let date = new Date(),
     maxDate = 0,
     maxYear = "1940:c+nn";
+  console.log(date);
   $(".datepicker").each(function () {
     maxDate = $(this).hasClass("no-limit") ? null : 0;
     maxYear = $(this).hasClass("no-limit") ? "1940:c+10" : "1940:c+nn";

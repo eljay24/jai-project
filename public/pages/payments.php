@@ -305,8 +305,8 @@ try {
                   <div class="jai-mb-2">
                     <select id="type" name="type" class="form-control" required>
                       <option value="" disabled selected>Select type</option>
-                      <option value="1">Cash</option>
-                      <option value="1">GCash</option>
+                      <option value="Cash">Cash</option>
+                      <option value="GCash">GCash</option>
                       <option value="Pass">Pass</option>
                     </select>
                   </div>
