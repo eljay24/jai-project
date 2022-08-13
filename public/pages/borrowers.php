@@ -143,7 +143,7 @@ try {
       <div class="jai-col-ID">ID</div>
       <div class="col">Borrower Details</div>
       <div class="col">Loan Details</div>
-      <div class="col">Remarks</div>
+      <!-- <div class="col">Remarks</div> -->
       <div class="col-1">Action</div>
     </div>
     <?php
@@ -202,9 +202,9 @@ try {
           <?php
           } ?>
         </div>
-        <div class="col position-relative">
+        <!-- <div class="col position-relative">
           <textarea class="jai-table-input" type="text"></textarea>
-        </div>
+        </div> -->
         <div class="col-1 d-flex align-items-center justify-content-around">
           <a title="Edit" href="#" class="btn btn-primary btn-sm edit-btn">Edit</a>
           <button title="Delete" type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower">Delete</button>
@@ -392,7 +392,7 @@ try {
     </div>
   </div>
 
-  <div class="modal fade" data-borrower="1" id="createBorrower" tabindex="-1" role="dialog" aria-labelledby="createBorrowerLabel" aria-hidden="true">
+  <div class="modal fade form-modal" data-borrower="1" id="createBorrower" tabindex="-1" role="dialog" aria-labelledby="createBorrowerLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -503,7 +503,7 @@ try {
     </div>
   </div>
 
-  <div class="modal fade" data-borrower="1" id="editBorrower" tabindex="-1" role="dialog" aria-labelledby="editBorrowerLabel" aria-hidden="true">
+  <div class="modal fade form-modal" data-borrower="1" id="editBorrower" tabindex="-1" role="dialog" aria-labelledby="editBorrowerLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">

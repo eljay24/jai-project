@@ -6,7 +6,6 @@ $(document).ready(function () {
   openModal(".btn-new-loan", "#createloan", false);
   openModal(".btn-new-loan", "#createloan", false);
   openModal(".open-payment-modal", "#paymentModal", false);
-  editForm();
   inputMask();
   createDatepicker();
   validateInputs();
@@ -14,7 +13,14 @@ $(document).ready(function () {
   createLoan();
   autoFillBorrower();
   submitForm(".submit-payment", ".payment-form", "add-payment.php");
-  setToZero();
+  submitForm(".submit-loan", ".create-form", "create-loan.php", createLoan);
+  submitForm(
+    ".submit-edit",
+    ".edit-form",
+    "edit-borrower.php",
+    editBorrowerAction
+  );
+
   // fillInputs();
   // createCustomSelect();
 });
@@ -163,10 +169,10 @@ function fillInputs(id) {
       // console.log(status);
       // console.log(success);
 
-      $("#loanamount").val(borrowerDetails[0]["amount"].toFixed(2));
-      $("#payable").val(borrowerDetails[0]["payable"].toFixed(2));
-      $("#remainingbalance").val(borrowerDetails[0]["balance"].toFixed(2));
-      $("#amortization").val(borrowerDetails[0]["amortization"].toFixed(2));
+      $("#loanamount").val(borrowerDetails[0]["amount"]);
+      $("#payable").val(borrowerDetails[0]["payable"]);
+      $("#remainingbalance").val(borrowerDetails[0]["balance"]);
+      $("#amortization").val(borrowerDetails[0]["amortization"]);
       $("#mode").val(borrowerDetails[0]["mode"]);
       $("#term").val(borrowerDetails[0]["term"]);
       $("#collectorid").val(borrowerDetails[0]["c_id"]);
@@ -175,9 +181,6 @@ function fillInputs(id) {
       $("#name").val(
         borrowerDetails[0]["cfname"] + " " + borrowerDetails[0]["clname"]
       );
-      $("#type").val("");
-      $("#payment").val("");
-
       // $("#type").val("");
       // $("#date").val("");
 
@@ -188,7 +191,7 @@ function fillInputs(id) {
       // $("#loanid").val(borrowerDetails[0]["l_id"]);
 
       // $('#payment').val(borrowerDetails[0]['amortization']);
-      payment.placeholder = borrowerDetails[0]["amortization"].toFixed(2);
+      // payment.placeholder = borrowerDetails[0]["amortization"].toFixed(2);
     },
     error: function (xghr, status, error) {
       console.log(xghr);
@@ -198,143 +201,40 @@ function fillInputs(id) {
   });
 }
 
-function setToZero() {
-  var selectBox = document.getElementById("type");
-  var selectedValue = selectBox.options[selectBox.selectedIndex].value;
-  if (selectedValue == "Pass") {
-      $('#payment').val(0);
-      document.getElementById("payment").readOnly = true;
-  } else {
-      var paymentAmount = $('#payment').val();
-      if (paymentAmount != 0) {
-          $('#payment').val(paymentAmount);
-      } else {
-          $('#payment').val("");
-      }
-      document.getElementById("payment").readOnly = false;
-  }
-}
+function editBorrowerAction(data, newValues, rowId) {
+  let newData = JSON.parse(data),
+    borrower =
+      newData.firstname + " " + newData.middlename + " " + newData.lastname,
+    contactno = newData.contactno,
+    address = newData.address,
+    comaker = newData.comaker,
+    comakerno = newData.comakerno;
 
-function createCustomSelect() {
-  $("select").each(function () {
-    var $this = $(this),
-      numberOfOptions = $(this).children("option").length;
+  $(".jai-data-row").each(function () {
+    if ($(this).data("row") == rowId) {
+      $(this).find(".jai-table-name .value").text(borrower);
+      $(this).find(".jai-table-contact .value").text(contactno);
+      $(this).find(".jai-table-address .value").text(address);
+      $(this).find(".jai-table-comaker .value").text(comaker);
+      $(this).find(".jai-table-comakerno .value").text(comakerno);
 
-    $this.addClass("select-hidden");
-    $this.wrap('<div class="select"></div>');
-    $this.after('<div class="select-styled"></div>');
-
-    var $styledSelect = $this.next("div.select-styled");
-    $styledSelect.text($this.children("option").eq(0).text());
-
-    var $list = $("<ul />", {
-      class: "select-options",
-    }).insertAfter($styledSelect);
-
-    for (var i = 0; i < numberOfOptions; i++) {
-      $("<li />", {
-        text: $this.children("option").eq(i).text(),
-        rel: $this.children("option").eq(i).val(),
-      }).appendTo($list);
-      //if ($this.children('option').eq(i).is(':selected')){
-      //  $('li[rel="' + $this.children('option').eq(i).val() + '"]').addClass('is-selected')
-      //}
-    }
-
-    var $listItems = $list.children("li");
-
-    $styledSelect.click(function (e) {
-      e.stopPropagation();
-      $("div.select-styled.active")
-        .not(this)
+      $(this)
+        .find(".hidden-form input")
         .each(function () {
-          $(this).removeClass("active").next("ul.select-options").hide();
-        });
-      $(this).toggleClass("active").next("ul.select-options").toggle();
-    });
+          let inputName = $(this).attr("name"),
+            input = $(this);
 
-    $listItems.click(function (e) {
-      e.stopPropagation();
-      $styledSelect.text($(this).text()).removeClass("active");
-      $this.val($(this).attr("rel"));
-      $list.hide();
-      //console.log($this.val());
-    });
-
-    $(document).click(function () {
-      $styledSelect.removeClass("active");
-      $list.hide();
-    });
-  });
-}
-
-function editForm() {
-  let inputChanged = false;
-
-  $(".submit-edit").on("click", function (event) {
-    event.preventDefault();
-    let formValues = $(".edit-form").serialize(),
-      newValues = $(".edit-form").serializeArray();
-    rowId = $(this)
-      .parents(".modal-content")
-      .find('input[name="data-row"]')
-      .val();
-
-    if (validateForm(".edit-form"))
-      $.ajax({
-        url: "../ajax-calls/edit-borrower.php",
-        method: "POST",
-        data: formValues,
-        dataType: "json",
-        beforeSend: function () {},
-        success: function (data) {
-          let borrower =
-              data.firstname + " " + data.middlename + " " + data.lastname,
-            contactno = data.contactno,
-            address = data.address,
-            comaker = data.comaker,
-            comakerno = data.comakerno;
-          console.log(rowId);
-
-          $(".jai-data-row").each(function () {
-            if ($(this).data("row") == rowId) {
-              $(this).find(".jai-table-name .value").text(borrower);
-              $(this).find(".jai-table-contact .value").text(contactno);
-              $(this).find(".jai-table-address .value").text(address);
-              $(this).find(".jai-table-comaker .value").text(comaker);
-              $(this).find(".jai-table-comakerno .value").text(comakerno);
-
-              $(this)
-                .find(".hidden-form input")
-                .each(function () {
-                  let inputName = $(this).attr("name"),
-                    input = $(this);
-
-                  $(newValues).each(function () {
-                    if (inputName == this["name"]) {
-                      input.val(this["value"]);
-                    }
-                  });
-                });
+          $(newValues).each(function () {
+            if (inputName == this["name"]) {
+              input.val(this["value"]);
             }
           });
-
-          $("#editBorrower .modal-content").fadeOut(300, function (param) {
-            $(".success-message").fadeIn(300, function () {
-              setTimeout(function () {
-                if ($("body").hasClass("modal-open"))
-                  $("#editBorrower").modal("hide");
-              }, 2000);
-            });
-          });
-        },
-        error: function (response) {
-          console.log("error");
-          console.log(response);
-        },
-      });
+        });
+    }
   });
 }
+
+// submitForm('.submit-create', '.create-form', 'create-borrower.php');
 
 function createForm() {
   let inputChanged = false;
@@ -372,51 +272,130 @@ function createForm() {
 }
 
 function createLoan() {
-  let inputChanged = false;
+  if ($(".create-form").length) $(".create-form")[0].reset();
+}
 
-  $(".submit-loan").on("click", function (event) {
+function submitForm(submitBtn, thisForm, ajaxFile, ajaxAction) {
+  $(submitBtn).on("click", function (event) {
     event.preventDefault();
-    let form = $(".create-form"),
-      formValues = form.serialize();
+    let form = $(thisForm),
+      formValues = form.serialize(),
+      newValues = form.serializeArray(),
+      rowId = $(this)
+        .parents(".modal-content")
+        .find('input[name="data-row"]')
+        .val();
 
-    console.log(formValues);
-
-    if (validateForm(".create-form"))
+    // console.log(form.serializeArray());
+    if (validateForm(thisForm))
       $.ajax({
-        url: "../ajax-calls/create-loan.php",
+        url: "../ajax-calls/" + ajaxFile,
         method: "POST",
         data: formValues,
-        dataType: "json",
-        beforeSend: function (xhr, data) {
-          // console.log(data);
-        },
+        dataType: "html",
+        beforeSend: function () {},
         success: function (data) {
-          console.log(data);
+          // console.log(data);
 
-          form[0].reset();
+          if (ajaxAction) ajaxAction(data, newValues, rowId);
 
-          $("#createloan .modal-content").fadeOut(300, function (param) {
+          $(".form-modal .modal-content").fadeOut(300, function (param) {
             $(".success-message").fadeIn(300, function () {
               setTimeout(function () {
                 if ($("body").hasClass("modal-open"))
-                  $("#createloan").modal("hide");
+                  $(".form-modal").modal("hide");
               }, 2000);
             });
           });
         },
-        error: function (response, status) {
+        error: function (response, xhr, data) {
           console.log("error");
-          console.log(status);
+          console.log(response);
+          console.log(xhr);
+          console.log(data);
         },
       });
   });
 }
 
+/*                             */
+/*      START Validations      */
+/*                             */
+
+function validateForm(form) {
+  $(form)
+    .find(
+      "input[required]:not([type='hidden']), select[required]:not([type='hidden']), textarea[required]:not([type='hidden']), checkbox[required]:not([type='hidden'])"
+    )
+    .each(function () {
+      clearErrors(this);
+      checkEmptyInput(this);
+    });
+
+  return !$(form).find(".error").length;
+}
+
+function validateInputs() {
+  $(
+    "input[required]:not([type='hidden']), select[required]:not([type='hidden']), textarea[required]:not([type='hidden']), checkbox[required]:not([type='hidden'])"
+  ).on("input", function (event) {
+    clearErrors(this);
+    checkEmptyInput(this);
+  });
+}
+
+function checkEmptyInput(thisInput) {
+  if (!$(thisInput).val()) {
+    $(thisInput)
+      .addClass("error")
+      .after("<span>" + validationMessages.required + "</span>");
+  }
+}
+
+function clearErrors(thisInput) {
+  $(thisInput).removeClass("error");
+  $(thisInput).next("span").remove();
+}
+
+function inputMask() {
+  $(".phone-number").mask("+63 000-000-0000");
+
+  $(".letters-only").mask("Z", {
+    translation: {
+      Z: {
+        pattern: /[a-zA-Z ]/,
+        recursive: true,
+      },
+    },
+  });
+
+  $(".alphanumeric").mask("X", {
+    translation: {
+      X: {
+        pattern: /[a-zA-Z0-9 ]/,
+        recursive: true,
+      },
+    },
+  });
+
+  $(".money").mask("000,000,000,000");
+}
+
+/*                           */
+/*      END Validations      */
+/*                           */
+
+/*                                */
+/*      START Modify Forms        */
+/*                                */
+
 function createDatepicker() {
   let date = new Date(),
     maxDate = 0,
-    maxYear = "1940:c+nn";
-  console.log(date);
+    maxYear = "1940:c+nn",
+    currentYear = date.getFullYear(),
+    currentMonth = date.getMonth() + 1,
+    currentDate = date.getDate();
   $(".datepicker").each(function () {
     maxDate = $(this).hasClass("no-limit") ? null : 0;
     maxYear = $(this).hasClass("no-limit") ? "1940:c+10" : "1940:c+nn";
@@ -432,9 +411,7 @@ function createDatepicker() {
     });
 
     if ($(this).hasClass("today"))
-      $(this).val(
-        date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()
-      );
+      $(this).val(currentYear + "-" + currentMonth + "-" + currentDate);
   });
 
   $(".datepicker").on("click contextmenu", function () {
@@ -605,99 +582,59 @@ function customSelectYear() {
   }
 }
 
-function inputMask() {
-  $(".phone-number").mask("+63 000-000-0000");
+function createCustomSelect() {
+  $("select").each(function () {
+    var $this = $(this),
+      numberOfOptions = $(this).children("option").length;
 
-  $(".letters-only").mask("Z", {
-    translation: {
-      Z: {
-        pattern: /[a-zA-Z ]/,
-        recursive: true,
-      },
-    },
-  });
+    $this.addClass("select-hidden");
+    $this.wrap('<div class="select"></div>');
+    $this.after('<div class="select-styled"></div>');
 
-  $(".alphanumeric").mask("X", {
-    translation: {
-      X: {
-        pattern: /[a-zA-Z0-9 ]/,
-        recursive: true,
-      },
-    },
-  });
+    var $styledSelect = $this.next("div.select-styled");
+    $styledSelect.text($this.children("option").eq(0).text());
 
-  $(".money").mask("000,000,000,000");
-}
+    var $list = $("<ul />", {
+      class: "select-options",
+    }).insertAfter($styledSelect);
 
-function validateForm(form) {
-  $(form)
-    .find(
-      "input[required]:not([type='hidden']), select[required]:not([type='hidden']), textarea[required]:not([type='hidden']), checkbox[required]:not([type='hidden'])"
-    )
-    .each(function () {
-      clearErrors(this);
-      checkEmptyInput(this);
+    for (var i = 0; i < numberOfOptions; i++) {
+      $("<li />", {
+        text: $this.children("option").eq(i).text(),
+        rel: $this.children("option").eq(i).val(),
+      }).appendTo($list);
+      //if ($this.children('option').eq(i).is(':selected')){
+      //  $('li[rel="' + $this.children('option').eq(i).val() + '"]').addClass('is-selected')
+      //}
+    }
+
+    var $listItems = $list.children("li");
+
+    $styledSelect.click(function (e) {
+      e.stopPropagation();
+      $("div.select-styled.active")
+        .not(this)
+        .each(function () {
+          $(this).removeClass("active").next("ul.select-options").hide();
+        });
+      $(this).toggleClass("active").next("ul.select-options").toggle();
     });
 
-  return !$(form).find(".error").length;
-}
+    $listItems.click(function (e) {
+      e.stopPropagation();
+      $styledSelect.text($(this).text()).removeClass("active");
+      $this.val($(this).attr("rel"));
+      $list.hide();
+      //console.log($this.val());
+    });
 
-function validateInputs() {
-  $(
-    "input[required]:not([type='hidden']), select[required]:not([type='hidden']), textarea[required]:not([type='hidden']), checkbox[required]:not([type='hidden'])"
-  ).on("input", function (event) {
-    clearErrors(this);
-    checkEmptyInput(this);
+    $(document).click(function () {
+      $styledSelect.removeClass("active");
+      $list.hide();
+    });
   });
 }
 
-function checkEmptyInput(thisInput) {
-  if (!$(thisInput).val()) {
-    $(thisInput)
-      .addClass("error")
-      .after("<span>" + validationMessages.required + "</span>");
-  }
-}
-
-function clearErrors(thisInput) {
-  $(thisInput).removeClass("error");
-  $(thisInput).next("span").remove();
-}
-
-function submitForm(submitBtn, thisForm, ajaxFile, ajaxAction) {
-  $(submitBtn).on("click", function (event) {
-    event.preventDefault();
-    let form = $(thisForm),
-      formValues = form.serialize();
-
-    console.log(form.serializeArray());
-    if (validateForm(thisForm))
-      $.ajax({
-        url: "../ajax-calls/" + ajaxFile,
-        method: "POST",
-        data: formValues,
-        dataType: "html",
-        beforeSend: function () {},
-        success: function (data) {
-          console.log(data);
-
-          if (ajaxAction) ajaxAction;
-
-          $(".form-modal .modal-content").fadeOut(300, function (param) {
-            $(".success-message").fadeIn(300, function () {
-              setTimeout(function () {
-                if ($("body").hasClass("modal-open"))
-                  $(".form-modal").modal("hide");
-              }, 2000);
-            });
-          });
-        },
-        error: function (response, xhr, data) {
-          console.log("error");
-          console.log(response);
-          console.log(xhr);
-          console.log(data);
-        },
-      });
-  });
-}
+/*                              */
+/*      END Modify Forms        */
+/*                              */

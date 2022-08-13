@@ -433,7 +433,7 @@ try {
   </div>
 </div>
 
-<div class="modal fade" data-loan="1" id="createloan" tabindex="-1" role="dialog" aria-labelledby="createloanLabel" aria-hidden="true">
+<div class="modal fade form-modal" data-loan="1" id="createloan" tabindex="-1" role="dialog" aria-labelledby="createloanLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
