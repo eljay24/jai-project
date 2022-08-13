@@ -186,7 +186,7 @@ try {
               <p class="sub-font">Contact: <?= $payment['contactno'] ?></p>
             </div>
             <div class="col">
-              <p class="primary-font">Loan Ref# <?= $payment['l_id'] ?></p>
+              <p class="primary-font">Loan Ref #<?= $payment['l_id'] ?></p>
             </div>
 
           </div>
@@ -325,7 +325,7 @@ try {
                 <div class="col">
                   <div class="jai-mb-2">
                     <input type="hidden" id="collectorid" name="collector-id" value="">
-                    <select id="collectorname" name="collector-name" class="form-control">
+                    <select id="collectorname" name="collector-name" class="form-control" required>
                       <option value="" disabled selected>Select collector</option>
                       <?php
                       foreach ($collectors as $i => $collector) {

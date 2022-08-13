@@ -141,6 +141,7 @@ function autoFillBorrower() {
     $(this).parent().prev().val($(this).text());
     $(this).parent().siblings(".borrower-id").val($(this).data("borrower"));
     fillInputs($(this).data("borrower"));
+    document.getElementById("payment").focus();
   });
 }
 

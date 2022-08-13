@@ -28,7 +28,7 @@ try {
                                           FROM jai_db.loans as l
                                           INNER JOIN jai_db.borrowers as b
                                           ON l.b_id = b.b_id
-                                          WHERE (b.isdeleted = 0) AND (b.b_id LIKE :search OR b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search
+                                          WHERE (b.isdeleted = 0) AND (b.b_id LIKE :search OR b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search OR l.status LIKE :search
                                                  OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                                  OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
                                                  OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search)
@@ -63,7 +63,7 @@ try {
                                  FROM jai_db.borrowers AS b
                                  INNER JOIN jai_db.loans AS l
                                  ON b.b_id = l.b_id
-                                 WHERE (b.isdeleted = 0) AND (b.b_id LIKE :search OR b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search
+                                 WHERE (b.isdeleted = 0) AND (b.b_id LIKE :search OR b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search OR l.status LIKE :search
                                         OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                         OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
                                         OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search)
@@ -198,21 +198,21 @@ try {
         </div>
         <div class="col">
           <div class="row">
+            <p class="jai-table-name primary-font"><span class="jai-table-label">Loan Reference #<?= $loan['l_id'] ?></span></p>
+          </div>
+          <div class="row">
             <div class="col">
-              <p class="jai-table-name primary-font"><span class="jai-table-label">Loan Reference #<?= $loan['l_id'] ?></span></p>
               <p class="jai-table-contact sub-font"> <span class="jai-table-label">Amount: </span><?= "₱ " . number_format($loan['amount'], 2) ?></p>
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Payable: </span><?= "₱ " . number_format($loan['payable'], 2) ?></p>
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Balance: </span><?= "₱ " . number_format($loan['balance'], 2) ?></p>
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Amortization: </span><?= "₱ " . number_format($loan['amortization'], 2) ?></p>
-
             </div>
             <div class="col">
-              <br>
               <p class="jai-table-address sub-font"> <?= ucwords(strtolower($loan['term'])) . ', ' . ucwords(strtolower($loan['mode'])) ?></p>
+              <p class="jai-table-release sub-font"> <span class="jai-table-label">Rel. Date: </span> <?= $loan['releasedate'] ?></p>
+              <p class="jai-table-due sub-font"> <span class="jai-table-label">Due Date: </span> <?= $loan['duedate'] ?></p>
               <p class="jai-table-address sub-font">Interest: <?= number_format($interestRate * 100, 2) . '%' ?></p>
               <p class="jai-table-address sub-font">Monthly interest: <?= number_format($monthlyInterestRate * 100, 2) . '%' ?></p>
-
-
             </div>
           </div>
         </div>
@@ -228,13 +228,9 @@ try {
           <div class="row">
             <div class="col">
               <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Total Paid: </span> <?= "₱ " . number_format($amount, 2) ?> </p>
-              <p class="jai-table-mode sub-font"> <span class="jai-table-label">to follow: </span> TEST</p>
-              <p class="jai-table-amort sub-font"> <span class="jai-table-label">to follow: </span> TEST</p>
             </div>
             <div class="col">
               <p class="jai-table-release sub-font"> <span class="jai-table-label">Est. Loss: </span> <?= "₱ " . number_format($passAmount, 2) ?> </p>
-              <p class="jai-table-release sub-font"> <span class="jai-table-label">Release Date: </span> 01/01/22</p>
-              <p class="jai-table-due sub-font"> <span class="jai-table-label">Due Date: </span> 01/01/22</p>
             </div>
           </div>
           <?php if ($lastPayment != 0) { ?>
@@ -250,7 +246,7 @@ try {
         <div class="col-1 d-flex align-items-center justify-content-around">
           <a title="Edit" href="update.php?id=<?php echo $loan['l_id'] ?>" class="btn btn-primary btn-sm edit-btn">Edit</a>
           <button title="Delete" type="button" class="btn btn-danger btn-sm delete-btn delete-borrower" data-toggle="modal" data-target="#deleteBorrower">Delete</button>
-          
+
           <form method="get" action="ledger.php" target="_blank">
             <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $loan['l_id'] ?>" <?= ($loan['paymentsmade'] || $loan['passes']) == 0 ? 'disabled' : '' ?>></input>
           </form>
