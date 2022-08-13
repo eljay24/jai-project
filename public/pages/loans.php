@@ -440,7 +440,7 @@ try {
         <h5 class="modal-title">Create Loan</h5>
       </div>
       <div class="modal-body">
-        <form class="create-form" autocomplete="off" action="create-loan" method="post" enctype="multipart/form-data">
+        <form class="action-form" autocomplete="off" action="create-loan" method="post" enctype="multipart/form-data">
           <input type="hidden" class="d-none" name="b_id" value="">
           <input name="data-row" type="hidden" class="d-none" value=''>
 
@@ -536,7 +536,7 @@ try {
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary btn-sm close-modal" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary btn-sm submit-loan">Submit</button>
+        <button type="button" class="btn btn-primary btn-sm btn-action">Submit</button>
       </div>
     </div>
     <div class="success-message" style="display: none;">

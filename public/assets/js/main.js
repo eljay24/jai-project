@@ -1,52 +1,91 @@
 $(document).ready(function () {
-  closeModal();
-  openModal(".edit-btn", "#editBorrower", openEdit);
-  openModal(".delete-borrower", "#deleteBorrower", openDelete);
-  openModal(".create-borrower", "#createBorrower", false);
-  openModal(".btn-new-loan", "#createloan", false);
-  openModal(".btn-new-loan", "#createloan", false);
-  openModal(".open-payment-modal", "#paymentModal", false);
   inputMask();
   createDatepicker();
   validateInputs();
-  createForm();
-  createLoan();
   autoFillBorrower();
-  submitForm(".submit-payment", ".payment-form", "add-payment.php");
-  submitForm(".submit-loan", ".create-form", "create-loan.php", createLoan);
+
+  // Toggle Modal Functions START
+  openModal(".create-borrower", ".form-modal", "submit-create", openCreate);
+  openModal(".edit-btn", ".form-modal", "submit-edit", openEdit);
+  openModal(".delete-borrower", "#deleteBorrower", '', openDelete);
+
+  openModal(".btn-new-loan", ".form-modal", "submit-loan", openCreate);
+
+  openModal(
+    ".open-payment-modal",
+    "#paymentModal",
+    "submit-payment",
+    openCreate
+  );
+
+  closeModal();
+  // Toggle Modal Functions END
+
+  // Modal Submit Functions START
+  submitForm(".submit-create", ".action-form", "create-borrower.php");
   submitForm(
     ".submit-edit",
-    ".edit-form",
+    ".action-form",
     "edit-borrower.php",
     editBorrowerAction
   );
 
-  // fillInputs();
-  // createCustomSelect();
+  submitForm(".submit-loan", ".action-form", "create-loan.php");
+
+  submitForm(".submit-payment", ".action-form", "add-payment.php");
+  // Modal Submit Functions END
 });
 
 /*                                */
 /*         Global Variables       */
 /*                                */
 
-const validationMessages = {
-  name: "Please enter a valid name",
-  firstname: "Please enter a valid first name",
-  middlename: "Please enter a valid middle name",
-  lastname: "Please enter a valid last name",
-  date: "Please enter a valid date",
-  phone: "Please enter a valid phone number",
-  occupation: "Please enter a occupation",
-  required: "This field is required",
+const messages = {
+  validationMessages: {
+    name: "Please enter a valid name",
+    firstname: "Please enter a valid first name",
+    middlename: "Please enter a valid middle name",
+    lastname: "Please enter a valid last name",
+    date: "Please enter a valid date",
+    phone: "Please enter a valid phone number",
+    occupation: "Please enter a occupation",
+    required: "This field is required",
+  },
+  successMessages: {
+    borrower: {
+      create: "New Borrower successfully created",
+      update: "Borrower successfully updated",
+      delete: "Borrower has been deleted",
+    },
+    Loan: {
+      create: "New loan successfully created",
+      update: "Loan successfully updated",
+    },
+    Payment: {
+      create: "New payment added",
+      update: "Loan successfully updated",
+    },
+  },
+  confirmMessages: {
+    borrower : {
+      delete: "Are you sure you want to delete"
+    }
+  }
 };
 
 /*                                */
 /*    Modal Related Functions     */
 /*                                */
 
-function openModal(buttonName, modalName, modalFunction) {
-  $(buttonName).on("click", function (event) {
+function openModal(
+  buttonName,
+  modalName,
+  submitBtnClass,
+  modalFunction = false
+) {
+  $(document).on("click", buttonName, function (event) {
     event.preventDefault();
+    $(modalName).find(".btn-action").addClass(submitBtnClass);
     if (modalFunction) {
       modalFunction(buttonName, modalName, $(this));
     }
@@ -54,13 +93,13 @@ function openModal(buttonName, modalName, modalFunction) {
   });
 }
 
-function openEdit(buttonName, modalName, thisValue) {
+function openEdit(modalClass, modalName, thisValue) {
   let formValues = $(thisValue)
       .parent()
       .siblings(".hidden-field")
       .find(".hidden-form")
       .serializeArray(),
-    modalInput = $(modalName).find("form.edit-form input");
+    modalInput = $(modalName).find("form.action-form input");
 
   modalInput.each(function () {
     let inputName = $(this).attr("name"),
@@ -76,7 +115,7 @@ function openEdit(buttonName, modalName, thisValue) {
 
 function openDelete(buttonName, modalName, thisValue) {
   let modalParent = $("#deleteBorrower"),
-    constText = "Are you sure you want to delete ",
+    constText = messages.confirmMessages.borrower.delete,
     modalBody = modalParent.find(".modal-body"),
     modalID = thisValue.parents(".jai-data-row").find(".jai-col-ID").text(),
     deleteID = modalParent.find(".delete-form input"),
@@ -97,6 +136,9 @@ function closeModal() {
     $(modalName).modal("toggle");
   });
 
+  $(".modal").on("hide.bs.modal", function () {
+    $(".btn-action").attr("class", "btn btn-primary btn-sm btn-action");
+  });
   $(".modal").on("hidden.bs.modal", function () {
     if ($(".modal-content:hidden")) {
       $(".modal-content").show();
@@ -108,6 +150,7 @@ function closeModal() {
 /*                                */
 /*    Form Related Functions      */
 /*                                */
+
 function autoFillBorrower() {
   $("#namesearch").on("input focus", function () {
     $(this).next().addClass("show-results");
@@ -234,49 +277,23 @@ function editBorrowerAction(data, newValues, rowId) {
   });
 }
 
-// submitForm('.submit-create', '.create-form', 'create-borrower.php');
-
-function createForm() {
-  let inputChanged = false;
-
-  $(".submit-create").on("click", function (event) {
-    event.preventDefault();
-    let form = $(".create-form"),
-      formValues = form.serialize();
-
-    if (validateForm(".create-form"))
-      $.ajax({
-        url: "../ajax-calls/create-borrower.php",
-        method: "POST",
-        data: formValues,
-        dataType: "json",
-        beforeSend: function () {},
-        success: function (data) {
-          console.log(data);
-
-          $("#createBorrower .modal-content").fadeOut(300, function (param) {
-            $(".success-message").fadeIn(300, function () {
-              setTimeout(function () {
-                if ($("body").hasClass("modal-open"))
-                  $("#createBorrower").modal("hide");
-              }, 2000);
-            });
-          });
-        },
-        error: function (response) {
-          console.log("error");
-          console.log(response);
-        },
-      });
-  });
-}
-
-function createLoan() {
-  if ($(".create-form").length) $(".create-form")[0].reset();
+function openCreate() {
+  if ($(".action-form").length) {
+    let noResetArr = [],
+      count = 0;
+    $(".action-form input.no-reset").each(function () {
+      noResetArr.push($(this).val());
+    });
+    $(".action-form")[0].reset();
+    $(".action-form input.no-reset").each(function () {
+      $(this).val(noResetArr[count]);
+      count++;
+    });
+  }
 }
 
 function submitForm(submitBtn, thisForm, ajaxFile, ajaxAction) {
-  $(submitBtn).on("click", function (event) {
+  $(document).on("click", submitBtn, function (event) {
     event.preventDefault();
     let form = $(thisForm),
       formValues = form.serialize(),

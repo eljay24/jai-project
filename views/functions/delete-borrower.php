@@ -16,11 +16,11 @@ if (!$id) {
     // var_dump($id);
     // echo "</pre>";
     // exit;
-    header('Location: index.php');
+    header('Location: ../../public/pages/borrowers');
 }
 
 $statement = $conn->prepare("DELETE FROM jai_db.borrowers WHERE b_id = :id");
 $statement->bindValue(":id", $id);
 $statement->execute();
 
-header('Location: index.php');
+header('Location:  ../../public/pages/borrowers');
