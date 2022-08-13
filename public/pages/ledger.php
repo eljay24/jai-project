@@ -5,7 +5,7 @@ require "../../views/includes/fpdf.php";
 
 $loanID = $_GET['loanID'];
 
-$statementLoan = $conn->prepare("SELECT b.b_id, CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) as name, l.amortization, l.mode, l.term,
+$statementLoan = $conn->prepare("SELECT b.b_id, l.l_id, CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) as name, l.amortization, l.mode, l.term,
                                         l.amount as loanamount, l.payable, l.releasedate, l.duedate, l.status, p.amount as paymentamount, p.type, p.date
                                  FROM jai_db.payments as p
                                  INNER JOIN jai_db.loans as l
@@ -35,7 +35,7 @@ class PDF extends FPDF
             $this->SetFont('Courier', '', 11);
             $this->Cell(65.3, 6, 'Page ' . $this->PageNo() . " of {pages}", 0, 0, 'L');
 
-            $this->SetFont('Courier', 'B', 14);            
+            $this->SetFont('Courier', 'B', 14);
             $this->Cell(65.3, 6, 'JAI FAIR LOAN', 0, 0, 'C');
 
             $this->SetFont('Courier', '', 11);
@@ -82,9 +82,8 @@ class PDF extends FPDF
             $this->Cell(195.9, 30, '', 0, 1, 'C');
 
             $this->SetFont('Courier', '', 22);
-            $this->Cell(195.9, 20, 'NO PAYMENTS ON RECORD.', 0, 1, 'C');
+            $this->Cell(195.9, 20, 'INVALID LOAN ID / NO PAYMENTS ON RECORD.', 0, 1, 'C');
             $this->Cell(195.9, 20, 'LEDGER UNAVAILABLE.', 0, 1, 'C');
-
         }
     }
 
@@ -108,6 +107,8 @@ class PDF extends FPDF
 // PRINTABLE AREA 215.9 - (10 * 2) = 195.9mm
 
 $pdf = new PDF('P', 'mm', 'Legal');
+
+$pdf->SetTitle('JAI Ledger B' . $payments[0]['b_id'] . ' L' . $payments[0]['l_id'] . ' (' . $payments[0]['status'] . ')');
 
 // Define alias for total no. of pages
 $pdf->AliasNbPages('{pages}');
@@ -140,6 +141,10 @@ if ($payments) {
 
 
 $totalPages = $pdf->PageNo();
+
+$pdf->SetCreator('JAI Fair Loan');
+$pdf->SetAuthor('JAI Fair Loan');
+$pdf->SetSubject('JAI Ledger_#' . $payments[0]['b_id'] . '_' . $payments[0]['name'] . '_' . date('Y-m-d'));
 
 if ($payments) {
     $pdf->Output('I', 'JAI Ledger_#' . $payments[0]['b_id'] . '_' . $payments[0]['name'] . '_' . date('Y-m-d') . '.pdf');
