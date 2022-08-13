@@ -469,6 +469,9 @@ textarea.form-control {
 .jai-table .jai-image-col {
   flex: 0 0 120px;
 }
+.jai-data-row:hover {
+  background-color: #06283d1a;
+}
 
 .modal#editBorrower .modal-dialog,
 .modal#editBorrower .success-message, .modal#createBorrower .modal-dialog,
