@@ -247,7 +247,6 @@ try {
           <!-- <textarea class="jai-table-input" type="text"></textarea> -->
         </div>
         <div class="col-1 d-flex align-items-center justify-content-around">
-          <a title="Edit" href="update.php?id=<?php echo $loan['l_id'] ?>" class="btn btn-primary btn-sm edit-btn">Edit</a>
           <button title="Delete" type="button" class="btn btn-danger btn-sm delete-btn delete-borrower" data-toggle="modal" data-target="#deleteBorrower">Delete</button>
 
           <form method="get" action="ledger.php" target="_blank">
@@ -452,15 +451,19 @@ try {
             </div>
             <div class="row">
               <div class="col">
-                <div class="jai-mb-2">
-                  <select name="borrower" id="borrower" class="form-control" required>
+                <div class="jai-mb-2 autocomplete">
+                  <!-- <select name="borrower" id="borrower" class="form-control" required>
                     <option value="" disabled selected>Select borrower</option>
                     <?php
-                    foreach ($borrowers as $i => $borrower) {
-                      echo '<option value="' . $borrower['b_id'] . '">#' . $borrower['b_id'] . ' ' . ucwords(strtolower($borrower['firstname'])) . ' ' . ucwords(strtolower($borrower['middlename'])) . ' ' . ucwords(strtolower($borrower['lastname'])) . '</option>';
-                    }
+                    //foreach ($borrowers as $i => $borrower) {
+                      //echo '<option value="' . $borrower['b_id'] . '">#' . $borrower['b_id'] . ' ' . ucwords(strtolower($borrower['firstname'])) . ' ' . ucwords(strtolower($borrower['middlename'])) . ' ' . ucwords(strtolower($borrower['lastname'])) . '</option>';
+                    //}
                     ?>
-                  </select>
+                  </select> -->
+                  <input type="hidden" class="borrower-id" name="borrower" placeholder="Search for borrowers..." autofocus>
+                  <input required type="text" name="borrower-name" id="namesearch" class="autocomplete-input form-control" placeholder="Search for borrowers..." onclick="this.select()" autofocus>
+                  <div class="suggestions-container">
+                  </div>
                 </div>
               </div>
             </div>
@@ -518,7 +521,7 @@ try {
               </div>
               <div class="col">
                 <div class="jai-mb-2">
-                  <input placeholder="Release Date" type="text" class="form-control datepicker no-limit" name="release-date" value="" readonly required>
+                  <input placeholder="Release Date" type="text" class="form-control datepicker no-limit min-date-today" name="release-date" value="" readonly required>
                 </div>
               </div>
             </div>

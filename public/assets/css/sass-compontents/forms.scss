@@ -28,13 +28,14 @@ textarea {
     &:focus {
       border-color: $jai-error;
     }
-    + span {
-      position: absolute;
-      color: $jai-error;
-      font-size: 13px;
-      margin-left: 22px;
-    }
   }
+}
+
+.error-message {
+  position: absolute;
+  color: $jai-error;
+  font-size: 13px;
+  margin-left: 22px;
 }
 
 textarea {
