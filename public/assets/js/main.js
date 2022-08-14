@@ -50,6 +50,7 @@ const messages = {
     phone: "Please enter a valid phone number",
     occupation: "Please enter a occupation",
     required: "This field is required",
+    noresults: "No results found",
   },
   successMessages: {
     borrower: {
@@ -153,32 +154,30 @@ function closeModal() {
 
 function autoFillBorrower() {
   $("#namesearch").on("input focus", function () {
-    $(this).next().addClass("show-results");
+    $(this).siblings(".suggestions-container").addClass("show-results");
     var name = $("#namesearch").val(),
       thisInput = $(this);
     $.ajax({
       url: "../ajax-calls/suggestions.php",
       method: "POST",
-      dataType: "json",
       data: {
         suggestion: name,
       },
-      dataType: "html",
+      dataType: "json",
       beforeSend: function () {},
       success: function (data) {
-        //response (data);
-        // console.log(data);
-        thisInput.next().html(data);
+        thisInput.siblings(".suggestions-container").html(data);
       },
-      error: function (response) {
-        console.log(response);
+      error: function (response, xhr, data) {
+        console.log(xhr);
+        thisInput
+          .siblings(messages.confirmMessages.borrower.noresults)
+          .html(data);
       },
     });
   });
 
   $(document).on("click", function (e) {
-    // console.log($(e.target));
-
     let target = $(e.target);
     if (!target.is(".autocomplete-input")) {
       $(".suggestions-container").removeClass("show-results");
@@ -186,19 +185,22 @@ function autoFillBorrower() {
   });
 
   $(document).on("click", ".suggestion-container", function () {
-    // console.log("clicked!");
-    $(this).parent().prev().val($(this).text());
+    let datePickerSelector = $(this)
+        .parents(".action-form")
+        .find(".datepicker"),
+      setMinDate = $(this).data("releasedate");
+
+    $(this).parent().siblings(".autocomplete-input").val($(this).text());
     $(this).parent().siblings(".borrower-id").val($(this).data("borrower"));
     fillInputs($(this).data("borrower"));
-    document.getElementById("payment").focus();
+    clearErrors($(this).parent().siblings(".autocomplete-input"));
+    checkEmptyInput($(this).parent().siblings(".autocomplete-input"));
+    datePickerSelector.datepicker("option", "minDate", new Date(setMinDate));
+    $("#payment").focus();
   });
 }
 
 function fillInputs(id) {
-  // var selectBox = document.getElementById("borrower");
-  // var payment = document.getElementById("payment");
-
-  // console.log(selectedValue);
   $.ajax({
     url: "../ajax-calls/get-borrower.php",
     method: "POST",
@@ -208,11 +210,6 @@ function fillInputs(id) {
     },
     dataType: "json",
     success: function (borrowerDetails, status, success) {
-      // console.log("test");
-      console.log(borrowerDetails);
-      // console.log(status);
-      // console.log(success);
-
       $("#loanamount").val(borrowerDetails[0]["amount"]);
       $("#payable").val(borrowerDetails[0]["payable"]);
       $("#remainingbalance").val(borrowerDetails[0]["balance"]);
@@ -225,17 +222,6 @@ function fillInputs(id) {
       $("#name").val(
         borrowerDetails[0]["cfname"] + " " + borrowerDetails[0]["clname"]
       );
-      // $("#type").val("");
-      // $("#date").val("");
-
-      // document.getElementById("payment").readOnly = false;
-      // $("#payment").val("");
-
-      // // 1 hidden inputs:
-      // $("#loanid").val(borrowerDetails[0]["l_id"]);
-
-      // $('#payment').val(borrowerDetails[0]['amortization']);
-      // payment.placeholder = borrowerDetails[0]["amortization"].toFixed(2);
     },
     error: function (xghr, status, error) {
       console.log(xghr);
@@ -304,7 +290,6 @@ function submitForm(submitBtn, thisForm, ajaxFile, ajaxAction) {
         .find('input[name="data-row"]')
         .val();
 
-    // console.log(form.serializeArray());
     if (validateForm(thisForm))
       $.ajax({
         url: "../ajax-calls/" + ajaxFile,
@@ -313,10 +298,8 @@ function submitForm(submitBtn, thisForm, ajaxFile, ajaxAction) {
         dataType: "html",
         beforeSend: function () {},
         success: function (data) {
-          // console.log(data);
-
           if (ajaxAction) ajaxAction(data, newValues, rowId);
-
+          console.log(formValues);
           $(".form-modal .modal-content").fadeOut(300, function (param) {
             $(".success-message").fadeIn(300, function () {
               setTimeout(function () {
@@ -356,7 +339,14 @@ function validateForm(form) {
 function validateInputs() {
   $(
     "input[required]:not([type='hidden']), select[required]:not([type='hidden']), textarea[required]:not([type='hidden']), checkbox[required]:not([type='hidden'])"
-  ).on("input blur", function (event) {
+  ).on("input change", function (event) {
+    clearErrors(this);
+    checkEmptyInput(this);
+  });
+
+  $(
+    "input[required]:not([type='hidden']):not(.datepicker):not(.autocomplete-input), select[required]:not([type='hidden']), textarea[required]:not([type='hidden']), checkbox[required]:not([type='hidden'])"
+  ).on("blur", function (event) {
     clearErrors(this);
     checkEmptyInput(this);
   });
@@ -366,7 +356,11 @@ function checkEmptyInput(thisInput) {
   if (!$(thisInput).val()) {
     $(thisInput)
       .addClass("error")
-      .after("<span>" + messages.validationMessages.required + "</span>");
+      .after(
+        "<span class='error-message'>" +
+          messages.validationMessages.required +
+          "</span>"
+      );
   }
 }
 
@@ -414,6 +408,7 @@ function createDatepicker() {
     currentYear = date.getFullYear(),
     currentMonth = date.getMonth() + 1,
     currentDate = date.getDate();
+
   $(".datepicker").each(function () {
     maxDate = $(this).hasClass("no-limit") ? null : 0;
     maxYear = $(this).hasClass("no-limit") ? "1940:c+10" : "1940:c+nn";
@@ -643,7 +638,6 @@ function createCustomSelect() {
       $styledSelect.text($(this).text()).removeClass("active");
       $this.val($(this).attr("rel"));
       $list.hide();
-      //console.log($this.val());
     });
 
     $(document).click(function () {

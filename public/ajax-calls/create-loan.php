@@ -3,14 +3,6 @@
 require "../../views/includes/dbconn.php";
 
 if (isset($_POST['b_id'])) {
-  // $b_id = $_POST['b_id'];
-
-  // $id = $b_id;
-
-  // $statement = $conn->prepare("SELECT * FROM jai_db.borrowers WHERE b_id = :b_id");
-  // $statement->bindValue(':b_id', $id);
-  // $statement->execute();
-  // $borrower = $statement->fetch(PDO::FETCH_ASSOC);
 
   $errors = [];
 
@@ -25,13 +17,6 @@ if (isset($_POST['b_id'])) {
   $statement->execute();
   $rates = $statement->fetch(PDO::FETCH_ASSOC);
 
-  // echo "<pre>";
-  // var_dump($rates);
-  // exit;
-
-
-  // $b_id = $_POST['b_id'];
-  // $data_row = $_POST['data-row'];
   $borrower = $_POST['borrower'];
   $amount = $_POST['amount'];
   $mode = $_POST['mode'];
@@ -39,31 +24,6 @@ if (isset($_POST['b_id'])) {
   $collector = $_POST['collector'];
   $release_date = $_POST['release-date'];
   $due_date = date('Y-m-d', strtotime('+'.$term, strtotime($release_date)));
-
-  // echo json_encode($b_id.$data_row.$borrower.$amount.$mode.$term.$collector.$release_date);
-  // $comaker = $_POST['comaker'];
-  // $comakerno = $_POST['comakerno'];
-  // $remarks = $_POST['remarks'];
-  // $datecreated = '';
-
-
-  // $details = [
-  //   'firstname' => $firstname,
-  //   'middlename' => $middlename,
-  //   'lastname' => $lastname,
-  //   'birthday' => $birthday,
-  //   'contactno' => $contactno,
-  //   'address' => $address,
-  //   'occupation' => $occupation,
-  //   'businessname'  => $businessname,
-  //   'comaker' => $comaker,
-  //   'comakerno' => $comakerno,
-  //   'remarks' => $remarks,
-  //   'datecreated' => ''
-
-  // ];
-
-
 
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -92,12 +52,6 @@ if (isset($_POST['b_id'])) {
       $statement2->bindValue(':status', 'Active');
 
       $statement2->execute();
-
-      // $statement3 = $conn->prepare("");
-
-      //     echo json_encode($details);
-      //   } else {
-      //   }
     }
   }
 }

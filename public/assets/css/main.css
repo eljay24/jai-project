@@ -94,7 +94,7 @@ body * {
   border-radius: 35px;
   padding: 10px 20px;
 }
-.btn.edit-btn, .btn.delete-btn, .btn.ledger-btn {
+.btn.edit-btn, .btn.delete-btn {
   text-indent: -9999999px;
   background-size: 25px;
   background-position: center;
@@ -107,9 +107,6 @@ body * {
 }
 .btn.delete-btn {
   background-image: url(../icons/delete-icon.png);
-}
-.btn.ledger-btn {
-  background-image: url(../icons/ledger.png);
 }
 
 input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active,
@@ -148,8 +145,8 @@ input.error:focus,
 textarea.error:focus {
   border-color: #d32121;
 }
-input.error + span,
-textarea.error + span {
+
+.error-message {
   position: absolute;
   color: #d32121;
   font-size: 13px;
@@ -468,9 +465,6 @@ textarea.form-control {
 }
 .jai-table .jai-image-col {
   flex: 0 0 120px;
-}
-.jai-data-row:hover {
-  background-color: #06283d1a;
 }
 
 .modal#editBorrower .modal-dialog,
