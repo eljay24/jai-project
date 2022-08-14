@@ -28,7 +28,7 @@ try {
                                           FROM jai_db.loans as l
                                           INNER JOIN jai_db.borrowers as b
                                           ON l.b_id = b.b_id
-                                          WHERE (b.isdeleted = 0) AND (b.b_id LIKE :search OR b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search OR l.status LIKE :search
+                                          WHERE (b.b_id LIKE :search OR b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search OR l.status LIKE :search
                                                  OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                                  OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
                                                  OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search)
@@ -57,13 +57,13 @@ try {
 
   if ($search) {
     $statement = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
-                                        b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
+                                        b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated, b.isdeleted,
                                         l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
                                         l.releasedate, l.duedate, l.status, l.c_id, l.paymentsmade, l.passes
                                  FROM jai_db.borrowers AS b
                                  INNER JOIN jai_db.loans AS l
                                  ON b.b_id = l.b_id
-                                 WHERE (b.isdeleted = 0) AND (b.b_id LIKE :search OR b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search OR l.status LIKE :search
+                                 WHERE (b.b_id LIKE :search OR b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search OR l.status LIKE :search
                                         OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                         OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
                                         OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search)
@@ -74,13 +74,12 @@ try {
     $statement->bindValue(':search', "%$search%");
   } else {
     $statement = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
-                                        b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
+                                        b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated, b.isdeleted,
                                         l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
                                         l.releasedate, l.duedate, l.status, l.c_id, l.paymentsmade, l.passes
                                   FROM jai_db.borrowers as b
                                   INNER JOIN jai_db.loans as l
                                   ON b.b_id = l.b_id
-                                  WHERE b.isdeleted = 0
                                   ORDER BY l.activeloan DESC, l.l_id DESC
                                   LIMIT :offset, :numOfRowsPerPage");
   }
@@ -106,7 +105,7 @@ try {
     <h1>Loans</h1>
   </div>
   <div class="d-flex justify-content-between">
-    <a href="create.php" type="button" class="btn btn-outline-success btn-new-loan">New loan</a>
+    <a type="button" class="btn btn-outline-success btn-new-loan">New loan</a>
 
     <form>
       <div class="input-group">
@@ -194,7 +193,11 @@ try {
               <p class="jai-table-name primary-font <?= $loan['passes'] >= 5 ? 'red' : ''; ?>
                                               <?= $loan['passes'] < 5 ? 'green' : '' ?>"><span class="jai-table-label"></span> <?= ucwords(strtolower($loan['firstname'])) . ' ' . ucwords(strtolower($loan['middlename'])) . ' ' . ucwords(strtolower($loan['lastname'])) ?></p>
               <p class="jai-table-name primary-font"><?= $loan['status'] ?></p>
-
+              <?php
+              if ($loan['isdeleted'] == 1) {
+                echo '<p class="sub-font">Borrower deleted</p>';
+              }
+              ?>
             </div>
           </div>
 
@@ -247,7 +250,7 @@ try {
           <!-- <textarea class="jai-table-input" type="text"></textarea> -->
         </div>
         <div class="col-1 d-flex align-items-center justify-content-around">
-          <button title="Delete" type="button" class="btn btn-danger btn-sm delete-btn delete-borrower" data-toggle="modal" data-target="#deleteBorrower">Delete</button>
+          <button title="Delete" type="button" class="btn btn-danger btn-sm delete-btn delete-borrower" data-toggle="modal" data-target="#deleteBorrower" disabled>Delete</button>
 
           <form method="get" action="ledger.php" target="_blank">
             <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $loan['l_id'] ?>" <?= ($loan['paymentsmade'] || $loan['passes']) == 0 ? 'disabled' : '' ?>></input>
@@ -456,12 +459,12 @@ try {
                     <option value="" disabled selected>Select borrower</option>
                     <?php
                     //foreach ($borrowers as $i => $borrower) {
-                      //echo '<option value="' . $borrower['b_id'] . '">#' . $borrower['b_id'] . ' ' . ucwords(strtolower($borrower['firstname'])) . ' ' . ucwords(strtolower($borrower['middlename'])) . ' ' . ucwords(strtolower($borrower['lastname'])) . '</option>';
+                    //echo '<option value="' . $borrower['b_id'] . '">#' . $borrower['b_id'] . ' ' . ucwords(strtolower($borrower['firstname'])) . ' ' . ucwords(strtolower($borrower['middlename'])) . ' ' . ucwords(strtolower($borrower['lastname'])) . '</option>';
                     //}
                     ?>
                   </select> -->
                   <input type="hidden" class="borrower-id" name="borrower" placeholder="Search for borrowers..." autofocus>
-                  <input required type="text" name="borrower-name" id="namesearch" class="autocomplete-input form-control" placeholder="Search for borrowers..." onclick="this.select()" autofocus>
+                  <input required type="text" name="borrower-name" id="newloansearch" class="autocomplete-input form-control" placeholder="Search for borrowers..." onclick="this.select()" autofocus>
                   <div class="suggestions-container">
                   </div>
                 </div>
@@ -521,7 +524,7 @@ try {
               </div>
               <div class="col">
                 <div class="jai-mb-2">
-                  <input placeholder="Release Date" type="text" class="form-control datepicker no-limit min-date-today" name="release-date" value="" readonly required>
+                  <input placeholder="Release Date" type="text" class="form-control datepicker no-limit" name="release-date" value="" readonly required>
                 </div>
               </div>
             </div>

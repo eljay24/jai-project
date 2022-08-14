@@ -207,7 +207,7 @@ try {
         </div> -->
         <div class="col-1 d-flex align-items-center justify-content-around">
           <a title="Edit" href="#" class="btn btn-primary btn-sm edit-btn">Edit</a>
-          <button title="Delete" type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower">Delete</button>
+          <button title="Delete" type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower" <?= $borrower['activeloan'] == 1 ? 'disabled' : '' ?>>Delete</button>
         </div>
         <div class="d-none hidden-field">
           <form id="hidden-form-<?= $count; ?>" class="hidden-form" action="">

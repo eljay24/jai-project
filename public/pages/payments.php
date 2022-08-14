@@ -197,11 +197,11 @@ try {
             <div class="col">
               <p class="jai-table-comaker primary-font <?= $payment['borrowerfname'] == 'Angelo' ? 'red' : ''; ?>
                                                 <?= $payment['borrowerfname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Amount:</span> <?= "₱ " .  number_format($payment['amount'], 2) ?></p>
-              <p class="sub-font">Mode: <?= ucwords(strtolower($payment['mode'])) ?></p>
+              <p class="jai-table-contact sub-font"> <span class="jai-table-label">Type: </span><?php echo $payment['type'] ?></p>
             </div>
             <div class="col">
-              <p class="jai-table-contact primary-font"> <span class="jai-table-label">Type: </span><?php echo $payment['type'] ?></p>
-              <p class="sub-font">Date: <?= date_format($date, "M-d-Y") ?></p>
+              <p class="primary-font">Date: <?= date_format($date, "M-d-Y") ?></p>
+              <p class="sub-font">Mode: <?= ucwords(strtolower($payment['mode'])) ?></p>
             </div>
             <!-- <div class="col">
               <p class="jai-table-amount primary-font"><span class="jai-table-label">Collector: </span><?php echo ucwords(strtolower($payment['collectorfname'])) . ' ' . ucwords(strtolower($payment['collectormname'])) . ' ' . ucwords(strtolower($payment['collectorlname'])) ?></p>
@@ -237,7 +237,7 @@ try {
           <!-- <a href="update.php?id=<?php //echo $borrower['b_id'] 
                                       ?>" class="btn btn-primary btn-sm edit-btn">Edit</a> -->
           <a title="Edit" href="#" class="btn btn-primary btn-sm edit-btn">Edit</a>
-          <button title="Delete" type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower">Delete</button>
+          <button title="Delete" type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower" disabled>Delete</button>
           <form method="get" action="ledger.php" target="_blank">
             <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $payment['l_id'] ?>" <?= ($payment['paymentsmade'] || $payment['passes']) == 0 ? 'disabled' : '' ?>></input>
           </form>
