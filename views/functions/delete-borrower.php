@@ -19,7 +19,9 @@ if (!$id) {
     header('Location: ../../public/pages/borrowers');
 }
 
-$statement = $conn->prepare("DELETE FROM jai_db.borrowers WHERE b_id = :id");
+$statement = $conn->prepare("UPDATE jai_db.borrowers 
+                             SET isdeleted = 1
+                             WHERE b_id = :id AND activeloan = 0");
 $statement->bindValue(":id", $id);
 $statement->execute();
 
