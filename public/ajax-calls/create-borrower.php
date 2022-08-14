@@ -51,11 +51,12 @@ if (isset($_POST['firstname'])) {
 
     if (empty($errors)) {
 
-      $statement = $conn->prepare("INSERT INTO jai_db.borrowers (firstname, middlename, lastname, address, contactno, birthday, businessname,
+      $statement = $conn->prepare("INSERT INTO jai_db.borrowers (picture, firstname, middlename, lastname, address, contactno, birthday, businessname,
             occupation, comaker, comakerno, remarks, datecreated)
-   VALUES (:firstname, :middlename, :lastname, :address, :contactno, :birthday, :businessname,
+   VALUES (:picture, :firstname, :middlename, :lastname, :address, :contactno, :birthday, :businessname,
             :occupation, :comaker, :comakerno, :remarks, :datecreated)");
 
+      $statement->bindValue(':picture', 'assets/icons/borrower-picture-placeholder.jpg');
       $statement->bindValue(':firstname', $firstname);
       $statement->bindValue(':middlename', $middlename);
       $statement->bindValue(':lastname', $lastname);
