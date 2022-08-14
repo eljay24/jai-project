@@ -183,12 +183,13 @@ try {
             <div class="col">
               <p class="jai-table-name primary-font <?= $payment['borrowerfname'] == 'Angelo' ? 'red' : ''; ?>
                                                 <?= $payment['borrowerfname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label"></span> <?= '#' . $payment['b_id'] . ' ' . ucwords(strtolower($payment['borrowerfname'])) . ' ' . ucwords(strtolower($payment['borrowermname'])) . ' ' . ucwords(strtolower($payment['borrowerlname'])) ?></p>
-              <p class="sub-font">Contact: <?= $payment['contactno'] ?></p>
             </div>
             <div class="col">
               <p class="primary-font">Loan Ref #<?= $payment['l_id'] ?></p>
             </div>
-
+          </div>
+          <div class="row">
+            <p class="sub-font">Contact: <?= $payment['contactno'] ?></p>
           </div>
         </div>
         <div class="col">
