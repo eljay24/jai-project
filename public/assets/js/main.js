@@ -7,7 +7,7 @@ $(document).ready(function () {
   // Toggle Modal Functions START
   openModal(".create-borrower", ".form-modal", "submit-create", openCreate);
   openModal(".edit-btn", ".form-modal", "submit-edit", openEdit);
-  openModal(".delete-borrower", "#deleteBorrower", '', openDelete);
+  openModal(".delete-borrower", "#deleteBorrower", "", openDelete);
 
   openModal(".btn-new-loan", ".form-modal", "submit-loan", openCreate);
 
@@ -67,10 +67,10 @@ const messages = {
     },
   },
   confirmMessages: {
-    borrower : {
-      delete: "Are you sure you want to delete"
-    }
-  }
+    borrower: {
+      delete: "Are you sure you want to delete",
+    },
+  },
 };
 
 /*                                */
@@ -282,11 +282,11 @@ function openCreate() {
   if ($(".action-form").length) {
     let noResetArr = [],
       count = 0;
-    $(".action-form input.no-reset").each(function () {
+    $(".action-form .no-reset").each(function () {
       noResetArr.push($(this).val());
     });
     $(".action-form")[0].reset();
-    $(".action-form input.no-reset").each(function () {
+    $(".action-form .no-reset").each(function () {
       $(this).val(noResetArr[count]);
       count++;
     });
@@ -356,7 +356,7 @@ function validateForm(form) {
 function validateInputs() {
   $(
     "input[required]:not([type='hidden']), select[required]:not([type='hidden']), textarea[required]:not([type='hidden']), checkbox[required]:not([type='hidden'])"
-  ).on("input", function (event) {
+  ).on("input blur", function (event) {
     clearErrors(this);
     checkEmptyInput(this);
   });
@@ -366,7 +366,7 @@ function checkEmptyInput(thisInput) {
   if (!$(thisInput).val()) {
     $(thisInput)
       .addClass("error")
-      .after("<span>" + validationMessages.required + "</span>");
+      .after("<span>" + messages.validationMessages.required + "</span>");
   }
 }
 
@@ -374,6 +374,14 @@ function clearErrors(thisInput) {
   $(thisInput).removeClass("error");
   $(thisInput).next("span").remove();
 }
+
+/*                           */
+/*      END Validations      */
+/*                           */
+
+/*                                */
+/*      START Modify Forms        */
+/*                                */ 4;
 
 function inputMask() {
   $(".phone-number").mask("+63 000-000-0000");
@@ -398,14 +406,6 @@ function inputMask() {
 
   $(".money").mask("000,000,000,000");
 }
-
-/*                           */
-/*      END Validations      */
-/*                           */
-
-/*                                */
-/*      START Modify Forms        */
-/*                                */
 
 function createDatepicker() {
   let date = new Date(),

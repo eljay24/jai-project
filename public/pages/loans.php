@@ -255,6 +255,7 @@ try {
           <form id="hidden-form-<?= $count; ?>" class="hidden-form" action="">
             <input type="hidden" name="data-row" value='row-<?= $loan['b_id'] ?>'>
             <input type="hidden" name="b_id" value="<?= ucwords(strtolower($loan['b_id'])) ?>">
+            <input type="hidden" name="borrower" value="<?= ucwords(strtolower($loan['b_id'])) ?>">
             <input type="hidden" name="amount" value="<?= ucwords(strtolower($loan['amount'])) ?>">
             <input type="hidden" name="mode" value="<?= ucwords(strtolower($loan['mode'])) ?>">
             <input type="hidden" name="term" value="<?= ucwords(strtolower($loan['term'])) ?>">
@@ -492,7 +493,7 @@ try {
                     <option value="" disabled selected>Term</option>
                     <?php
                     foreach ($terms as $term) {
-                      echo "<option>" . ucwords(strtolower($term['term']))  . "</option>";
+                      echo "<option value='" . ucwords(strtolower($term['term'])) . "'>" . ucwords(strtolower($term['term']))  . "</option>";
                     }
                     ?>
                   </select>
