@@ -94,7 +94,7 @@ body * {
   border-radius: 35px;
   padding: 10px 20px;
 }
-.btn.edit-btn, .btn.delete-btn {
+.btn.edit-btn, .btn.delete-btn, .btn.ledger-btn {
   text-indent: -9999999px;
   background-size: 25px;
   background-position: center;
@@ -107,6 +107,9 @@ body * {
 }
 .btn.delete-btn {
   background-image: url(../icons/delete-icon.png);
+}
+.btn.ledger-btn {
+  background-image: url(../icons/ledger.png);
 }
 
 input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active,
