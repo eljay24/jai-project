@@ -360,7 +360,7 @@ try {
                 </div>
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input id="date" class="datepicker form-control today no-reset" name="date" placeholder="Select date of payment" type="text" class="form-control" onkeydown="return false" required>
+                    <input id="date" class="datepicker form-control today no-reset set-min-date" name="date" placeholder="Select date of payment" type="text" class="form-control" onkeydown="return false" required>
                   </div>
                 </div>
               </div>

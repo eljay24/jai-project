@@ -518,7 +518,7 @@ try {
               </div>
               <div class="col">
                 <div class="jai-mb-2">
-                  <input placeholder="Release Date" type="text" class="form-control datepicker no-limit" name="release-date" value="" readonly required>
+                  <input placeholder="Release Date" type="text" class="form-control datepicker no-limit min-date-today" name="release-date" value="" readonly required>
                 </div>
               </div>
             </div>

@@ -187,7 +187,7 @@ function autoFillBorrower() {
   $(document).on("click", ".suggestion-container", function () {
     let datePickerSelector = $(this)
         .parents(".action-form")
-        .find(".datepicker"),
+        .find(".set-min-date"),
       setMinDate = $(this).data("releasedate");
 
     $(this).parent().siblings(".autocomplete-input").val($(this).text());
@@ -425,6 +425,13 @@ function createDatepicker() {
 
     if ($(this).hasClass("today"))
       $(this).val(currentYear + "-" + currentMonth + "-" + currentDate);
+
+    if ($(this).hasClass("min-date-today"))
+      $(this).datepicker(
+        "option",
+        "minDate",
+        new Date(currentYear + "-" + currentMonth + "-" + currentDate)
+      );
   });
 
   $(".datepicker").on("click contextmenu", function () {
