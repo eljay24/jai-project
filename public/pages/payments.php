@@ -3,7 +3,7 @@
 try {
   /** @var $conn \PDO */
   require_once "../../views/includes/dbconn.php";
-  
+
 
   $search = $_GET['search'] ?? '';
 
@@ -240,10 +240,16 @@ try {
           <form method="get" action="ledger.php" target="_blank">
             <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $payment['l_id'] ?>" <?= ($payment['paymentsmade'] || $payment['passes']) == 0 ? 'disabled' : '' ?>></input>
           </form>
-       
+
         </div>
         <div class="d-none hidden-field">
-          <input type="hidden" data-jai-firstname="<?= ucwords(strtolower($borrower['firstname'])) ?>" data-jai-middlename="<?= ucwords(strtolower($borrower['middlename'])) ?>" data-jai-lastname="<?= ucwords(strtolower($borrower['lastname'])) ?>" data-jai-address="<?= ucwords(strtolower($borrower['address'])) ?>" data-jai-contactno="<?= ucwords(strtolower($borrower['contactno'])) ?>" data-jai-birthday="<?= ucwords(strtolower($borrower['birthday'])) ?>" data-jai-businessname="<?= ucwords(strtolower($borrower['businessname'])) ?>" data-jai-occupation="<?= ucwords(strtolower($borrower['occupation'])) ?>" data-jai-comaker="<?= ucwords(strtolower($borrower['comaker'])) ?>" data-jai-comakerno="<?= ucwords(strtolower($borrower['comakerno'])) ?>">
+          <form id="hidden-form-<?= $count; ?>" class="hidden-form" action="">
+            <input type="hidden" name="data-row" value='row-<?= $loan['b_id'] ?>'>
+            <input type="hidden" name="b_id" value="<?= ucwords(strtolower($loan['b_id'])) ?>">
+            <input type="hidden" name="borrower-id" value="<?= $loan['b_id'] ?>">
+            <input type="hidden" name="borrower-name" value="<?= '#' . $payment['b_id'] . ' ' . ucwords(strtolower($payment['borrowerfname'])) . ' ' . ucwords(strtolower($payment['borrowermname'])) . ' ' . ucwords(strtolower($payment['borrowerlname'])) ?>">
+            <input type="hidden" name="loan-amount" value="<?= number_format($payment['amount'], 2) ?>">
+          </form>
         </div>
       </div>
     <?php } ?>
