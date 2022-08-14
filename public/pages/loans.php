@@ -128,6 +128,9 @@ try {
     $count = 1;
     foreach ($loans as $i => $loan) {
 
+      $releaseDate = date_create($loan['releasedate']);
+      $dueDate = date_create($loan['duedate']);
+
       // SELECT LAST PAYMENT OF LOAN      
       $statementLastPayment = $conn->prepare("SELECT l_id, amount, type, date
                                               FROM jai_db.payments
@@ -209,8 +212,8 @@ try {
             </div>
             <div class="col">
               <p class="jai-table-address sub-font"> <?= ucwords(strtolower($loan['term'])) . ', ' . ucwords(strtolower($loan['mode'])) ?></p>
-              <p class="jai-table-release sub-font"> <span class="jai-table-label">Rel. Date: </span> <?= $loan['releasedate'] ?></p>
-              <p class="jai-table-due sub-font"> <span class="jai-table-label">Due Date: </span> <?= $loan['duedate'] ?></p>
+              <p class="jai-table-release sub-font"> <span class="jai-table-label">Rel. Date: </span> <?= date_format($releaseDate, 'M-d-Y') ?></p>
+              <p class="jai-table-due sub-font"> <span class="jai-table-label">Due Date: </span> <?= date_format($dueDate, 'M-d-Y') ?></p>
               <p class="jai-table-address sub-font">Interest: <?= number_format($interestRate * 100, 2) . '%' ?></p>
               <p class="jai-table-address sub-font">Monthly interest: <?= number_format($monthlyInterestRate * 100, 2) . '%' ?></p>
             </div>
