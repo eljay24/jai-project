@@ -272,7 +272,7 @@ try {
           <h5 class="modal-title">Create Payment</h5>
         </div>
         <div class="modal-body">
-          <form class="payment-form" autocomplete="off" action="payment-loan" method="post" enctype="multipart/form-data">
+          <form class="action-form" autocomplete="off" action="payment-loan" method="post" enctype="multipart/form-data">
             <input type="hidden" class="d-none" name="b_id" value="">
             <input name="data-row" type="hidden" class="d-none" value=''>
 
@@ -354,7 +354,7 @@ try {
                 </div>
                 <div class="col">
                   <div class="jai-mb-2">
-                    <input id="date" class="datepicker form-control today" name="date" placeholder="Select date of payment" type="text" class="form-control" onkeydown="return false" required>
+                    <input id="date" class="datepicker form-control today no-reset" name="date" placeholder="Select date of payment" type="text" class="form-control" onkeydown="return false" required>
                   </div>
                 </div>
               </div>

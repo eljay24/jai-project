@@ -143,7 +143,7 @@ try {
       <div class="jai-col-ID">ID</div>
       <div class="col">Borrower Details</div>
       <div class="col">Loan Details</div>
-      <div class="col">Remarks</div>
+      <!-- <div class="col">Remarks</div> -->
       <div class="col-1">Action</div>
     </div>
     <?php
@@ -202,9 +202,9 @@ try {
           <?php
           } ?>
         </div>
-        <div class="col position-relative">
+        <!-- <div class="col position-relative">
           <textarea class="jai-table-input" type="text"></textarea>
-        </div>
+        </div> -->
         <div class="col-1 d-flex align-items-center justify-content-around">
           <a title="Edit" href="#" class="btn btn-primary btn-sm edit-btn">Edit</a>
           <button title="Delete" type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower">Delete</button>
@@ -383,7 +383,7 @@ try {
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary btn-sm close-modal" data-dismiss="modal">Cancel</button>
-          <form class="delete-form" style="display: inline-block" method="post" action="delete.php">
+          <form class="delete-form" style="display: inline-block" method="post" action="/JAI/views/functions/delete-borrower.php">
             <input type="hidden" name="b_id" value="">
             <button type="submit" class="btn btn-danger btn-sm">Delete</button>
           </form>
@@ -392,14 +392,14 @@ try {
     </div>
   </div>
 
-  <div class="modal fade" data-borrower="1" id="createBorrower" tabindex="-1" role="dialog" aria-labelledby="createBorrowerLabel" aria-hidden="true">
+  <div class="modal fade form-modal" data-borrower="1" id="createBorrower" tabindex="-1" role="dialog" aria-labelledby="createBorrowerLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Create Borrower</h5>
         </div>
         <div class="modal-body">
-          <form class="create-form" autocomplete="off" action="create-borrower" method="post" enctype="multipart/form-data">
+          <form class="action-form" autocomplete="off" action="create-borrower" method="post" enctype="multipart/form-data">
             <input type="hidden" class="d-none" name="b_id" value="">
             <input name="data-row" type="hidden" class="d-none" value=''>
 
@@ -489,7 +489,7 @@ try {
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary btn-sm close-modal" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary btn-sm submit-create">Submit</button>
+          <button type="button" class="btn btn-primary btn-sm btn-action">Submit</button>
         </div>
       </div>
       <div class="success-message" style="display: none;">
@@ -498,117 +498,6 @@ try {
         </div>
         <h3>
           Borrower Created.
-        </h3>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade" data-borrower="1" id="editBorrower" tabindex="-1" role="dialog" aria-labelledby="editBorrowerLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Edit Borrower</h5>
-        </div>
-        <div class="modal-body">
-          <form class="edit-form" autocomplete="off" action="edit-borrower" method="post" enctype="multipart/form-data">
-            <input id="b_id" type="hidden" class="d-none" name="b_id" value="">
-            <input name="data-row" type="hidden" class="d-none" value=''>
-
-            <div class="container">
-              <div class="row">
-                <div class="col">
-                  <h5 class="modal-body-label">Borrower</h5>
-                </div>
-              </div>
-              <div class="row">
-
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input placeholder="First name" type="text" class="form-control letters-only" name="firstname" value="" required>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input placeholder="Middle name" type="text" class="form-control letters-only" name="middlename" value="" required>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input placeholder="Last name" type="text" class="form-control letters-only" name="lastname" value="" required>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input readonly placeholder="Birthday" type="text" class="form-control datepicker" name="birthday" value="" required>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input placeholder="Contact number" type="text" class="form-control phone-number" name="contactno" value="" required>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input placeholder="Address" type="text" class="form-control alphanumeric" name="address" value="" required>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input placeholder="Occupation" type="text" class="form-control letters-only" name="occupation" value="" required>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input placeholder="Business name" type="text" class="form-control alphanumeric" name="businessname" value="" required>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <h5 class="modal-body-label">Comaker</h5>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input placeholder="Comaker" type="text" class="form-control letters-only" name="comaker" value="" required>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input placeholder="Comaker Contact Number" type="text" class="form-control phone-number" name="comakerno" value="" required>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <textarea placeholder="Remarks" type="text" class="form-control" name="remarks"></textarea>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </form>
-
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary btn-sm close-modal" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary btn-sm submit-edit">Submit</button>
-        </div>
-      </div>
-      <div class="success-message" style="display: none;">
-        <div class="close-container">
-          <div class="close-button"></div>
-        </div>
-        <h3>
-          Borrower has been updated.
         </h3>
       </div>
     </div>
