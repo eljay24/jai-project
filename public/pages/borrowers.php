@@ -14,7 +14,7 @@ try {
     $pageNum = 1;
   }
 
-  $numOfRowsPerPage = 5;
+  $numOfRowsPerPage = 10;
 
   $offset = ($pageNum - 1) * $numOfRowsPerPage;
   $previousPage = $pageNum - 1;
@@ -27,7 +27,8 @@ try {
                                           ");
     $statementTotalRows->bindValue(':search', "%$search%");
   } else {
-    $statementTotalRows = $conn->prepare("SELECT COUNT(*) as count FROM jai_db.borrowers");
+    $statementTotalRows = $conn->prepare("SELECT COUNT(*) as count FROM jai_db.borrowers
+                                          WHERE (isdeleted = 0)");
   }
   $statementTotalRows->execute();
 
@@ -194,8 +195,8 @@ try {
                 <p class="jai-table-amort sub-font"> <span class="jai-table-label">Amortization: </span> <span class="value"><?= "₱ " . number_format($borrower['amortization'], 2) ?></span></p>
               </div>
               <div class="col">
-                <p class="jai-table-release sub-font"> <span class="jai-table-label">Release Date: </span> 01/01/22</p>
-                <p class="jai-table-due sub-font"> <span class="jai-table-label">Due Date: </span> 01/01/22</p>
+                <p class="jai-table-release sub-font"> <span class="jai-table-label">Release Date: </span> <?= date_format(date_create($borrower['releasedate']), 'M-d-Y') ?></p>
+                <p class="jai-table-due sub-font"> <span class="jai-table-label">Due Date: </span> <?= date_format(date_create($borrower['duedate']), 'M-d-Y') ?></p>
                 <p class="sub-font"> <span class="jai-table-label"><strong>(TEST) LOAN ID: </span> <?= $borrower['l_id'] ?> </strong></p>
               </div>
             </div>

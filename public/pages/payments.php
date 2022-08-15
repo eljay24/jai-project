@@ -16,7 +16,7 @@ try {
     $pageNum = 1;
   }
 
-  $numOfRowsPerPage = 10;
+  $numOfRowsPerPage = 20;
 
   $offset = ($pageNum - 1) * $numOfRowsPerPage;
   $previousPage = $pageNum - 1;
