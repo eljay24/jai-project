@@ -94,7 +94,7 @@ body * {
   border-radius: 35px;
   padding: 10px 20px;
 }
-.btn.edit-btn, .btn.delete-btn, .btn.ledger-btn {
+.btn.edit-btn, .btn.delete-btn {
   text-indent: -9999999px;
   background-size: 25px;
   background-position: center;
@@ -107,9 +107,6 @@ body * {
 }
 .btn.delete-btn {
   background-image: url(../icons/delete-icon.png);
-}
-.btn.ledger-btn {
-  background-image: url(../icons/ledger.png);
 }
 
 input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active,
@@ -147,6 +144,27 @@ textarea.error {
 input.error:focus,
 textarea.error:focus {
   border-color: #d32121;
+}
+
+.form-image-container {
+  margin: 25px;
+  border: 1px solid #06283d;
+  overflow: hidden;
+  border-radius: 15px;
+  width: 250px;
+  height: 250px;
+}
+.form-image-container .form-image {
+  cursor: pointer;
+  height: 100%;
+  width: 100%;
+  object-position: center;
+  object-fit: cover;
+  transition: all 150ms;
+  transform: scale(1.05);
+}
+.form-image-container .form-image:active {
+  transform: scale(1);
 }
 
 .error-message {

@@ -149,14 +149,16 @@ try {
     </div>
     <?php
     $count = 1;
-    foreach ($borrowers as $i => $borrower) { ?>
+    foreach ($borrowers as $i => $borrower) {
+      $picturePath = $borrower['picture'] ? $borrower['picture'] : 'assets/icons/borrower-picture-placeholder.jpg';
+    ?>
       <div class="row jai-data-row" data-row="row-<?= $borrower['b_id'] ?>">
         <div class="jai-col-ID"><?= $borrower['b_id'] ?></div>
         <div class="col">
           <div class="row">
             <div class="jai-image-col">
               <div class="jai-picture zoom">
-                <img src="../<?= $borrower['picture']; ?>" class="thumb-image2">
+                <img src="../<?= $picturePath; ?>" class="thumb-image2">
               </div>
             </div>
             <div class="col">
@@ -406,65 +408,75 @@ try {
 
             <div class="container">
               <div class="row">
-                <div class="col">
-                  <h5 class="modal-body-label">Borrower</h5>
+                <div class="col-3">
+                  <div class="form-image-container">
+                    <img id="formImg" class="form-image" src="../assets/icons/borrower-picture-placeholder.jpg" alt="your image" />
+                    <input accept="image/*" type='file' id="imgInp" class="img-input d-none" />
+                  </div>
                 </div>
-              </div>
-              <div class="row">
+                <div class="col">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="modal-body-label">Borrower</h5>
+                    </div>
+                  </div>
+                  <div class="row">
 
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input placeholder="First name" type="text" class="form-control letters-only" name="firstname" value="" required>
+                    <div class="col">
+                      <div class="jai-mb-2">
+                        <input placeholder="First name" type="text" class="form-control letters-only" name="firstname" value="" required>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="jai-mb-2">
+                        <input placeholder="Middle name" type="text" class="form-control letters-only" name="middlename" value="" required>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="jai-mb-2">
+                        <input placeholder="Last name" type="text" class="form-control letters-only" name="lastname" value="" required>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input placeholder="Middle name" type="text" class="form-control letters-only" name="middlename" value="" required>
+                  <div class="row">
+                    <div class="col">
+                      <div class="jai-mb-2">
+                        <input readonly placeholder="Birthday" type="text" class="form-control datepicker" name="birthday" value="" required>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="jai-mb-2">
+                        <input placeholder="Contact number" type="text" class="form-control phone-number" name="contactno" value="" required>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input placeholder="Last name" type="text" class="form-control letters-only" name="lastname" value="" required>
+                  <div class="row">
+                    <div class="col">
+                      <div class="jai-mb-2">
+                        <input placeholder="Address" type="text" class="form-control alphanumeric" name="address" value="" required>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <div class="jai-mb-2">
+                        <input placeholder="Occupation" type="text" class="form-control letters-only" name="occupation" value="" required>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="jai-mb-2">
+                        <input placeholder="Business name" type="text" class="form-control alphanumeric" name="businessname" value="" required>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input readonly placeholder="Birthday" type="text" class="form-control datepicker" name="birthday" value="" required>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input placeholder="Contact number" type="text" class="form-control phone-number" name="contactno" value="" required>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input placeholder="Address" type="text" class="form-control alphanumeric" name="address" value="" required>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input placeholder="Occupation" type="text" class="form-control letters-only" name="occupation" value="" required>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input placeholder="Business name" type="text" class="form-control alphanumeric" name="businessname" value="" required>
-                  </div>
-                </div>
-              </div>
+
               <div class="row">
                 <div class="col">
                   <h5 class="modal-body-label">Comaker</h5>
                 </div>
               </div>
-
               <div class="row">
                 <div class="col">
                   <div class="jai-mb-2">
@@ -498,7 +510,7 @@ try {
           <div class="close-button"></div>
         </div>
         <h3 class="success-content">
-          
+
         </h3>
       </div>
     </div>

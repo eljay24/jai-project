@@ -4,6 +4,7 @@ $(document).ready(function () {
   createDatepicker();
   validateInputs();
   setToZero();
+  imgInput();
 
   // Autofill Functions
   autofillChoiceActions();
@@ -442,7 +443,20 @@ function clearFormErrors(thisForm) {
 
 /*                                */
 /*      START Modify Forms        */
-/*                                */ 4;
+/*                                */
+
+function imgInput() {
+  $(document).on("click", ".form-image", function () {
+    $(this).siblings(".img-input").click();
+  });
+
+  $(document).on("change", ".img-input", function () {
+    const [file] = imgInp.files;
+    if (file) {
+      formImg.src = URL.createObjectURL(file);
+    }
+  });
+}
 
 function inputMask() {
   $(".phone-number").mask("+63 000-000-0000");
