@@ -143,7 +143,7 @@ try {
     <div class="row">
       <div class="jai-col-ID">ID</div>
       <div class="col">Borrower Details</div>
-      <div class="col">Loan Details</div>
+      <div class="col">Loan Summary</div>
       <!-- <div class="col">Remarks</div> -->
       <div class="col-1">Action</div>
     </div>
