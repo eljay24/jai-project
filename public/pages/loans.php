@@ -130,7 +130,7 @@ try {
       $releaseDate = date_create($loan['releasedate']);
       $dueDate = date_create($loan['duedate']);
 
-      // SELECT LAST PAYMENT OF LOAN      
+      /* ----- SELECT LAST PAYMENT OF LOAN ----- */
       $statementLastPayment = $conn->prepare("SELECT l_id, amount, type, date
                                               FROM jai_db.payments
                                               WHERE l_id = :loanid AND date = (SELECT MAX(date)
@@ -138,11 +138,10 @@ try {
                                                                                WHERE l_id = :loanid)");
       $statementLastPayment->bindValue(":loanid", $loan['l_id']);
       $statementLastPayment->execute();
-
       $lastPayment = $statementLastPayment->fetch(PDO::FETCH_ASSOC);
-      // END - SELECT LAST PAYMENT OF LOAN
+      /* ----- END - SELECT LAST PAYMENT OF LOAN ----- */
 
-      // GET (MONTHLY)/INTEREST RATE
+      /* ----- GET MONTHLY & TOTAL INTEREST RATE ----- */
       $loanID = $loan['l_id'];
 
       $loanPayable = $loan['payable'];
@@ -151,9 +150,9 @@ try {
 
       $interestRate = ($loanPayable / $loanAmount) - 1;
       $monthlyInterestRate = $interestRate / $loanDuration;
-      // END - GET (MONTHLY)/INTEREST RATE
+      /* ----- END - GET MONTHLY & TOTAL INTEREST RATE ----- */
 
-      // GET TOTAL AMOUNT PAID     
+      /* ----- GET TOTAL AMOUNT PAID ----- */
       $statementPayment = $conn->prepare("SELECT sum(amount) as amount
                                           FROM jai_db.payments
                                           WHERE l_id = :l_id");
@@ -161,13 +160,11 @@ try {
       $statementPayment->execute();
       $amountPaid = $statementPayment->fetch(PDO::FETCH_ASSOC);
       $amount = $amountPaid['amount'];
-      // END - GET TOTAL AMOUNT PAID
+      /* ----- END - GET TOTAL AMOUNT PAID ----- */
 
-
-
-      // GET EST. PASS AMOUNT
+      /* ----- GET EST. PASS AMOUNT ----- */
       $passAmount = $loan['amortization'] * $loan['passes'];
-      // END - GET EST. PASS AMOUNT
+      /* ----- END - GET EST. PASS AMOUNT ----- */
 
 
 
@@ -210,7 +207,8 @@ try {
             <div class="col">
               <p class="jai-table-contact sub-font"> <span class="jai-table-label">Amount: </span><?= "₱ " . number_format($loan['amount'], 2) ?></p>
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Payable: </span><?= "₱ " . number_format($loan['payable'], 2) ?></p>
-              <p class="jai-table-address sub-font"> <span class="jai-table-label">Balance: </span><?= "₱ " . number_format($loan['balance'], 2) ?></p>
+              <p class="jai-table-address sub-font"> <span class="jai-table-label">Balance: </span><?= "₱ " . number_format($loan['balance'], 2) ?></p> <!-- Hard coded balance (From loans table) -->
+              <p class="jai-table-address sub-font"> <span class="jai-table-label">Bal. (Test): </span><?= "₱ " . number_format($loan['payable'] - $amount, 2) ?></p> <!-- Computed balance (Payable - Total payments) -->
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Amortization: </span><?= "₱ " . number_format($loan['amortization'], 2) ?></p>
             </div>
             <div class="col">
@@ -220,6 +218,63 @@ try {
               <p class="jai-table-address sub-font">Interest: <?= number_format($interestRate * 100, 2) . '%' ?></p>
               <p class="jai-table-address sub-font">Monthly interest: <?= number_format($monthlyInterestRate * 100, 2) . '%' ?></p>
             </div>
+          </div>
+          <br>
+          <div class="row">
+            <p class="sub-font">(test)Number of days from release to due date:
+              <?php
+
+              /*                                                                   */
+              /*       Count number of days                                        */
+              /*       from release date to due date (inclusive of both)           */
+              /*       excluding Sundays                                           */
+              /*                                                                   */
+              $start = new DateTime(date_format($releaseDate, 'Y-m-d'));
+              $end = new DateTime(date_format($dueDate, 'Y-m-d'));
+
+              // otherwise the  end date is excluded (bug?)
+              $end->modify('+1 day');
+
+              $interval = $end->diff($start);
+
+              // total days
+              $days = $interval->days;
+
+              // create an iterateable period of date (P1D equates to 1 day)
+              $period = new DatePeriod($start, new DateInterval('P1D'), $end);
+
+              // best stored as array, so you can add more than one
+              $holidays = array('2012-09-07');
+
+              foreach ($period as $dt) {
+                $curr = $dt->format('D');
+
+                // substract if Saturday or Sunday
+                if ($curr == 'Sun') {
+                  $days--;
+                }
+
+                // (optional) for the updated question
+                elseif (in_array($dt->format('Y-m-d'), $holidays)) {
+                  $days--;
+                }
+              }
+
+              echo $days;
+              /*                                                                   */
+              /*       END - Count number of days                                  */
+              /*       from release date to due date (inclusive of both)           */
+              /*       excluding Sundays                                           */
+              /*                                                                   */
+
+              ?></p>
+            <p class="sub-font">(test)Daily profit:
+              <?php
+                $loanNumOfDays = $loan['payable'] / $loan['amortization'];
+                $dailyProfit = ($loan['payable'] - $loan['amount']) / $loanNumOfDays;
+                echo number_format($dailyProfit, 4);
+              ?>
+            </p>
           </div>
         </div>
         <div class="col position-relative">
