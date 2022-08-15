@@ -207,8 +207,8 @@ try {
             <div class="col">
               <p class="jai-table-contact sub-font"> <span class="jai-table-label">Amount: </span><?= "₱ " . number_format($loan['amount'], 2) ?></p>
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Payable: </span><?= "₱ " . number_format($loan['payable'], 2) ?></p>
-              <p class="jai-table-address sub-font"> <span class="jai-table-label">Balance: </span><?= "₱ " . number_format($loan['balance'], 2) ?></p> <!-- Hard coded balance (From loans table) -->
-              <p class="jai-table-address sub-font"> <span class="jai-table-label">Bal. (Test): </span><?= "₱ " . number_format($loan['payable'] - $amount, 2) ?></p> <!-- Computed balance (Payable - Total payments) -->
+              <!-- <p class="jai-table-address sub-font"> <span class="jai-table-label">Balance: </span><?= "₱ " . number_format($loan['balance'], 2) ?></p> Hard coded balance (From loans table) -->
+              <p class="jai-table-address sub-font"> <span class="jai-table-label">Balance: </span><?= "₱ " . number_format($loan['payable'] - $amount, 2) ?></p> <!-- Computed balance (Payable - Total payments) -->
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Amortization: </span><?= "₱ " . number_format($loan['amortization'], 2) ?></p>
             </div>
             <div class="col">
