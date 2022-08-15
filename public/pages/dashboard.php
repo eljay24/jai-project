@@ -28,11 +28,20 @@ require_once "../../views/partials/header.php";
     ");
     $statActiveLoans->execute();
     $activeLoans = $statActiveLoans->fetch(PDO::FETCH_ASSOC);
+    //////////////////////////////// END - COUNT ACTIVE LOANS
 
-    //////////////////////////////// TOTAL RELEASED & PAYABLES THIS MONTH
+
+
+    /*                                                                */
+    /*                                                                */
+    /*                         THIS MONTH QUERIES                     */
+    /*                                                                */
+    /*                                                                */
+
     $firstOfThisMonth = date('Y-m-01'); // hard-coded '01' for first day
     $lastOfThisMonth  = date('Y-m-t');
 
+    /* ----- TOTAL RELEASED & PAYABLES THIS MONTH ----- */
     $statementLoans = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
                                         b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
                                         l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
@@ -54,28 +63,124 @@ require_once "../../views/partials/header.php";
       $totalReleasedThisMonth += $loan['amount'];
       $totalPayablesThisMonth += $loan['payable'];
     }
+    /* ----- END - TOTAL RELEASED & PAYABLES THIS MONTH ----- */
 
-    //////////////////////////////// TOTAL PAYMENTS FOR LOANS THIS MONTH
-    $statementPayments = $conn->prepare("SELECT p.amount as amount, p.date as date, l.releasedate
+    /* ----- TOTAL PAYMENTS FOR LOANS THIS MONTH ----- */
+    $statementPaymentsThisMonth = $conn->prepare("SELECT p.amount as amount, p.date as date, l.releasedate
                                          FROM jai_db.payments as p
                                          INNER JOIN jai_db.loans as l
                                          ON p.l_id = l.l_id
                                          WHERE l.releasedate BETWEEN :firstOfThisMonth AND :lastOfThisMonth
                                          ORDER BY date ASC");
-    $statementPayments->bindValue(':firstOfThisMonth', $firstOfThisMonth);
-    $statementPayments->bindValue(':lastOfThisMonth', $lastOfThisMonth);
-    $statementPayments->execute();
-    $payments = $statementPayments->fetchAll(PDO::FETCH_ASSOC);
+    $statementPaymentsThisMonth->bindValue(':firstOfThisMonth', $firstOfThisMonth);
+    $statementPaymentsThisMonth->bindValue(':lastOfThisMonth', $lastOfThisMonth);
+    $statementPaymentsThisMonth->execute();
+    $paymentsThisMonth = $statementPaymentsThisMonth->fetchAll(PDO::FETCH_ASSOC);
 
     $totalPaymentsThisMonth = (float)0;
-    foreach ($payments as $i => $payment) {
-      $totalPaymentsThisMonth += $payment['amount'];
+    foreach ($paymentsThisMonth as $i => $paymentThisMonth) {
+      $totalPaymentsThisMonth += $paymentThisMonth['amount'];
     }
+    /* ----- END - TOTAL PAYMENTS FOR LOANS THIS MONTH ----- */
+
+    /*                                                                */
+    /*                                                                */
+    /*                      END - THIS MONTH QUERIES                  */
+    /*                                                                */
+    /*                                                                */
+
+    /*                                                                */
+    /*                                                                */
+    /*                        PREV MONTHS QUERIES                     */
+    /*                                                                */
+    /*                                                                */
+
+    /* ----- TOTAL PAYMENTS FOR LOANS FROM PREVIOUS MONTHS ----- */
+    $statementPaymentsPrevMonths = $conn->prepare("SELECT p.amount as amount, p.date as date, l.releasedate
+                                                   FROM jai_db.payments as p
+                                                   INNER JOIN jai_db.loans as l
+                                                   ON p.l_id = l.l_id
+                                                   WHERE l.releasedate < :firstOfThisMonth
+                                                   ORDER BY date ASC");
+    $statementPaymentsPrevMonths->bindValue(':firstOfThisMonth', $firstOfThisMonth);
+    $statementPaymentsPrevMonths->execute();
+    $paymentsPrevMonths = $statementPaymentsPrevMonths->fetchAll(PDO::FETCH_ASSOC);
+
+    $totalPaymentsPrevMonths = (float)0;
+    foreach ($paymentsPrevMonths as $i => $paymentPrevMonths) {
+      $totalPaymentsPrevMonths += $paymentPrevMonths['amount'];
+    }
+    /* ----- END - TOTAL PAYMENTS FOR LOANS FROM PREVIOUS MONTHS ----- */
+
+    /* ----- TOTAL RELEASED & PAYABLES PREV MONTHS ----- */
+    $statementLoansPrevMonths = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
+                                        b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
+                                        l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
+                                        l.releasedate, l.duedate, l.status, l.c_id, l.paymentsmade, l.passes
+                                  FROM jai_db.borrowers as b
+                                  INNER JOIN jai_db.loans as l
+                                  ON b.b_id = l.b_id
+                                  WHERE b.isdeleted = 0 AND l.activeloan = 1 AND (l.releasedate < :firstday)
+                                  ");
+    $statementLoansPrevMonths->bindValue(':firstday', $firstOfThisMonth);
+    $statementLoansPrevMonths->execute();
+    $loansPrevMonths = $statementLoansPrevMonths->fetchAll(PDO::FETCH_ASSOC);
+
+    $totalReleasedPrevMonths = (float)0;
+    $totalPayablesPrevMonths = (float)0;
+
+    foreach ($loansPrevMonths as $i => $loanPrevMonths) {
+      $totalReleasedPrevMonths += $loanPrevMonths['amount'];
+      $totalPayablesPrevMonths += $loanPrevMonths['payable'];
+    }
+    /* ----- END - TOTAL RELEASED & PAYABLES PREV MONTHS ----- */
+
+    /* ----- CALCULATE PROFIT ----- */
+    $statementProfits = $conn->prepare("SELECT *
+                                        FROM jai_db.loans
+                                        WHERE activeloan = 1");
+    $statementProfits->execute();
+    $profits = $statementProfits->fetchAll(PDO::FETCH_ASSOC);
+
+    $totalDailyProfit = (float)0;
+    $expectedTotalCollection = (float)0;
+    foreach ($profits as $i => $profit) {
+      $loanNumberOfDays = $profit['payable'] / $profit['amortization'];
+      $dailyProfit = ($profit['payable'] - $profit['amount']) / $loanNumberOfDays;
+      $totalDailyProfit += $dailyProfit;
+      $expectedTotalCollection += $profit['amortization'];
+    }
+    /* ----- END - CALCULATE PROFIT ----- */
+
+
+    /*                                                                */
+    /*                                                                */
+    /*                   END - PREV MONTHS QUERIES                    */
+    /*                                                                */
+    /*                                                                */
+
+
+
+
 
     // echo "<pre>";
     // var_dump($activeLoans);
     // exit;
     echo 'Active Loans: ' . $activeLoans['count'];
+    echo "<br>";
+    echo "<br>";
+    echo "PREVIOUS MONTHS";
+    echo "<br>";
+    echo 'Total released: ' . number_format($totalReleasedPrevMonths, 2);
+    echo "<br>";
+    echo 'Total collectibles: ' . number_format($totalPayablesPrevMonths, 2);
+    echo "<br>";
+    echo 'Expected total profit: ' . number_format($totalPayablesPrevMonths - $totalReleasedPrevMonths, 2) . ' ('. number_format(((($totalPayablesPrevMonths - $totalReleasedPrevMonths) / $totalPayablesPrevMonths) * 100), 2) .'%)';
+    echo "<br>";
+    echo 'Total collection from previous months: ' . number_format($totalPaymentsPrevMonths, 2);
+    echo "<br>";
+    echo 'Remaining Collectibles: ' . number_format($totalPayablesPrevMonths - $totalPaymentsPrevMonths, 2);
+
     echo "<br>";
     echo "<br>";
     $thisMonth = date('F Y');
@@ -85,15 +190,15 @@ require_once "../../views/partials/header.php";
     echo "<br>";
     echo 'Total collectibles: ' . number_format($totalPayablesThisMonth, 2);
     echo "<br>";
-    echo 'Total payments for loans this month: ' . number_format($totalPaymentsThisMonth, 2);
+    echo 'Total collection for loans this month: ' . number_format($totalPaymentsThisMonth, 2);
     echo "<br>";
     echo 'Remaining Collectibles: ' . number_format($totalPayablesThisMonth - $totalPaymentsThisMonth, 2);
 
     echo "<br>";
     echo "<br>";
-    
-
-
+    echo 'Expected profits today: ' . number_format($totalDailyProfit, 2);
+    echo "<br>";
+    echo 'Expected total collection today: ' . number_format($expectedTotalCollection, 2);
     exit;
 
     ?>
