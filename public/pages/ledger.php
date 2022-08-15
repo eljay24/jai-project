@@ -5,7 +5,7 @@ require "../../views/includes/fpdf.php";
 
 $loanID = $_GET['loanID'];
 
-$statementLoan = $conn->prepare("SELECT b.b_id, l.l_id, CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) as name, l.amortization, l.mode, l.term,
+$statementLoan = $conn->prepare("SELECT b.b_id, l.l_id, CONCAT(b.lastname, ', ', b.firstname, ' ', b.middlename) as name, l.amortization, l.mode, l.term,
                                         l.amount as loanamount, l.payable, l.releasedate, l.duedate, l.status, p.amount as paymentamount, p.type, p.date
                                  FROM jai_db.payments as p
                                  INNER JOIN jai_db.loans as l
