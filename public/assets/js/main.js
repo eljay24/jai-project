@@ -1,11 +1,14 @@
 $(document).ready(function () {
+  // Form Modifications
   inputMask();
   createDatepicker();
   validateInputs();
+  setToZero();
+
+  // Autofill Functions
   autofillChoiceActions();
   autoFillAction("#namesearch", "suggestions.php");
   autoFillAction("#newloansearch", "suggestions-new-loan.php");
-  setToZero();
 
   // Toggle Modal Functions START
   openModal(".create-borrower", ".form-modal", "submit-create", openCreate);
@@ -25,17 +28,33 @@ $(document).ready(function () {
   // Toggle Modal Functions END
 
   // Modal Submit Functions START
-  submitForm(".submit-create", ".action-form", "create-borrower.php");
+  submitForm(
+    ".submit-create",
+    ".action-form",
+    "create-borrower.php",
+    messages.successMessages.borrower.create
+  );
   submitForm(
     ".submit-edit",
     ".action-form",
     "edit-borrower.php",
-    editBorrowerAction
+    editBorrowerAction,
+    messages.successMessages.borrower.update
   );
 
-  submitForm(".submit-loan", ".action-form", "create-loan.php");
+  submitForm(
+    ".submit-loan",
+    ".action-form",
+    "create-loan.php",
+    messages.successMessages.Loan.create
+  );
 
-  submitForm(".submit-payment", ".action-form", "add-payment.php");
+  submitForm(
+    ".submit-payment",
+    ".action-form",
+    "add-payment.php",
+    messages.successMessages.Payment.create
+  );
   // Modal Submit Functions END
 });
 
@@ -89,7 +108,7 @@ function openModal(
 ) {
   $(document).on("click", buttonName, function (event) {
     event.preventDefault();
-    
+
     clearFormErrors(modalName);
 
     $(modalName).find(".btn-action").addClass(submitBtnClass);
@@ -160,11 +179,11 @@ function closeModal() {
 
 function setToZero() {
   if ($("#type").length) {
-    var selectBox = document.getElementById("type");
-    var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+    var selectBox = $("#type");
+    var selectedValue = selectBox.val();
     if (selectedValue == "Pass") {
       $("#payment").val(0);
-      document.getElementById("payment").readOnly = true;
+      $("#payment").readOnly = true;
     } else {
       var paymentAmount = $("#payment").val();
       if (paymentAmount != 0) {
@@ -172,7 +191,7 @@ function setToZero() {
       } else {
         $("#payment").val("");
       }
-      document.getElementById("payment").readOnly = false;
+      $("#payment").readOnly = false;
     }
   }
 }
@@ -314,7 +333,7 @@ function openCreate(buttonName, modalName) {
   }
 }
 
-function submitForm(submitBtn, thisForm, ajaxFile, ajaxAction) {
+function submitForm(submitBtn, thisForm, ajaxFile, ajaxAction, successMessage) {
   $(document).on("click", submitBtn, function (event) {
     event.preventDefault();
     let form = $(thisForm),
@@ -336,7 +355,7 @@ function submitForm(submitBtn, thisForm, ajaxFile, ajaxAction) {
         },
         success: function (data) {
           if (ajaxAction) ajaxAction(data, newValues, rowId);
-          console.log(formValues);
+          $(".success-message .success-content").text(successMessage);
           $(".form-modal .modal-content").fadeOut(150, function (param) {
             $(".success-message").fadeIn(150, function () {
               $(submitBtn).removeClass("disabled");

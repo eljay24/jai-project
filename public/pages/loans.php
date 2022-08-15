@@ -604,8 +604,8 @@ try {
       <div class="close-container">
         <div class="close-button"></div>
       </div>
-      <h3>
-        Loan Created.
+      <h3 class="success-content">
+        
       </h3>
     </div>
   </div>

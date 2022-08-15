@@ -380,8 +380,7 @@ try {
         <div class="close-container">
           <div class="close-button"></div>
         </div>
-        <h3>
-          Payment recorded.
+        <h3 class="success-content">
         </h3>
       </div>
     </div>
