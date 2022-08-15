@@ -2,7 +2,8 @@
   border-radius: 35px;
   padding: 10px 20px;
   &.edit-btn,
-  &.delete-btn {
+  &.delete-btn,
+  &.ledger-btn {
     text-indent: -9999999px;
     background-size: 25px;
     background-position: center;
@@ -15,5 +16,8 @@
   }
   &.delete-btn {
     background-image: url(../icons/delete-icon.png);
+  }
+  &.ledger-btn {
+    background-image: url(../icons/ledger.png);
   }
 }
