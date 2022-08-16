@@ -13,32 +13,53 @@ $statementLoan = $conn->prepare("SELECT b.b_id, l.l_id, CONCAT(b.lastname, ', ',
                                  INNER JOIN jai_db.borrowers as b
                                  ON p.b_id = b.b_id
                                  WHERE p.l_id = :loanID
-                                 ORDER BY p.date ASC
-");
+                                 ORDER BY p.date ASC");
 $statementLoan->bindValue(':loanID', $loanID);
 $statementLoan->execute();
-
 $payments = $statementLoan->fetchAll(PDO::FETCH_ASSOC);
+
+$statementPaymentCount = $conn->prepare("SELECT COUNT(*) as paymentcount
+                                          FROM jai_db.payments as p
+                                          WHERE p.l_id = :loanID");
+$statementPaymentCount->bindValue(':loanID', $loanID);
+$statementPaymentCount->execute();
+$paymentCount = $statementPaymentCount->fetch(PDO::FETCH_ASSOC);
+
+$statementSumOfPayments = $conn->prepare("SELECT SUM(p.amount) as sumofpayments
+                                          FROM jai_db.payments as p
+                                          WHERE p.l_id = :loanID");
+$statementSumOfPayments->bindValue(':loanID', $loanID);
+$statementSumOfPayments->execute();
+$sumOfPayments = $statementSumOfPayments->fetch(PDO::FETCH_ASSOC);
+
+/* ----- CALCULATE Supposed Current Balance & Arrears ----- */
+$SCB = $payments[0]['payable'] - ($payments[0]['amortization'] * $paymentCount['paymentcount']);
+$arrears = ($payments[0]['payable'] - $sumOfPayments['sumofpayments']) - $SCB;
 
 // LETTER PAPER SIZE = 215.9mm x 279.4mm
 // LEGAL PAPER SIZE = 215.9mm x 355.6mm
 // MARGIN PER SIDE = 10mm
 // PRINTABLE AREA 215.9 - (10 * 2) = 195.9mm
+// EXACT SIZE USED BELOW = 8.5 x 13 inches / 215.9 x 330.2 millimeters
+
 class PDF extends FPDF
 {
     function Header()
     {
         global $payments;
+        global $paymentCount;
+        global $SCB;
+        global $arrears;
 
         if ($payments) {
 
-            $this->SetFont('Courier', '', 11);
+            $this->SetFont('Courier', '', 10);
             $this->Cell(65.3, 6, 'Page ' . $this->PageNo() . " of {pages}", 0, 0, 'L');
 
             $this->SetFont('Courier', 'B', 14);
             $this->Cell(65.3, 6, 'JAI FAIR LOAN', 0, 0, 'C');
 
-            $this->SetFont('Courier', '', 11);
+            $this->SetFont('Courier', '', 10);
             $this->Cell(65.3, 6, 'Date: ' . date('Y-m-d'), 0, 1, 'R');
 
 
@@ -48,19 +69,38 @@ class PDF extends FPDF
             $this->SetFont('Courier', '', 11);
             $this->Cell(65.3, 6, '', 0, 1, 'R');
 
-            $this->SetFont('Courier', '', 11);
+            $this->SetFont('Courier', '', 10);
             // $this->Cell(195.9, 6, 'Borrower No.: ' . $payments[0]['b_id'], 0, 1);
-            $this->Cell(97.95, 6, 'Name: ' . ucwords(strtolower($payments[0]['name'])), 0, 0);
-            $this->Cell(97.95, 6, 'Loan Status: ' . $payments[0]['status'], 0, 1, 'R');
+            $this->Cell(97.95, 6, 'Name: ' . ucwords(strtolower($payments[0]['name'])), 0, 1);
+
+            // $this->Cell(32.65, 6, 'Loan Amount:', 0, 0);
+            // $this->Cell(32.65, 6, number_format($payments[0]['loanamount'], 2), 0, 0);
+            // $this->Cell(32.65, 6, '   Payable:', 0, 0, 'L');
+            // $this->Cell(32.65, 6, number_format($payments[0]['payable'], 2), 0, 0, 'L');
+            // $this->Cell(32.65, 6, 'Amortization:', 0, 0, 'l');
+            // $this->Cell(32.65, 6, number_format($payments[0]['amortization'], 2), 0, 1, 'L');
+            // $this->Cell(32.65, 6, 'Mode & Term:', 0, 0);
+            // $this->Cell(32.65, 6, ucwords(strtolower($payments[0]['mode'])) . '/' . ucwords(strtolower($payments[0]['term'])), 0, 0);
+            // $this->Cell(32.65, 6, '   Rel. Date:', 0, 0, 'L');
+            // $this->Cell(32.65, 6, $payments[0]['releasedate'], 0, 0, 'L');
+            // $this->Cell(32.65, 6, 'Due Date:', 0, 0, 'L');
+            // $this->Cell(32.65, 6, $payments[0]['duedate'], 0, 1, 'L');
+            // $this->Cell(32.65, 6, 'SCB:', 0, 0, 'L');
+            // $this->Cell(32.65, 6, number_format($SCB, 2), 0, 0, 'L');
+            // $this->Cell(32.65, 6, '   Arrears:', 0, 0, 'L');
+            // $this->Cell(32.65, 6, number_format($arrears, 2), 0, 0, 'L');
+            // $this->Cell(32.65, 6, 'Loan Status:', 0, 0, 'L');
+            // $this->Cell(32.65, 6, $payments[0]['status'], 0, 1, 'L');
 
             $this->Cell(65.3, 6, 'Loan Amount: ' . number_format($payments[0]['loanamount'], 2), 0, 0);
-            $this->Cell(65.3, 6, 'Payable: ' . number_format($payments[0]['payable'], 2), 0, 0, 'R');
+            $this->Cell(65.3, 6, '      Payable: ' . number_format($payments[0]['payable'], 2), 0, 0, 'L');
             $this->Cell(65.3, 6, 'Amortization: ' . number_format($payments[0]['amortization'], 2), 0, 1, 'R');
             $this->Cell(65.3, 6, 'Mode & Term: ' . ucwords(strtolower($payments[0]['mode'])) . '/' . ucwords(strtolower($payments[0]['term'])), 0, 0);
-            $this->Cell(65.3, 6, 'Release Date: ' . $payments[0]['releasedate'], 0, 0, 'R');
+            $this->Cell(65.3, 6, '      Release Date: ' . $payments[0]['releasedate'], 0, 0, 'L');
             $this->Cell(65.3, 6, 'Due Date: ' . $payments[0]['duedate'], 0, 1, 'R');
-
-            $this->SetFont('Courier', '', 10);
+            $this->Cell(65.3, 6, 'SCB: ' . number_format($SCB, 2), 0, 0, 'L');
+            $this->Cell(65.3, 6, '      Arrears: ' . number_format($arrears, 2), 0, 0, 'L');
+            $this->Cell(65.3, 6, 'Loan Status: ' . $payments[0]['status'], 0, 1, 'R');
 
             $this->Cell(195.9, 5, '', 0, 1);
 
@@ -104,7 +144,6 @@ class PDF extends FPDF
 // LETTER PAPER SIZE = 215.9mm x 279.4mm
 // LEGAL PAPER SIZE = 215.9mm x 355.6mm
 // MARGIN PER SIDE = 10mm
-
 // PRINTABLE AREA 215.9 - (10 * 2) = 195.9mm
 // EXACT SIZE USED BELOW = 8.5 x 13 inches / 215.9 x 330.2 millimeters
 
@@ -131,7 +170,7 @@ if ($payments) {
     $payable = $payments[0]['payable'];
     foreach ($payments as $i => $payment) {
         $pdf->Cell(48.975, 7, $payment['date'], 'L', 0);
-        $pdf->Cell(48.975, 7, $payment['type'] == 'Pass' ? $payment['type'] : 'Payment ' . '(' . $payment['type'] . ')', 'L', 0);
+        $pdf->Cell(48.975, 7, $payment['type'] == 'Pass' ? $payment['type'] : ($payment['type'] == 'GCash' ? $payment['type'] . ' Payment' : 'Payment'), 'L', 0);
         $pdf->Cell(48.975, 7, number_format($payment['paymentamount'], 2), 'L', 0, 'R');
         $pdf->Cell(48.975, 7, number_format($payable -= $payment['paymentamount'], 2), 'LR', 1, 'R');
     }
