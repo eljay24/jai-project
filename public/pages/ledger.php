@@ -49,7 +49,7 @@ class PDF extends FPDF
             $this->Cell(65.3, 6, '', 0, 1, 'R');
 
             $this->SetFont('Courier', '', 11);
-            $this->Cell(195.9, 6, 'Borrower No.: ' . $payments[0]['b_id'], 0, 1);
+            // $this->Cell(195.9, 6, 'Borrower No.: ' . $payments[0]['b_id'], 0, 1);
             $this->Cell(97.95, 6, 'Name: ' . ucwords(strtolower($payments[0]['name'])), 0, 0);
             $this->Cell(97.95, 6, 'Loan Status: ' . $payments[0]['status'], 0, 1, 'R');
 
@@ -104,9 +104,11 @@ class PDF extends FPDF
 // LETTER PAPER SIZE = 215.9mm x 279.4mm
 // LEGAL PAPER SIZE = 215.9mm x 355.6mm
 // MARGIN PER SIDE = 10mm
-// PRINTABLE AREA 215.9 - (10 * 2) = 195.9mm
 
-$pdf = new PDF('P', 'mm', 'Legal');
+// PRINTABLE AREA 215.9 - (10 * 2) = 195.9mm
+// EXACT SIZE USED BELOW = 8.5 x 13 inches / 215.9 x 330.2 millimeters
+
+$pdf = new PDF('P', 'mm', array(215.9, 330.2));
 
 $pdf->SetTitle('JAI Ledger B' . $payments[0]['b_id'] . ' L' . $payments[0]['l_id'] . ' (' . $payments[0]['status'] . ')');
 
