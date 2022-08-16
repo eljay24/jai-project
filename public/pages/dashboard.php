@@ -91,7 +91,7 @@ require_once "../../views/partials/header.php";
 
     /*                                                                */
     /*                                                                */
-    /*                        PREV MONTHS QUERIES                     */
+    /*                        PREV MONTHS & MISC QUERIES              */
     /*                                                                */
     /*                                                                */
 
@@ -152,10 +152,18 @@ require_once "../../views/partials/header.php";
     }
     /* ----- END - CALCULATE PROFIT ----- */
 
+    /* ----- GET COLLECTOR DATA (FOR ACCOUNT LIST) ----- */
+    $statementCollectors = $conn->prepare("SELECT c_id, CONCAT(c.firstname, ' ', c.lastname) as name
+                                           FROM jai_db.collectors as c
+                                          ");
+    $statementCollectors->execute();
+    $collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
+    /* ----- END - GET COLLECTOR DATA (FOR ACCOUNT LIST) ----- */
+
 
     /*                                                                */
     /*                                                                */
-    /*                   END - PREV MONTHS QUERIES                    */
+    /*                   END - PREV MONTHS & MISC QUERIES             */
     /*                                                                */
     /*                                                                */
 
@@ -166,6 +174,21 @@ require_once "../../views/partials/header.php";
     // echo "<pre>";
     // var_dump($activeLoans);
     // exit;
+    ?>
+    SELECT COLELCTOR
+    <form method="get" action="accountslist.php" target="_blank">
+      <select name="c_id">
+        <?php
+        foreach ($collectors as $i => $collector) {
+          echo '<option value="' . $collector['c_id'] . '">' . $collector['name'] . '</option>';
+        }
+        ?>
+      </select>
+      <input title="View accounts list" type="submit" />
+      <!-- <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $payment['l_id'] ?>" <?= ($payment['paymentsmade'] || $payment['passes']) == 0 ? 'disabled' : '' ?>></input> -->
+    </form>
+
+    <?php
     echo 'Active Loans: ' . $activeLoans['count'];
     echo "<br>";
     echo "<br>";
@@ -175,7 +198,7 @@ require_once "../../views/partials/header.php";
     echo "<br>";
     echo 'Total collectibles: ' . number_format($totalPayablesPrevMonths, 2);
     echo "<br>";
-    echo 'Expected total profit: ' . number_format($totalPayablesPrevMonths - $totalReleasedPrevMonths, 2) . ' ('. number_format(((($totalPayablesPrevMonths - $totalReleasedPrevMonths) / $totalPayablesPrevMonths) * 100), 2) .'%)';
+    echo 'Expected total profit: ' . number_format($totalPayablesPrevMonths - $totalReleasedPrevMonths, 2) . ' (' . number_format(((($totalPayablesPrevMonths - $totalReleasedPrevMonths) / $totalPayablesPrevMonths) * 100), 2) . '%)';
     echo "<br>";
     echo 'Total collection from previous months: ' . number_format($totalPaymentsPrevMonths, 2);
     echo "<br>";
