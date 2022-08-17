@@ -59,10 +59,12 @@ try {
     $statement = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
                                         b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated, b.isdeleted,
                                         l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
-                                        l.releasedate, l.duedate, l.status, l.c_id, l.paymentsmade, l.passes
+                                        l.releasedate, l.duedate, l.status, l.c_id, l.paymentsmade, l.passes, CONCAT(c.firstname, ' ', c.lastname) as collector
                                  FROM jai_db.borrowers AS b
                                  INNER JOIN jai_db.loans AS l
                                  ON b.b_id = l.b_id
+                                 INNER JOIN jai_db.collectors as c
+                                 ON l.c_id = c.c_id
                                  WHERE (b.b_id LIKE :search OR b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search OR l.status LIKE :search
                                         OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                         OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
@@ -76,10 +78,12 @@ try {
     $statement = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
                                         b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated, b.isdeleted,
                                         l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
-                                        l.releasedate, l.duedate, l.status, l.c_id, l.paymentsmade, l.passes
+                                        l.releasedate, l.duedate, l.status, l.c_id, l.paymentsmade, l.passes, CONCAT(c.firstname, ' ', c.lastname) as collector
                                   FROM jai_db.borrowers as b
                                   INNER JOIN jai_db.loans as l
                                   ON b.b_id = l.b_id
+                                  INNER JOIN jai_db.collectors as c
+                                  ON l.c_id = c.c_id
                                   ORDER BY l.activeloan DESC, l.l_id DESC
                                   LIMIT :offset, :numOfRowsPerPage");
   }
@@ -221,6 +225,8 @@ try {
           </div>
           <br>
           <div class="row">
+            <p class="sub-font">Collector: <?= $loan['collector'] ?></p>
+            <br>
             <p class="sub-font">(test)Number of days from release to due date:
               <?php
 
