@@ -81,10 +81,10 @@ class PDF extends FPDF
 
             $this->SetFont('Arial', 'B', 8);
             $this->Cell(10.86, 6, '#', 'LTB', 0);
-            $this->Cell(36.86, 6, 'Name', 'TB', 0);
+            $this->Cell(42.86, 6, 'Name', 'TB', 0);
             $this->Cell(23.86, 6, 'Release Date', 'TB', 0);
-            $this->Cell(23.86, 6, 'Due Date', 'TB', 0);
-            $this->Cell(23.86, 6, 'Amount', 'TB', 0, 'R');
+            $this->Cell(20.86, 6, 'Due Date', 'TB', 0);
+            $this->Cell(20.86, 6, 'Amount', 'TB', 0, 'R');
             $this->Cell(23.86, 6, 'Payable', 'TB', 0, 'R');
             $this->Cell(23.86, 6, 'Amortization', 'TB', 0, 'R');
             $this->Cell(23.86, 6, 'Term', 'TB', 0, 'R');
@@ -111,13 +111,17 @@ class PDF extends FPDF
 }
 
 $pdf = new PDF('L', 'mm', array(330.2, 215.9));
-$pdf->SetTitle('JAI Accounts List');
+if ($accounts) {
+    $pdf->SetTitle('JAI Accounts List - ' . $accounts[0]['collector']);
+} else {
+    $pdf->SetTitle('JAI Invalid Accounts List');
+}
 $pdf->AliasNbPages('{pages}');
 $pdf->AddPage();
 
 if ($accounts) {
     $pdf->SetFont('Arial', '', 8);
-    /* ----- UPDATE ACCOUNTS ----- */
+    /* ----- UPDATED ACCOUNTS ----- */
     $pdf->SetFont('Arial', 'I', 8);
     $pdf->Cell(310.2, 6, 'UPDATED ACCOUNTS', 'LR', 1);
     $updatedAccsTotalOutBal = (float)0;
@@ -126,10 +130,10 @@ if ($accounts) {
     $pdf->SetFont('Arial', '', 8);
     foreach ($updatedAccs as $i => $updatedAcc) {
         $pdf->Cell(10.86, 5, $updatedAcc['l_id'], 'LB', 0);
-        $pdf->Cell(36.86, 5, $updatedAcc['name'], 'B', 0);
+        $pdf->Cell(42.86, 5, $updatedAcc['name'], 'B', 0);
         $pdf->Cell(23.86, 5, $updatedAcc['releasedate'], 'B', 0);
-        $pdf->Cell(23.86, 5, $updatedAcc['duedate'], 'B', 0);
-        $pdf->Cell(23.86, 5, number_format($updatedAcc['amount'], 2), 'B', 0, 'R');
+        $pdf->Cell(20.86, 5, $updatedAcc['duedate'], 'B', 0);
+        $pdf->Cell(20.86, 5, number_format($updatedAcc['amount'], 2), 'B', 0, 'R');
         $pdf->Cell(23.86, 5, number_format($updatedAcc['payable'], 2), 'B', 0, 'R');
         $pdf->Cell(23.86, 5, number_format($updatedAcc['amortization'], 2), 'B', 0, 'R');
         $pdf->Cell(23.86, 5, $updatedAcc['term'], 'B', 0, 'R');
@@ -144,12 +148,24 @@ if ($accounts) {
         $updatedAccsTotalArrears += $updatedAcc['arrears'];
     }
 
+    /* ----- UPDATED ACCOUNTS SUMMARY ----- */
     $pdf->Cell(310.2, 2, '', 0, 1);
-    $pdf->Cell(50.4, 6, 'Updated Accounts Summary', 'B', 0, 'C');
-    $pdf->Cell(62.4, 6, 'Total Accounts:   ' . count($updatedAccs), 'B', 0);
-    $pdf->Cell(74.4, 6, 'Total Outstanding Balance:     ' . number_format($updatedAccsTotalOutBal, 2), 'B', 0);
-    $pdf->Cell(62.4, 6, 'Total SCB:   ' . number_format($updatedAccsTotalSCB, 2), 'B', 0);
-    $pdf->Cell(62.4, 6, 'Total Arrears:     ' . number_format($updatedAccsTotalArrears, 2), 'B', 1);
+    $pdf->Cell(50.4, 6, 'In Arrears Accounts Summary', 'B', 0, 'C');
+    $pdf->Cell(31.2, 6, 'Total Accounts:', 'B', 0, 'R');
+    $pdf->SetFont('Arial', 'B', 8.5);
+    $pdf->Cell(31.2, 6, count($updatedAccs), 'B', 0);
+    $pdf->SetFont('Arial', '', 8);
+    $pdf->Cell(37.2, 6, 'Total Outstanding Balance:', 'B', 0);
+    $pdf->SetFont('Arial', 'B', 8.5);
+    $pdf->Cell(37.2, 6, number_format($updatedAccsTotalOutBal, 2), 'B', 0);
+    $pdf->SetFont('Arial', '', 8);
+    $pdf->Cell(17.2, 6, 'Total SCB:', 'B', 0);
+    $pdf->SetFont('Arial', 'B', 8.5);
+    $pdf->Cell(45.2, 6, number_format($updatedAccsTotalSCB, 2), 'B', 0);
+    $pdf->SetFont('Arial', '', 8);
+    $pdf->Cell(20.2, 6, 'Total Arrears:', 'B', 0);
+    $pdf->SetFont('Arial', 'B', 8.5);
+    $pdf->Cell(42.2, 6, number_format($updatedAccsTotalArrears, 2), 'B', 1);
     $pdf->Cell(310.2, 5, '', 0, 1);
 
 
@@ -162,10 +178,10 @@ if ($accounts) {
     $pdf->SetFont('Arial', '', 8);
     foreach ($inArrearsAccs as $i => $inArrearsAcc) {
         $pdf->Cell(10.86, 5, $inArrearsAcc['l_id'], 'LB', 0);
-        $pdf->Cell(36.86, 5, $inArrearsAcc['name'], 'B', 0);
+        $pdf->Cell(42.86, 5, $inArrearsAcc['name'], 'B', 0);
         $pdf->Cell(23.86, 5, $inArrearsAcc['releasedate'], 'B', 0);
-        $pdf->Cell(23.86, 5, $inArrearsAcc['duedate'], 'B', 0);
-        $pdf->Cell(23.86, 5, number_format($inArrearsAcc['amount'], 2), 'B', 0, 'R');
+        $pdf->Cell(20.86, 5, $inArrearsAcc['duedate'], 'B', 0);
+        $pdf->Cell(20.86, 5, number_format($inArrearsAcc['amount'], 2), 'B', 0, 'R');
         $pdf->Cell(23.86, 5, number_format($inArrearsAcc['payable'], 2), 'B', 0, 'R');
         $pdf->Cell(23.86, 5, number_format($inArrearsAcc['amortization'], 2), 'B', 0, 'R');
         $pdf->Cell(23.86, 5, $inArrearsAcc['term'], 'B', 0, 'R');
@@ -180,20 +196,34 @@ if ($accounts) {
         $inArrearsAccsTotalArrears += $inArrearsAcc['arrears'];
     }
 
+    /* ----- IN ARREARS ACCOUNTS SUMMARY ----- */
     $pdf->Cell(310.2, 2, '', 0, 1);
     $pdf->Cell(50.4, 6, 'In Arrears Accounts Summary', 'B', 0, 'C');
-    $pdf->Cell(62.4, 6, 'Total Accounts:   ' . count($inArrearsAccs), 'B', 0);
-    $pdf->Cell(74.4, 6, 'Total Outstanding Balance:     ' . number_format($inArrearsAccsTotalOutBal, 2), 'B', 0);
-    $pdf->Cell(62.4, 6, 'Total SCB:     ' . number_format($inArrearsAccsTotalSCB, 2), 'B', 0);
-    $pdf->Cell(62.4, 6, 'Total Arrears:     ' . number_format($inArrearsAccsTotalArrears, 2), 'B', 1);
+    $pdf->Cell(31.2, 6, 'Total Accounts:', 'B', 0, 'R');
+    $pdf->SetFont('Arial', 'B', 8.5);
+    $pdf->Cell(31.2, 6, count($inArrearsAccs), 'B', 0);
+    $pdf->SetFont('Arial', '', 8);
+    $pdf->Cell(37.2, 6, 'Total Outstanding Balance:', 'B', 0);
+    $pdf->SetFont('Arial', 'B', 8.5);
+    $pdf->Cell(37.2, 6, number_format($inArrearsAccsTotalOutBal, 2), 'B', 0);
+    $pdf->SetFont('Arial', '', 8);
+    $pdf->Cell(17.2, 6, 'Total SCB:', 'B', 0);
+    $pdf->SetFont('Arial', 'B', 8.5);
+    $pdf->Cell(45.2, 6, number_format($inArrearsAccsTotalSCB, 2), 'B', 0);
+    $pdf->SetFont('Arial', '', 8);
+    $pdf->Cell(20.2, 6, 'Total Arrears:', 'B', 0);
+    $pdf->SetFont('Arial', 'B', 8.5);
+    $pdf->Cell(42.2, 6, number_format($inArrearsAccsTotalArrears, 2), 'B', 1);
     $pdf->Cell(310.2, 5, '', 0, 1);
 } else {
     $pdf->SetFont('Courier', 'B', 22);
-    $pdf->Cell(310.2, 150, 'INVALID COLLECTOR ID OR NO DATA RETRIEVED', 0, 1, 'C');
+    $pdf->Cell(310.2, 50, '', 0, 1, 'C');
+    $pdf->Cell(310.2, 20, 'INVALID COLLECTOR ID / NO DATA RETRIEVED', 0, 1, 'C');
+    $pdf->Cell(310.2, 6, 'ACCOUNTS LIST UNAVAILABLE', 0, 1, 'C');
 }
 
 if ($accounts) {
-    $pdf->Output('I', 'JAI Accounts List_' . $accounts[0]['collector'] .'_' . date('Y-m-d') . '.pdf');
+    $pdf->Output('I', 'JAI Accounts List_' . $accounts[0]['collector'] . '_' . date('Y-m-d') . '_' . date('giA') .'.pdf');
 } else {
     $pdf->Output('I', 'JAI Invalid Accounts List.pdf');
 }
