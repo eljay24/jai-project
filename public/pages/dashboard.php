@@ -184,10 +184,10 @@ require_once "../../views/partials/header.php";
         }
         ?>
       </select>
-      <input title="View accounts list" type="submit" />
+      <button title="View accounts list" class="btn-primary" type="submit">View accounts list</button>
       <!-- <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $payment['l_id'] ?>" <?= ($payment['paymentsmade'] || $payment['passes']) == 0 ? 'disabled' : '' ?>></input> -->
     </form>
-
+    <br>
     <?php
     echo 'Active Loans: ' . $activeLoans['count'];
     echo "<br>";

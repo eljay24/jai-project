@@ -32,9 +32,17 @@ $statementSumOfPayments->bindValue(':loanID', $loanID);
 $statementSumOfPayments->execute();
 $sumOfPayments = $statementSumOfPayments->fetch(PDO::FETCH_ASSOC);
 
-/* ----- CALCULATE Supposed Current Balance & Arrears ----- */
-$SCB = $payments[0]['payable'] - ($payments[0]['amortization'] * $paymentCount['paymentcount']);
-$arrears = ($payments[0]['payable'] - $sumOfPayments['sumofpayments']) - $SCB;
+if ($payments) {
+    /* ----- CALCULATE Supposed Current Balance & Arrears ----- */
+    
+    if ($payments[0]['payable'] - $sumOfPayments['sumofpayments'] == 0) {
+        $SCB = 0;
+        $arrears = 0;
+    } else {
+        $SCB = $payments[0]['payable'] - ($payments[0]['amortization'] * $paymentCount['paymentcount']);
+        $arrears = ($payments[0]['payable'] - $sumOfPayments['sumofpayments']) - $SCB;
+    }
+}
 
 // LETTER PAPER SIZE = 215.9mm x 279.4mm
 // LEGAL PAPER SIZE = 215.9mm x 355.6mm
@@ -66,8 +74,8 @@ class PDF extends FPDF
             $this->SetFont('Courier', '', 14);
             $this->Cell(65.3, 6, '', 0, 0);
             $this->Cell(65.3, 6, 'Ledger', 0, 0, 'C');
-            $this->SetFont('Courier', '', 11);
-            $this->Cell(65.3, 6, '', 0, 1, 'R');
+            $this->SetFont('Courier', '', 10);
+            $this->Cell(65.3, 6, date('g:i:s A'), 0, 1, 'R');
 
             $this->SetFont('Courier', '', 10);
             // $this->Cell(195.9, 6, 'Borrower No.: ' . $payments[0]['b_id'], 0, 1);
@@ -118,10 +126,10 @@ class PDF extends FPDF
             $this->Cell(65.3, 6, 'Date: ' . date('Y-m-d'), 0, 1, 'R');
 
             $this->SetFont('Courier', '', 14);
-            $this->Cell(195.9, 6, 'Ledger', 0, 1, 'C');
+            $this->Cell(195.9, 6, '', 0, 1, 'C');
             $this->Cell(195.9, 30, '', 0, 1, 'C');
 
-            $this->SetFont('Courier', '', 22);
+            $this->SetFont('Courier', 'B', 22);
             $this->Cell(195.9, 20, 'INVALID LOAN ID / NO PAYMENTS ON RECORD.', 0, 1, 'C');
             $this->Cell(195.9, 20, 'LEDGER UNAVAILABLE.', 0, 1, 'C');
         }
@@ -149,14 +157,13 @@ class PDF extends FPDF
 
 $pdf = new PDF('P', 'mm', array(215.9, 330.2));
 
-$pdf->SetTitle('JAI Ledger B' . $payments[0]['b_id'] . ' L' . $payments[0]['l_id'] . ' (' . $payments[0]['status'] . ')');
-
 // Define alias for total no. of pages
 $pdf->AliasNbPages('{pages}');
 
 $pdf->AddPage();
 
 if ($payments) {
+    $pdf->SetTitle('JAI Ledger B' . $payments[0]['b_id'] . ' L' . $payments[0]['l_id'] . ' (' . $payments[0]['status'] . ')');
 
     // $pdf->Image('../assets/watermark/New-Project.png',10,10,195.9);
 
@@ -178,6 +185,8 @@ if ($payments) {
 
     $pdf->Cell(195.9, 0, '', 0, 1, 'C');
     $pdf->Cell(195.9, 3, '-------------------------------    NOTHING FOLLOWS    -------------------------------', 0, 0, 'C');
+} else {
+    $pdf->SetTitle('JAI Invalid Ledger');
 }
 
 
@@ -185,7 +194,11 @@ $totalPages = $pdf->PageNo();
 
 $pdf->SetCreator('JAI Fair Loan');
 $pdf->SetAuthor('JAI Fair Loan');
-$pdf->SetSubject('JAI Ledger_#' . $payments[0]['b_id'] . '_' . $payments[0]['name'] . '_' . date('Y-m-d'));
+if ($payments) {
+    $pdf->SetSubject('JAI Ledger_#' . $payments[0]['b_id'] . '_' . $payments[0]['name'] . '_' . date('Y-m-d'));
+} else {
+    $pdf->SetSubject('JAI Invalid Ledger');
+}
 
 if ($payments) {
     $pdf->Output('I', 'JAI Ledger_#' . $payments[0]['b_id'] . '_' . $payments[0]['name'] . '_' . date('Y-m-d') . '.pdf');
