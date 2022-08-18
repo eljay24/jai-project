@@ -72,11 +72,12 @@ class PDF extends FPDF
             $this->SetFont('Courier', 'B', 14);
             $this->Cell(103.4, 4, 'JAI FAIR LOAN', 0, 0, 'C');
             $this->SetFont('Courier', '', 10);
-            $this->Cell(103.4, 4, 'Date: ' . date('Y-m-d'), 0, 1, 'R');
+            $this->Cell(103.4, 4, 'Date: ' . date('Y-m-d, D'), 0, 1, 'R');
             $this->Cell(103.4, 8, '', 0, 0, 'C');
             $this->Cell(103.4, 8, 'List of Active Loans by Collector', 0, 0, 'C');
             $this->Cell(103.4, 8, 'Time: ' . date('g:i:s A'), 0, 1, 'R');
-            $this->Cell(310.2, 4, 'Collector: ' . $accounts[0]['collector'], 0, 1, 'L');
+            $this->Cell(155.1, 4, 'Collector: ' . $accounts[0]['collector'], 0, 0, 'L');
+            $this->Cell(155.1, 4, 'Total accounts: ' . count($accounts), 0, 1, 'R');
             $this->Cell(310.2, 4, '', 0, 1);
 
             $this->SetFont('Arial', 'B', 8);
@@ -92,7 +93,7 @@ class PDF extends FPDF
             $this->Cell(23.86, 6, 'Outstanding Bal.', 'TB', 0, 'R');
             $this->Cell(23.86, 6, 'SCB', 'TB', 0, 'R');
             $this->Cell(23.86, 6, 'Arrears', 'TB', 0, 'R');
-            $this->Cell(23.86, 6, 'Last Transaction', 'RTB', 1, 'R');
+            $this->Cell(23.86, 6, 'Last Trans.', 'RTB', 1, 'R');
         } else {
             $this->SetFont('Courier', '', 10);
             $this->Cell(103.4, 4, 'Page ' . $this->PageNo() . " of {pages}", 0, 0, 'L');
@@ -123,7 +124,7 @@ if ($accounts) {
     $pdf->SetFont('Arial', '', 8);
     /* ----- UPDATED ACCOUNTS ----- */
     $pdf->SetFont('Arial', 'I', 8);
-    $pdf->Cell(310.2, 6, 'UPDATED ACCOUNTS', 'LR', 1);
+    $pdf->Cell(310.2, 6, 'STATUS: UPDATED', 'LR', 1);
     $updatedAccsTotalOutBal = (float)0;
     $updatedAccsTotalSCB = (float)0;
     $updatedAccsTotalArrears = (float)0;
@@ -150,7 +151,7 @@ if ($accounts) {
 
     /* ----- UPDATED ACCOUNTS SUMMARY ----- */
     $pdf->Cell(310.2, 2, '', 0, 1);
-    $pdf->Cell(50.4, 6, 'In Arrears Accounts Summary', 'B', 0, 'C');
+    $pdf->Cell(50.4, 6, 'Updated Accounts Summary', 'B', 0, 'C');
     $pdf->Cell(31.2, 6, 'Total Accounts:', 'B', 0, 'R');
     $pdf->SetFont('Arial', 'B', 8.5);
     $pdf->Cell(31.2, 6, count($updatedAccs), 'B', 0);
@@ -171,7 +172,7 @@ if ($accounts) {
 
     /* ----- IN ARREARS ACCOUNTS ----- */
     $pdf->SetFont('Arial', 'I', 8);
-    $pdf->Cell(310.2, 6, 'IN ARREARS ACCOUNTS', 'LR', 1);
+    $pdf->Cell(310.2, 6, 'STATUS: IN ARREARS', 'LR', 1);
     $inArrearsAccsTotalOutBal = (float)0;
     $inArrearsAccsTotalSCB = (float)0;
     $inArrearsAccsTotalArrears = (float)0;
