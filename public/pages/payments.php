@@ -272,7 +272,7 @@ try {
     </div>
   </div>
 
-  <div class="modal fade form-modal" data-loan="1" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+  <div class="modal fade form-modal payment-modal" data-loan="1" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -282,7 +282,6 @@ try {
           <form class="action-form" autocomplete="off" action="payment-loan" method="post" enctype="multipart/form-data">
             <input type="hidden" class="d-none" name="b_id" value="">
             <input name="data-row" type="hidden" class="d-none" value=''>
-
             <div class="container">
               <div class="row">
                 <div class="col">
@@ -290,78 +289,84 @@ try {
                 </div>
               </div>
               <div class="row">
-                <div class="col">
-                  <div class="jai-mb-2 autocomplete">
-                    <input type="hidden" class="borrower-id" name="borrower-id" placeholder="Search for borrowers..." autofocus>
-                    <input type="text" name="borrower-name" id="namesearch" class="autocomplete-input form-control" placeholder="Search for borrowers..." onclick="this.select()" autofocus>
-                    <div class="suggestions-container">
+                <div class="col-7">
+                  <div class="row">
+                    <div class="col">
+                      <div class="jai-mb-2 autocomplete">
+                        <input type="hidden" class="borrower-id" name="borrower-id" placeholder="Search for borrowers...">
+                        <input type="text" name="borrower-name" id="namesearch" class="autocomplete-input form-control" placeholder="Search for borrowers..." required>
+                        <div class="suggestions-container">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <div class="jai-mb-2">
+                        <input id="loanamount" name="loan-amount" placeholder="Loan Amount" type="text" class="form-control" readonly required>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="jai-mb-2">
+                        <input id="remainingbalance" name="remaining-balance" placeholder="Remaining Balance" type="text" class="form-control" readonly required>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <div class="jai-mb-2">
+                        <input id="mode" name="mode" placeholder="Mode" type="text" class="form-control" readonly required>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="jai-mb-2">
+                        <input id="term" name="term" placeholder="Term" type="text" class="form-control" readonly required>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="jai-mb-2">
+                        <input id="amortization" name="amortization" placeholder="Amortization" type="text" class="form-control" readonly required>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="row">
                 <div class="col">
-                  <div class="jai-mb-2">
-                    <input id="loanamount" name="loan-amount" placeholder="Loan Amount" type="text" class="form-control" readonly required>
+                  <div class="row">
+                    <div class="col">
+                      <div class="jai-mb-2">
+                        <input id="payment" name="payment" placeholder="Payment amount" type="text" class="form-control" required>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="jai-mb-2">
+                        <select id="type" name="type" class="form-control" onchange="setToZero();" required>
+                          <option value="" disabled selected>Select type</option>
+                          <option value="Cash">Cash</option>
+                          <option value="GCash">GCash</option>
+                          <option value="Pass">Pass</option>
+                        </select>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input id="remainingbalance" name="remaining-balance" placeholder="Remaining Balance" type="text" class="form-control" readonly required>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input id="mode" name="mode" placeholder="Mode" type="text" class="form-control" readonly required>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input id="term" name="term" placeholder="Term" type="text" class="form-control" readonly required>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input id="amortization" name="amortization" placeholder="Amortization" type="text" class="form-control" readonly required>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input type="hidden" id="collectorid" name="collector-id" value="">
-                    <select id="collectorname" name="collector-name" class="form-control" required>
-                      <option value="" disabled selected>Select collector</option>
-                      <?php
-                      foreach ($collectors as $i => $collector) {
-                        echo '<option value="' . $collector['c_id'] . '">' . $collector['firstname'] . ' ' . $collector['middlename'] . ' ' . $collector['lastname'] . '</option>';
-                      }
-                      ?>
-                    </select>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <select id="type" name="type" class="form-control" onchange="setToZero();" required>
-                      <option value="" disabled selected>Select type</option>
-                      <option value="Cash">Cash</option>
-                      <option value="GCash">GCash</option>
-                      <option value="Pass">Pass</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input id="payment" name="payment" placeholder="Payment amount" type="text" class="form-control" required>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input id="date" class="datepicker form-control today no-reset set-min-date" name="date" placeholder="Select date of payment" type="text" class="form-control" onkeydown="return false" required>
+                  <div class="row">
+                    <div class="col">
+                      <div class="jai-mb-2">
+                        <input type="hidden" id="collectorid" name="collector-id" class="form-control" value="">
+                        <select id="collectorname" name="collector-name" class="form-control" required>
+                          <option value="" disabled selected>Select collector</option>
+                          <?php
+                          foreach ($collectors as $i => $collector) {
+                            echo '<option value="' . $collector['c_id'] . '">' . $collector['firstname'] . ' ' . $collector['middlename'] . ' ' . $collector['lastname'] . '</option>';
+                          }
+                          ?>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="jai-mb-2">
+                        <input id="date" class="datepicker form-control today no-reset set-min-date" name="date" placeholder="Select date of payment" type="text" class="form-control" onkeydown="return false" required>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

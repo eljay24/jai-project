@@ -1,10 +1,13 @@
 .modal {
-  &#editBorrower, &#createBorrower {
+  &#editBorrower,
+  &#createBorrower,
+  &.payment-modal {
     .modal-dialog,
     .success-message {
       max-width: 1200px;
     }
   }
+
   .modal-dialog {
     .modal-content {
       border-radius: 15px;

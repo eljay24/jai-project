@@ -116,36 +116,46 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 textarea:-webkit-autofill,
 textarea:-webkit-autofill:hover,
 textarea:-webkit-autofill:focus,
-textarea:-webkit-autofill:active {
+textarea:-webkit-autofill:active,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus,
+select:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 30px white inset !important;
 }
 input.datepicker,
-textarea.datepicker {
+textarea.datepicker,
+select.datepicker {
   cursor: pointer;
 }
 input.form-control,
-textarea.form-control {
+textarea.form-control,
+select.form-control {
   transition: all 300ms;
   padding-left: 20px;
   border-radius: 25px;
   min-height: 45px;
 }
 input.form-control[readonly],
-textarea.form-control[readonly] {
+textarea.form-control[readonly],
+select.form-control[readonly] {
   background-color: transparent;
 }
 input.form-control:focus,
-textarea.form-control:focus {
+textarea.form-control:focus,
+select.form-control:focus {
   box-shadow: none;
   border-color: #1363df;
 }
 input.error,
-textarea.error {
+textarea.error,
+select.error {
   position: relative;
   border-color: #d32121;
 }
 input.error:focus,
-textarea.error:focus {
+textarea.error:focus,
+select.error:focus {
   border-color: #d32121;
 }
 
@@ -493,7 +503,8 @@ textarea.form-control {
 
 .modal#editBorrower .modal-dialog,
 .modal#editBorrower .success-message, .modal#createBorrower .modal-dialog,
-.modal#createBorrower .success-message {
+.modal#createBorrower .success-message, .modal.payment-modal .modal-dialog,
+.modal.payment-modal .success-message {
   max-width: 1200px;
 }
 .modal .modal-dialog .modal-content {
