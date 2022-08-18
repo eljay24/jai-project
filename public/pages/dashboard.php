@@ -39,7 +39,7 @@ require_once "../../views/partials/header.php";
     /*                                                                */
 
     $firstOfThisMonth = date('Y-m-01'); // hard-coded '01' for first day
-    $lastOfThisMonth  = date('Y-m-t');
+    $lastOfThisMonth  = date('Y-m-t'); // t = number of days in given month
 
     /* ----- TOTAL RELEASED & PAYABLES THIS MONTH ----- */
     $statementLoans = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
@@ -152,13 +152,55 @@ require_once "../../views/partials/header.php";
     }
     /* ----- END - CALCULATE PROFIT ----- */
 
-    /* ----- GET COLLECTOR DATA (FOR ACCOUNT LIST) ----- */
+    /* ----- GET COLLECTOR DATA (FOR ACCOUNTSLIST.PHP) ----- */
     $statementCollectors = $conn->prepare("SELECT c_id, CONCAT(c.firstname, ' ', c.lastname) as name
                                            FROM jai_db.collectors as c
                                           ");
     $statementCollectors->execute();
     $collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
-    /* ----- END - GET COLLECTOR DATA (FOR ACCOUNT LIST) ----- */
+    /* ----- END - GET COLLECTOR DATA (FOR ACCOUNTSLIST.PHP) ----- */
+
+    /* TEST */
+    $statementPaymentsAug3 = $conn->prepare("SELECT p.amount, l.amortization
+                                              FROM jai_db.payments as p
+                                              INNER JOIN jai_db.loans as l
+                                              ON p.l_id = l.l_id
+                                              WHERE p.date = '2022-08-03'");
+    $statementPaymentsAug3->execute();
+    $paymentsAug3 = $statementPaymentsAug3->fetchAll(PDO::FETCH_ASSOC);
+    $expectedPaymentsAug3 = (float)0;
+    $actualPaymentsAug3 = (float)0;
+    foreach ($paymentsAug3 as $i => $paymentAug3) {
+      $expectedPaymentsAug3 += $paymentAug3['amortization'];
+      $actualPaymentsAug3 += $paymentAug3['amount'];
+    }
+
+    // $testFirstOfJuly = date('Y-m-01');
+    // $testLastOfJuly = date('Y-m-t');
+    // $date1 = new DateTime($testFirstOfJuly);
+    // $date2 = new DateTime($testLastOfJuly);
+    // $interval = $date1->diff($date2);
+
+    // echo $testFirstOfJuly . ' - ' . $testLastOfJuly;
+    // echo "<br>";
+    // echo "difference " . $interval->y . " years, " . $interval->m." months, ".($interval->d + 1)." days "; 
+    // echo "<br>";
+
+    // $count = 0;
+    // while ($count <= $interval->d + 1) {
+    //   echo $count;
+    //   echo '<br>';
+    //   $count++;
+
+    // }
+
+    $date = strtotime("+1 day", strtotime("2007-02-28"));
+    echo date("Y-m-d", $date);
+    echo "<br>";
+    echo "(test)Expected Payments on Aug 3: " . number_format($expectedPaymentsAug3, 2);
+    echo "<br>";
+    echo "(test)Total Payments on Aug 3: " . number_format($actualPaymentsAug3, 2);
+    /* END - TEST */
 
 
     /*                                                                */
@@ -175,7 +217,9 @@ require_once "../../views/partials/header.php";
     // var_dump($activeLoans);
     // exit;
     ?>
-    SELECT COLELCTOR
+    <br>
+    <br>
+    SELECT COLLECTOR
     <form method="get" action="accountslist.php" target="_blank">
       <select name="c_id">
         <?php
@@ -207,7 +251,7 @@ require_once "../../views/partials/header.php";
     echo "<br>";
     echo "<br>";
     $thisMonth = date('F Y');
-    echo "THIS MONTH ($thisMonth)";
+    // echo "THIS MONTH ($thisMonth)";
     echo "<br>";
     echo 'Total released: ' . number_format($totalReleasedThisMonth, 2);
     echo "<br>";
