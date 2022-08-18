@@ -44,11 +44,13 @@ require_once "../../views/partials/header.php";
     /* ----- TOTAL RELEASED & PAYABLES THIS MONTH ----- */
     $statementLoans = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
                                         b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
-                                        l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
-                                        l.releasedate, l.duedate, l.status, l.c_id, l.paymentsmade, l.passes
+                                        l.l_id, l.amount, l.payable, l.mode, l.term, l.interestrate, l.amortization,
+                                        l.releasedate, l.duedate, l.status, l.c_id, l.paymentsmade, l.passes, CONCAT(c.firstname, ' ', c.lastname) as collector
                                   FROM jai_db.borrowers as b
                                   INNER JOIN jai_db.loans as l
                                   ON b.b_id = l.b_id
+                                  INNER JOIN jai_db.collectors as c
+                                  ON l.c_id = c.c_id
                                   WHERE b.isdeleted = 0 AND l.activeloan = 1 AND (l.releasedate BETWEEN :firstday AND :lastday)
                                   ");
     $statementLoans->bindValue(':firstday', $firstOfThisMonth);
@@ -115,7 +117,7 @@ require_once "../../views/partials/header.php";
     /* ----- TOTAL RELEASED & PAYABLES PREV MONTHS ----- */
     $statementLoansPrevMonths = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
                                         b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
-                                        l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
+                                        l.l_id, l.amount, l.payable, l.mode, l.term, l.interestrate, l.amortization,
                                         l.releasedate, l.duedate, l.status, l.c_id, l.paymentsmade, l.passes
                                   FROM jai_db.borrowers as b
                                   INNER JOIN jai_db.loans as l

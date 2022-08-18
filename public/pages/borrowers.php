@@ -51,7 +51,7 @@ try {
   if ($search) {
     $statement = $conn->prepare("SELECT b.b_id, b.isdeleted, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
                                         b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated, b.activeloan,
-                                        l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
+                                        l.l_id, l.amount, l.payable, l.mode, l.term, l.interestrate, l.amortization,
                                         l.releasedate, l.duedate, l.status, l.c_id
                                  FROM jai_db.borrowers as b
                                  LEFT JOIN jai_db.loans as l
@@ -70,7 +70,7 @@ try {
   } else {
     $statement = $conn->prepare("SELECT b.b_id, b.isdeleted, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
                                         b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated, b.activeloan,
-                                        l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
+                                        l.l_id, l.amount, l.payable, l.mode, l.term, l.interestrate, l.amortization,
                                         l.releasedate, l.duedate, l.status, l.c_id
                                  FROM jai_db.borrowers as b
                                  LEFT JOIN jai_db.loans as l

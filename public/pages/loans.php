@@ -58,7 +58,7 @@ try {
   if ($search) {
     $statement = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
                                         b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated, b.isdeleted,
-                                        l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
+                                        l.l_id, l.amount, l.payable, l.mode, l.term, l.interestrate, l.amortization,
                                         l.releasedate, l.duedate, l.status, l.c_id, l.paymentsmade, l.passes, CONCAT(c.firstname, ' ', c.lastname) as collector
                                  FROM jai_db.borrowers AS b
                                  INNER JOIN jai_db.loans AS l
@@ -77,7 +77,7 @@ try {
   } else {
     $statement = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
                                         b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated, b.isdeleted,
-                                        l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
+                                        l.l_id, l.amount, l.payable, l.mode, l.term, l.interestrate, l.amortization,
                                         l.releasedate, l.duedate, l.status, l.c_id, l.paymentsmade, l.passes, CONCAT(c.firstname, ' ', c.lastname) as collector
                                   FROM jai_db.borrowers as b
                                   INNER JOIN jai_db.loans as l

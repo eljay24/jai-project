@@ -60,7 +60,7 @@ try {
   //#endregion
 
   if ($search) {
-    $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, b.contactno, l.l_id, l.mode, l.balance, l.status,
+    $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, b.contactno, l.l_id, l.mode, l.status,
                                         l.paymentsmade, l.passes, p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
                                  FROM jai_db.payments as p
                                  INNER JOIN jai_db.collectors as c 
@@ -80,7 +80,7 @@ try {
     $statement->bindValue(':numOfRowsPerPage', $numOfRowsPerPage, PDO::PARAM_INT); // "PDO::PARAM_INT" removes quotes from SQL
     $statement->bindValue(':search', "%$search%");
   } else {
-    $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, b.contactno, l.l_id, l.mode, l.balance, l.status,
+    $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, b.contactno, l.l_id, l.mode, l.status,
                                         l.paymentsmade, l.passes, p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
                                  FROM jai_db.payments as p
                                  INNER JOIN jai_db.collectors as c 
@@ -128,22 +128,7 @@ try {
 
 <div class="content-container">
   <div class="page-name">
-
-
-    <?php //TOTAL AMOUNT TEST
-
-    // foreach ($borrowers as $i => $borrower) {
-    //   $totalAmount += $borrower['amount'];
-    //   $totalPayable += $borrower['payable'];
-    //   $totalBalance += $borrower['balance'];
-    // }
-
-    // echo "Total Amount: ₱" . number_format($totalAmount, 2) . "<br>";
-    // echo "Total Payable: ₱" . number_format($totalPayable, 2) . "<br>";
-    // echo "Total Balance: ₱" . number_format($totalBalance, 2);
-
-    ?>
-
+    
     <h1>Payments</h1>
   </div>
 
