@@ -39,8 +39,8 @@ $(document).ready(function () {
     ".submit-edit",
     ".action-form",
     "edit-borrower.php",
-    editBorrowerAction,
-    messages.successMessages.borrower.update
+    messages.successMessages.borrower.update,
+    editBorrowerAction
   );
 
   submitForm(
@@ -334,7 +334,13 @@ function openCreate(buttonName, modalName) {
   }
 }
 
-function submitForm(submitBtn, thisForm, ajaxFile, ajaxAction, successMessage) {
+function submitForm(
+  submitBtn,
+  thisForm,
+  ajaxFile,
+  successMessage,
+  ajaxAction = false
+) {
   $(document).on("click", submitBtn, function (event) {
     event.preventDefault();
     let form = $(thisForm),
