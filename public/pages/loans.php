@@ -276,9 +276,17 @@ try {
               ?></p>
             <p class="sub-font">(test)Daily profit:
               <?php
-                $loanNumOfDays = $loan['payable'] / $loan['amortization'];
-                $dailyProfit = ($loan['payable'] - $loan['amount']) / $loanNumOfDays;
-                echo number_format($dailyProfit, 4);
+
+              /*                                               */
+              /*       CALCULATE DAILY PROFIT (PER LOAN)       */
+              /*                                               */
+
+              $loanNumOfDays = $loan['payable'] / $loan['amortization'];
+              // $dailyProfit = ($loan['payable'] - $loan['amount']) / $loanNumOfDays;
+              $dailyProfit = ($loan['payable'] - $loan['amount']) / $days;
+              echo number_format($dailyProfit, 4);
+              /*    END - CALCULATE DAILY PROFIT (PER LOAN)    */
+
               ?>
             </p>
           </div>
@@ -611,7 +619,7 @@ try {
         <div class="close-button"></div>
       </div>
       <h3 class="success-content">
-        
+
       </h3>
     </div>
   </div>
