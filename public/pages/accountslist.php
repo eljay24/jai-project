@@ -41,6 +41,7 @@ $statement->bindValue(':c_id', $c_id);
 $statement->execute();
 $accounts = $statement->fetchAll(PDO::FETCH_ASSOC); //13 columns
 
+/* ----- ASSIGN ACCOUNTS TO DIFFERENT STATUS ----- */
 $updatedAccs = [];
 $inArrearsAccs = [];
 $pastDueAccs = [];
@@ -52,6 +53,7 @@ foreach ($accounts as $i => $account) {
         array_push($inArrearsAccs, $accounts[$i]);
     }
 }
+/* ----- END - ASSIGN ACCOUNTS TO DIFFERENT STATUS ----- */
 
 // echo '<pre>';
 // var_dump($updatedAccs);
@@ -158,21 +160,27 @@ if ($accounts) {
     $pdf->SetFont('Arial', '', 8);
     $pdf->Cell(37.2, 6, 'Total Outstanding Balance:', 'B', 0);
     $pdf->SetFont('Arial', 'B', 8.5);
+    $pdf->SetTextColor(0,76,153); //BLUE
     $pdf->Cell(37.2, 6, number_format($updatedAccsTotalOutBal, 2), 'B', 0);
     $pdf->SetFont('Arial', '', 8);
+    $pdf->SetTextColor(0,0,0); //BLACK
     $pdf->Cell(17.2, 6, 'Total SCB:', 'B', 0);
     $pdf->SetFont('Arial', 'B', 8.5);
+    $pdf->SetTextColor(0,76,153); //BLUE
     $pdf->Cell(45.2, 6, number_format($updatedAccsTotalSCB, 2), 'B', 0);
     $pdf->SetFont('Arial', '', 8);
+    $pdf->SetTextColor(0,0,0); //BLACK
     $pdf->Cell(20.2, 6, 'Total Arrears:', 'B', 0);
     $pdf->SetFont('Arial', 'B', 8.5);
+    $pdf->SetTextColor(76,153,0); //GREEN
     $pdf->Cell(42.2, 6, number_format($updatedAccsTotalArrears, 2), 'B', 1);
     $pdf->Cell(310.2, 5, '', 0, 1);
 
 
     /* ----- IN ARREARS ACCOUNTS ----- */
     $pdf->SetFont('Arial', 'I', 8);
-    $pdf->Cell(310.2, 6, 'STATUS: IN ARREARS', 'LR', 1);
+    $pdf->SetTextColor(0,0,0); //BLACK
+    $pdf->Cell(310.2, 6, 'STATUS: IN ARREARS', 'TLR', 1);
     $inArrearsAccsTotalOutBal = (float)0;
     $inArrearsAccsTotalSCB = (float)0;
     $inArrearsAccsTotalArrears = (float)0;
@@ -206,14 +214,19 @@ if ($accounts) {
     $pdf->SetFont('Arial', '', 8);
     $pdf->Cell(37.2, 6, 'Total Outstanding Balance:', 'B', 0);
     $pdf->SetFont('Arial', 'B', 8.5);
+    $pdf->SetTextColor(0,76,153); //BLUE
     $pdf->Cell(37.2, 6, number_format($inArrearsAccsTotalOutBal, 2), 'B', 0);
     $pdf->SetFont('Arial', '', 8);
+    $pdf->SetTextColor(0,0,0); //BLACK
     $pdf->Cell(17.2, 6, 'Total SCB:', 'B', 0);
     $pdf->SetFont('Arial', 'B', 8.5);
+    $pdf->SetTextColor(0,76,153); //BLUE
     $pdf->Cell(45.2, 6, number_format($inArrearsAccsTotalSCB, 2), 'B', 0);
     $pdf->SetFont('Arial', '', 8);
+    $pdf->SetTextColor(0,0,0); //BLACK
     $pdf->Cell(20.2, 6, 'Total Arrears:', 'B', 0);
     $pdf->SetFont('Arial', 'B', 8.5);
+    $pdf->SetTextColor(204,0,0); //RED
     $pdf->Cell(42.2, 6, number_format($inArrearsAccsTotalArrears, 2), 'B', 1);
     $pdf->Cell(310.2, 5, '', 0, 1);
 } else {

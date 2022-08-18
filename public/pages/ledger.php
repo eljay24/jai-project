@@ -75,7 +75,7 @@ class PDF extends FPDF
             $this->Cell(65.3, 6, '', 0, 0);
             $this->Cell(65.3, 6, 'Ledger', 0, 0, 'C');
             $this->SetFont('Courier', '', 10);
-            $this->Cell(65.3, 6, date('g:i:s A'), 0, 1, 'R');
+            $this->Cell(65.3, 6, 'Time: '.date('g:i:s A'), 0, 1, 'R');
 
             $this->SetFont('Courier', '', 10);
             // $this->Cell(195.9, 6, 'Borrower No.: ' . $payments[0]['b_id'], 0, 1);
@@ -184,7 +184,7 @@ if ($payments) {
     $pdf->Cell(195.9, 7, '', 'T', 1, 'C');
 
     $pdf->Cell(195.9, 0, '', 0, 1, 'C');
-    $pdf->Cell(195.9, 3, '-------------------------------    NOTHING FOLLOWS    -------------------------------', 0, 0, 'C');
+    $pdf->Cell(195.9, 3, '--------------------------------    NOTHING FOLLOWS    --------------------------------', 0, 0, 'C');
 } else {
     $pdf->SetTitle('JAI Invalid Ledger');
 }
