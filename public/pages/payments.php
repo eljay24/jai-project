@@ -74,7 +74,7 @@ try {
                                        OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                        OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
                                        OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
-                                 ORDER BY p.date DESC
+                                 ORDER BY p.date DESC, p.p_id DESC
                                  LIMIT :offset, :numOfRowsPerPage");
     $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
     $statement->bindValue(':numOfRowsPerPage', $numOfRowsPerPage, PDO::PARAM_INT); // "PDO::PARAM_INT" removes quotes from SQL
@@ -89,7 +89,7 @@ try {
                                  ON p.l_id = l.l_id
                                  INNER JOIN jai_db.borrowers as b 
                                  ON b.b_id = l.b_id
-                                 ORDER BY p.date DESC
+                                 ORDER BY p.date DESC, p.p_id DESC
                                  LIMIT :offset, :numOfRowsPerPage");
   }
 
