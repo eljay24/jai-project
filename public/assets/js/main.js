@@ -31,13 +31,11 @@ $(document).ready(function () {
   // Modal Submit Functions START
   submitForm(
     ".submit-create",
-    ".action-form",
     "create-borrower.php",
     messages.successMessages.borrower.create
   );
   submitForm(
     ".submit-edit",
-    ".action-form",
     "edit-borrower.php",
     messages.successMessages.borrower.update,
     editBorrowerAction
@@ -45,14 +43,12 @@ $(document).ready(function () {
 
   submitForm(
     ".submit-loan",
-    ".action-form",
     "create-loan.php",
     messages.successMessages.Loan.create
   );
 
   submitForm(
     ".submit-payment",
-    ".action-form",
     "add-payment.php",
     messages.successMessages.Payment.create
   );
@@ -336,14 +332,13 @@ function openCreate(buttonName, modalName) {
 
 function submitForm(
   submitBtn,
-  thisForm,
   ajaxFile,
   successMessage,
   ajaxAction = false
 ) {
   $(document).on("click", submitBtn, function (event) {
     event.preventDefault();
-    let form = $(thisForm),
+    let form = $('.action-form'),
       formValues = form.serialize(),
       newValues = form.serializeArray(),
       rowId = $(this)
@@ -351,7 +346,7 @@ function submitForm(
         .find('input[name="data-row"]')
         .val();
 
-    if (validateForm(thisForm))
+    if (validateForm(form))
       $.ajax({
         url: "../ajax-calls/" + ajaxFile,
         method: "POST",
