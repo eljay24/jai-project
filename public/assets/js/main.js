@@ -212,8 +212,8 @@ function autoFillAction(input, actionFile) {
       beforeSend: function () {},
       success: function (data, xhr, success) {
         thisInput.siblings(".suggestions-container").html(data);
-        console.log(data);
-        console.log(xhr);
+        // console.log(data);
+        // console.log(xhr);
         console.log(success);
       },
       error: function (response, xhr, data) {
