@@ -13,7 +13,7 @@ $statementLoan = $conn->prepare("SELECT b.b_id, l.l_id, CONCAT(b.lastname, ', ',
                                  INNER JOIN jai_db.borrowers as b
                                  ON p.b_id = b.b_id
                                  WHERE p.l_id = :loanID
-                                 ORDER BY p.date ASC");
+                                 ORDER BY p.date ASC, p.p_id ASC");
 $statementLoan->bindValue(':loanID', $loanID);
 $statementLoan->execute();
 $payments = $statementLoan->fetchAll(PDO::FETCH_ASSOC);
@@ -35,7 +35,7 @@ $sumOfPayments = $statementSumOfPayments->fetch(PDO::FETCH_ASSOC);
 if ($payments) {
     /* ----- CALCULATE Supposed Current Balance & Arrears ----- */
     
-    if ($payments[0]['payable'] - $sumOfPayments['sumofpayments'] == 0) {
+    if ($payments[0]['payable'] - $sumOfPayments['sumofpayments'] <= 0) {
         $SCB = 0;
         $arrears = 0;
     } else {

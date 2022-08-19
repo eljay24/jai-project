@@ -58,8 +58,8 @@ try {
   if ($search) {
     $statement = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
                                         b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated, b.isdeleted,
-                                        l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
-                                        l.releasedate, l.duedate, l.status, l.c_id, l.paymentsmade, l.passes, CONCAT(c.firstname, ' ', c.lastname) as collector
+                                        l.l_id, l.amount, l.payable, l.mode, l.term, l.interestrate, l.amortization,
+                                        l.releasedate, l.duedate, l.status, l.c_id, CONCAT(c.firstname, ' ', c.lastname) as collector
                                  FROM jai_db.borrowers AS b
                                  INNER JOIN jai_db.loans AS l
                                  ON b.b_id = l.b_id
@@ -77,8 +77,8 @@ try {
   } else {
     $statement = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
                                         b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated, b.isdeleted,
-                                        l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
-                                        l.releasedate, l.duedate, l.status, l.c_id, l.paymentsmade, l.passes, CONCAT(c.firstname, ' ', c.lastname) as collector
+                                        l.l_id, l.amount, l.payable, l.mode, l.term, l.interestrate, l.amortization,
+                                        l.releasedate, l.duedate, l.status, l.c_id, CONCAT(c.firstname, ' ', c.lastname) as collector
                                   FROM jai_db.borrowers as b
                                   INNER JOIN jai_db.loans as l
                                   ON b.b_id = l.b_id
@@ -166,10 +166,29 @@ try {
       $amount = $amountPaid['amount'];
       /* ----- END - GET TOTAL AMOUNT PAID ----- */
 
-      /* ----- GET EST. PASS AMOUNT ----- */
-      $passAmount = $loan['amortization'] * $loan['passes'];
-      /* ----- END - GET EST. PASS AMOUNT ----- */
+      /* ----- GET TOTAL PAYMENTS MADE ----- */
+      $statementTotalPayments = $conn->prepare("SELECT COUNT(amount) as totalpayments
+                                                FROM jai_db.payments as p
+                                                WHERE l_id = :l_id AND (p.type = 'Cash' OR p.type = 'GCash')");
+      $statementTotalPayments->bindValue(':l_id', $loanID);
+      $statementTotalPayments->execute();
+      $totalPayments = $statementTotalPayments->fetch(PDO::FETCH_ASSOC);
+      $totalPayment = $totalPayments['totalpayments'];
+      /* ----- END - GET TOTAL PAYMENTS MADE ----- */
 
+      /* ----- GET TOTAL PASSES ----- */
+      $statementTotalPasses = $conn->prepare("SELECT COUNT(amount) as totalpasses
+                                                FROM jai_db.payments as p
+                                                WHERE l_id = :l_id AND (p.type = 'Pass')");
+      $statementTotalPasses->bindValue(':l_id', $loanID);
+      $statementTotalPasses->execute();
+      $totalPasses = $statementTotalPasses->fetch(PDO::FETCH_ASSOC);
+      $totalPass = $totalPasses['totalpasses'];
+      /* ----- END - GET TOTAL PASSES ----- */
+
+      /* ----- GET EST. PASS AMOUNT ----- */
+      $passAmount = $loan['amortization'] * $totalPass;
+      /* ----- END - GET EST. PASS AMOUNT ----- */
 
 
       // echo "<pre>";
@@ -191,8 +210,8 @@ try {
               </div>
             </div>
             <div class="col">
-              <p class="jai-table-name primary-font <?= $loan['passes'] >= 5 ? 'red' : ''; ?>
-                                              <?= $loan['passes'] < 5 ? 'green' : '' ?>"><span class="jai-table-label"></span> <?= ucwords(strtolower($loan['firstname'])) . ' ' . ucwords(strtolower($loan['middlename'])) . ' ' . ucwords(strtolower($loan['lastname'])) ?></p>
+              <p class="jai-table-name primary-font <?= $totalPass >= 5 ? 'red' : ''; ?>
+                                              <?= $totalPass < 5 ? 'green' : '' ?>"><span class="jai-table-label"></span> <?= ucwords(strtolower($loan['firstname'])) . ' ' . ucwords(strtolower($loan['middlename'])) . ' ' . ucwords(strtolower($loan['lastname'])) ?></p>
               <p class="jai-table-name primary-font"><?= $loan['status'] ?></p>
               <?php
               if ($loan['isdeleted'] == 1) {
@@ -294,10 +313,12 @@ try {
         <div class="col position-relative">
           <div class="row">
             <div class="col">
-              <p class="jai-table-amount primary-font"><span class="jai-table-label">Payments made:</span> <?php echo $loan['paymentsmade'] ?></p>
+              <!-- <p class="jai-table-amount primary-font"><span class="jai-table-label">Payments made:</span> <?php echo $loan['paymentsmade'] ?></p> hard coded payments made from loans table -->
+              <p class="jai-table-amount primary-font"><span class="jai-table-label">Payments made:</span> <?php echo $totalPayment ?></p> <!-- select query total payments from payments table  -->
             </div>
             <div class="col">
-              <p class="jai-table-payable primary-font"> <span class="jai-table-label">Passes: </span> <?php echo $loan['passes'] ?></p>
+              <!-- <p class="jai-table-payable primary-font"> <span class="jai-table-label">Passes: </span> <?php echo $loan['passes'] ?></p> hard coded passes from loans table -->
+              <p class="jai-table-payable primary-font"> <span class="jai-table-label">Passes: </span> <?php echo $totalPass ?></p> <!-- select query total passes from payments table -->
             </div>
           </div>
           <div class="row">
@@ -322,7 +343,7 @@ try {
           <button title="Delete" type="button" class="btn btn-danger btn-sm delete-btn delete-borrower" data-toggle="modal" data-target="#deleteBorrower" disabled>Delete</button>
 
           <form method="get" action="ledger.php" target="_blank">
-            <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $loan['l_id'] ?>" <?= ($loan['paymentsmade'] || $loan['passes']) == 0 ? 'disabled' : '' ?>></input>
+            <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $loan['l_id'] ?>" <?= ($totalPayment || $totalPass) == 0 ? 'disabled' : '' ?>></input>
           </form>
         </div>
         <div class="d-none hidden-field">

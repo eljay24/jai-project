@@ -59,30 +59,50 @@ if (isset($_POST['borrower-name'])) {
 
 
   // UPDATE BALANCE & ARREARS? ON LOANS TABLE
-  $statementUpdateLoan = $conn->prepare("UPDATE jai_db.loans
-                                          SET balance = balance - :paidamount, paymentsmade = paymentsmade + :paymentsmade, passes = passes + :passes
-                                          WHERE b_id = :b_id AND l_id = :l_id");
+  // $statementUpdateLoan = $conn->prepare("UPDATE jai_db.loans
+  //                                         SET balance = balance - :paidamount, paymentsmade = paymentsmade + :paymentsmade, passes = passes + :passes
+  //                                         WHERE b_id = :b_id AND l_id = :l_id");
 
-  $statementUpdateLoan->bindValue(':b_id', $_POST['borrower-id']);
-  $statementUpdateLoan->bindValue(':l_id', $_POST['loanid']);
-  $statementUpdateLoan->bindValue(':paidamount', $_POST['payment']);
-  $statementUpdateLoan->bindValue(':paymentsmade', $paymentsMade);
-  $statementUpdateLoan->bindValue(':passes', $pass);
+  // $statementUpdateLoan->bindValue(':b_id', $_POST['borrower-id']);
+  // $statementUpdateLoan->bindValue(':l_id', $_POST['loanid']);
+  // $statementUpdateLoan->bindValue(':paidamount', $_POST['payment']);
+  // $statementUpdateLoan->bindValue(':paymentsmade', $paymentsMade);
+  // $statementUpdateLoan->bindValue(':passes', $pass);
 
-  $statementUpdateLoan->execute();
+  // $statementUpdateLoan->execute();
   // END - UPDATE BALANCE & ARREARS? ON LOANS TABLE
 
   // CHECK IF LOAN CLOSED
-  $statementCheckClosed = $conn->prepare("UPDATE jai_db.loans as l
+  $statementLoan = $conn->prepare("SELECT l.payable
+                                   FROM jai_db.loans as l
+                                   WHERE (l.b_id = :b_id AND l.l_id = :l_id)");
+  $statementLoan->bindValue(':b_id', $_POST['borrower-id']);
+  $statementLoan->bindValue(':l_id', $_POST['loanid']);
+  $statementLoan->execute();
+  $payable = $statementLoan->fetch(PDO::FETCH_ASSOC);
+
+  $statementGetAllPayments = $conn->prepare("SELECT SUM(amount) as totalpayment
+                                             FROM jai_db.payments as p
+                                             WHERE (p.b_id = :b_id AND p.l_id = :l_id)");
+  $statementGetAllPayments->bindValue(':b_id', $_POST['borrower-id']);
+  $statementGetAllPayments->bindValue(':l_id', $_POST['loanid']);
+  $statementGetAllPayments->execute();
+  $sumOfPayments = $statementGetAllPayments->fetch(PDO::FETCH_ASSOC);
+
+  if ($payable['payable'] - $sumOfPayments['totalpayment'] <= 0) {
+    $statementCheckClosed = $conn->prepare("UPDATE jai_db.loans as l
                                             INNER JOIN jai_db.borrowers as b
                                             ON l.b_id = b.b_id
-                                            SET l.status = 'Closed', l.activeloan= 0, b.activeloan = 0
-                                            WHERE (l.b_id = :b_id AND l.l_id = :l_id AND balance <= 0)
-  ");
+                                            SET l.status = 'Closed', l.activeloan = 0, b.activeloan = 0
+                                            WHERE (l.b_id = :b_id AND l.l_id = :l_id)
+                                            ");
 
-  $statementCheckClosed->bindValue(':b_id', $_POST['borrower-id']);
-  $statementCheckClosed->bindValue(':l_id', $_POST['loanid']);
-  $statementCheckClosed->execute();
+    $statementCheckClosed->bindValue(':b_id', $_POST['borrower-id']);
+    $statementCheckClosed->bindValue(':l_id', $_POST['loanid']);
+    $statementCheckClosed->execute();
+  }
+
+
   // END - CHECK IF LOAN CLOSED
 
   // UPDATE BORROWER ACTIVE LOAN

@@ -51,7 +51,7 @@ try {
   if ($search) {
     $statement = $conn->prepare("SELECT b.b_id, b.isdeleted, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
                                         b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated, b.activeloan,
-                                        l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
+                                        l.l_id, l.amount, l.payable, l.mode, l.term, l.interestrate, l.amortization,
                                         l.releasedate, l.duedate, l.status, l.c_id
                                  FROM jai_db.borrowers as b
                                  LEFT JOIN jai_db.loans as l
@@ -70,7 +70,7 @@ try {
   } else {
     $statement = $conn->prepare("SELECT b.b_id, b.isdeleted, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
                                         b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated, b.activeloan,
-                                        l.l_id, l.amount, l.payable, l.balance, l.mode, l.term, l.interestrate, l.amortization,
+                                        l.l_id, l.amount, l.payable, l.mode, l.term, l.interestrate, l.amortization,
                                         l.releasedate, l.duedate, l.status, l.c_id
                                  FROM jai_db.borrowers as b
                                  LEFT JOIN jai_db.loans as l
@@ -93,37 +93,12 @@ try {
   echo "Connection failed: " . $e->getMessage();
 }
 
-// echo "<pre>";
-// var_dump($borrowers);
-// echo '</pre>';
-// exit;
-
-//TOTAL AMOUNT TEST
-// $totalAmount = 0;
-// $totalPayable = 0;
-// $totalBalance = 0;
-
 ?>
 
 <?php include_once "../../views/partials/header.php"; ?>
 
 <div class="content-container">
   <div class="page-name">
-
-
-    <?php //TOTAL AMOUNT TEST
-
-    // foreach ($borrowers as $i => $borrower) {
-    //   $totalAmount += $borrower['amount'];
-    //   $totalPayable += $borrower['payable'];
-    //   $totalBalance += $borrower['balance'];
-    // }
-
-    // echo "Total Amount: ₱" . number_format($totalAmount, 2) . "<br>";
-    // echo "Total Payable: ₱" . number_format($totalPayable, 2) . "<br>";
-    // echo "Total Balance: ₱" . number_format($totalBalance, 2);
-
-    ?>
 
     <h1>Borrowers</h1>
   </div>
@@ -150,6 +125,15 @@ try {
     <?php
     $count = 1;
     foreach ($borrowers as $i => $borrower) {
+
+      $l_id = $borrower['l_id'];
+      $statementPayment = $conn->prepare("SELECT SUM(p.amount) as totalpayment
+                                           FROM jai_db.payments as p
+                                           WHERE l_id = :l_id");
+      $statementPayment->bindValue(':l_id', $l_id);
+      $statementPayment->execute();
+      $totalPayment = $statementPayment->fetch(PDO::FETCH_ASSOC);
+
       $picturePath = $borrower['picture'] ? $borrower['picture'] : 'assets/icons/borrower-picture-placeholder.jpg';
     ?>
       <div class="row jai-data-row" data-row="row-<?= $borrower['b_id'] ?>">
@@ -187,7 +171,8 @@ try {
                 <p class="jai-table-amount primary-font"><span class="jai-table-label">Amount:</span> <span class="value"><?= "₱ " . number_format($borrower['amount'], 2); ?></span></p>
               </div>
               <div class="col">
-                <p class="jai-table-payable primary-font"> <span class="jai-table-label">Balance: </span> <span class="value"><?= "₱ " . number_format($borrower['balance'], 2) ?></span></p>
+                <!-- <p class="jai-table-payable primary-font"> <span class="jai-table-label">Balance: </span> <span class="value"><?= "₱ " . number_format($borrower['balance'], 2) ?></span></p> HARD CODED BALANCE (FROM DB) -->
+                <p class="jai-table-payable primary-font"> <span class="jai-table-label">Balance: </span> <span class="value"><?= "₱ " . number_format($borrower['payable'] - $totalPayment['totalpayment'], 2) ?></span></p> <!-- CALCULATED BALANCE -->
               </div>
             </div>
             <div class="row">

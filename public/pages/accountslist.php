@@ -3,7 +3,13 @@
 require_once "../../views/includes/dbconn.php";
 require "../../views/includes/fpdf.php";
 
-$c_id = $_GET['c_id'];
+if (empty($_GET)) {
+    $c_id = 0;
+} else {
+    $c_id = $_GET['c_id'];
+}
+
+
 
 $statement = $conn->prepare("SELECT DISTINCT l.l_id, CONCAT(b.lastname, ', ', b.firstname, ' ', b.middlename) as name,
                                              l.releasedate, l.duedate, l.amount, l.payable, l.amortization, l.term, l.mode,
