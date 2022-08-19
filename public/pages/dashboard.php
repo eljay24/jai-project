@@ -45,7 +45,7 @@ require_once "../../views/partials/header.php";
     $statementLoans = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
                                         b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
                                         l.l_id, l.amount, l.payable, l.mode, l.term, l.interestrate, l.amortization,
-                                        l.releasedate, l.duedate, l.status, l.c_id, l.paymentsmade, l.passes, CONCAT(c.firstname, ' ', c.lastname) as collector
+                                        l.releasedate, l.duedate, l.status, l.c_id, CONCAT(c.firstname, ' ', c.lastname) as collector
                                   FROM jai_db.borrowers as b
                                   INNER JOIN jai_db.loans as l
                                   ON b.b_id = l.b_id
@@ -118,7 +118,7 @@ require_once "../../views/partials/header.php";
     $statementLoansPrevMonths = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
                                         b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
                                         l.l_id, l.amount, l.payable, l.mode, l.term, l.interestrate, l.amortization,
-                                        l.releasedate, l.duedate, l.status, l.c_id, l.paymentsmade, l.passes
+                                        l.releasedate, l.duedate, l.status, l.c_id
                                   FROM jai_db.borrowers as b
                                   INNER JOIN jai_db.loans as l
                                   ON b.b_id = l.b_id
@@ -221,9 +221,10 @@ require_once "../../views/partials/header.php";
     ?>
     <br>
     <br>
-    SELECT COLLECTOR
+    Accounts Listtttttttttt test
     <form method="get" action="accountslist.php" target="_blank">
       <select name="c_id">
+        <option value="" selected disabled>Select collector</option>
         <?php
         foreach ($collectors as $i => $collector) {
           echo '<option value="' . $collector['c_id'] . '">' . $collector['name'] . '</option>';
