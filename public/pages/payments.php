@@ -61,7 +61,7 @@ try {
 
   if ($search) {
     $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, b.contactno, l.l_id, l.mode, l.status,
-                                        l.paymentsmade, l.passes, p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
+                                        p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
                                  FROM jai_db.payments as p
                                  INNER JOIN jai_db.collectors as c 
                                  ON p.c_id = c.c_id
@@ -81,7 +81,7 @@ try {
     $statement->bindValue(':search', "%$search%");
   } else {
     $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, b.contactno, l.l_id, l.mode, l.status,
-                                        l.paymentsmade, l.passes, p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
+                                        p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
                                  FROM jai_db.payments as p
                                  INNER JOIN jai_db.collectors as c 
                                  ON p.c_id = c.c_id
@@ -128,7 +128,7 @@ try {
 
 <div class="content-container">
   <div class="page-name">
-    
+
     <h1>Payments</h1>
   </div>
 
@@ -154,7 +154,30 @@ try {
     <?php
     foreach ($payments as $i => $payment) {
 
-      $date = date_create($payment['date']); ?>
+      $date = date_create($payment['date']);
+      $loanID = $payment['l_id'];
+
+      /* ----- GET TOTAL PAYMENTS MADE ----- */
+      $statementTotalPayments = $conn->prepare("SELECT COUNT(amount) as totalpayments
+                                                FROM jai_db.payments as p
+                                                WHERE l_id = :l_id AND (p.type = 'Cash' OR p.type = 'GCash')");
+      $statementTotalPayments->bindValue(':l_id', $loanID);
+      $statementTotalPayments->execute();
+      $totalPayments = $statementTotalPayments->fetch(PDO::FETCH_ASSOC);
+      $totalPayment = $totalPayments['totalpayments'];
+      /* ----- END - GET TOTAL PAYMENTS MADE ----- */
+
+      /* ----- GET TOTAL PASSES ----- */
+      $statementTotalPasses = $conn->prepare("SELECT COUNT(amount) as totalpasses
+                                                FROM jai_db.payments as p
+                                                WHERE l_id = :l_id AND (p.type = 'Pass')");
+      $statementTotalPasses->bindValue(':l_id', $loanID);
+      $statementTotalPasses->execute();
+      $totalPasses = $statementTotalPasses->fetch(PDO::FETCH_ASSOC);
+      $totalPass = $totalPasses['totalpasses'];
+      /* ----- END - GET TOTAL PASSES ----- */
+
+    ?>
 
       <div data-row-id="<?php echo $payment['p_id'] ?>" class="row jai-data-row">
         <div class="jai-col-ID"><?php echo $payment['p_id'] ?></div>
@@ -224,7 +247,7 @@ try {
           <a title="Edit" href="#" class="btn btn-primary btn-sm edit-btn">Edit</a>
           <button title="Delete" type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower" disabled>Delete</button>
           <form method="get" action="ledger.php" target="_blank">
-            <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $payment['l_id'] ?>" <?= ($payment['paymentsmade'] || $payment['passes']) == 0 ? 'disabled' : '' ?>></input>
+            <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $loanID ?>" <?= ($totalPayment || $totalPass) == 0 ? 'disabled' : '' ?>></input>
           </form>
 
         </div>
@@ -337,8 +360,8 @@ try {
                     <div class="col">
                       <div class="jai-mb-2">
                         <input type="hidden" id="collectorid" name="collector-id" class="form-control" value="">
-                        <select id="collectorname" name="collector-name" class="form-control" required>
-                          <option value="" disabled selected>Select collector</option>
+                        <select id="collectorname" name="collector-name" class="form-control" disabled required>
+                          <option value="" disabled selected>Collector</option>
                           <?php
                           foreach ($collectors as $i => $collector) {
                             echo '<option value="' . $collector['c_id'] . '">' . $collector['firstname'] . ' ' . $collector['middlename'] . ' ' . $collector['lastname'] . '</option>';
