@@ -237,7 +237,7 @@ try {
               <p class="jai-table-address primary-font"> <span class="jai-table-label">Collector: </span><?php echo ucwords(strtolower($payment['collectorfname'])) . ' ' . ucwords(strtolower($payment['collectormname'])) . ' ' . ucwords(strtolower($payment['collectorlname'])) ?></p>
               <!-- <textarea class="jai-table-input" type="text"></textarea> -->
             </div>
-            <div class="col">
+            <div class="col-3">
               <p class="primary-font"><?= $payment['status'] ?></p>
             </div>
           </div>

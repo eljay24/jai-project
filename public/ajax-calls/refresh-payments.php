@@ -182,7 +182,7 @@ if (isset($_POST['action'])) {
     $table .= '<p class="jai-table-address primary-font"> <span class="jai-table-label">Collector: </span>' . ucwords(strtolower($payment['collectorfname'])) . ' ' . ucwords(strtolower($payment['collectormname'])) . ' ' . ucwords(strtolower($payment['collectorlname'])) . '</p>';
     $table .= '<!-- <textarea class="jai-table-input" type="text"></textarea> -->';
     $table .= '</div>';
-    $table .= '<div class="col">';
+    $table .= '<div class="col-3">';
     $table .= '<p class="primary-font">' . $payment['status'] . '</p>';
     $table .= '</div>';
     $table .= '</div>';
