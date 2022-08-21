@@ -342,7 +342,7 @@ try {
         <div class="col-1 d-flex align-items-center justify-content-around">
           <button title="Delete" type="button" class="btn btn-danger btn-sm delete-btn delete-borrower" data-toggle="modal" data-target="#deleteBorrower" disabled>Delete</button>
 
-          <form method="get" action="ledger.php" target="_blank">
+          <form method="get" action="ledger" target="_blank">
             <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $loan['l_id'] ?>" <?= ($totalPayment || $totalPass) == 0 ? 'disabled' : '' ?>></input>
           </form>
         </div>

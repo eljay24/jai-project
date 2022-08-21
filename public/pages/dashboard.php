@@ -396,7 +396,7 @@ $thisMonth = date('F Y');
     <br>
     <br>
     Accounts Listtttttttttt test
-    <form method="get" action="accountslist.php" target="_blank">
+    <form method="get" action="accountslist" target="_blank">
       <select name="c_id">
         <option value="" selected disabled>Select collector</option>
         <?php
