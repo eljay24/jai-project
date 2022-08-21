@@ -560,4 +560,8 @@ body.modal-open {
   padding-right: 0 !important;
 }
 
+.chart-div {
+  width: 350px;
+}
+
 /*# sourceMappingURL=main.css.map */
