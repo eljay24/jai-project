@@ -216,15 +216,15 @@ if (isset($_POST['action'])) {
     }
   }
 
-  $pagination .= "<li" . ($pageNum <= 1 ? " class='page-link disabled'" : '') . ">";
   if ($pageNum > 1) {
+    $pagination .= "<li" . ($pageNum <= 1 ? " class='page-link disabled'" : '') . ">";
     if (!$search) {
       $pagination .= "<a class='page-link' data-pagecount='$previousPage' href='?page=$previousPage'>";
     } else {
       $pagination .= "<a class='page-link' data-pagecount='$previousPage' href='?page=$previousPage&search=$search'>";
     }
+    $pagination .= "Previous</a></li>";
   }
-  $pagination .= "Previous</a></li>";
 
 
 
@@ -322,16 +322,20 @@ if (isset($_POST['action'])) {
     }
   }
 
+  if ($totalPages == 0) {
+    $pagination .= "<li class='page-item'><a class='page-link active' data-pagecount='1' href='?page=1'>1</a></li>";
+  }
 
-  $pagination .= "<li " . ($pageNum >= $totalPages ? "class='page-link disabled'" : '') . "><a ";
+
   if ($pageNum < $totalPages) {
+    $pagination .= "<li " . ($pageNum >= $totalPages ? "class='page-link disabled'" : '') . "><a ";
     if (!$search) {
       $pagination .= "class='page-link' data-pagecount='$nextPage' href='?page=$nextPage'";
     } else {
       $pagination .= "class='page-link' data-pagecount='$nextPage href='?page=$nextPage&search=$search'";
     }
+    $pagination .= ">Next</a></li>";
   }
-  $pagination .= ">Next</a></li>";
 
 
   if ($pageNum < $totalPages) {

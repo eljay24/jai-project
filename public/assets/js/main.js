@@ -391,7 +391,7 @@ function submitForm(submitBtn, ajaxFile, successMessage, tableAction = false) {
         url: "../ajax-calls/" + ajaxFile,
         method: "POST",
         data: formValues,
-        dataType: "html",
+        dataType: "json",
         beforeSend: function () {
           $(submitBtn).addClass("disabled");
         },
