@@ -444,7 +444,7 @@ try {
       if ($pageNum <= 4) {
         for ($counter = 1; $counter < 8; $counter++) {
           if ($counter == $pageNum) {
-            echo "<li class='page-item active'><a data-pagecount='$counter' class='page-link'>$counter</a></li>";
+            echo "<li class='page-item active'><a data-pagecount='$counter' class='page-link active'>$counter</a></li>";
           } else {
             if (!$search) {
               echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
@@ -478,7 +478,7 @@ try {
           $counter++
         ) {
           if ($counter == $pageNum) {
-            echo "<li class='page-item active'><a class='page-link' data-pagecount='" . $counter . "'>$counter</a></li>";
+            echo "<li class='page-item active'><a class='page-link active' data-pagecount='" . $counter . "'>$counter</a></li>";
           } else {
             if (!$search) {
               echo "<li class='page-item'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter'>$counter</a></li>";
@@ -510,7 +510,7 @@ try {
           $counter++
         ) {
           if ($counter == $pageNum) {
-            echo "<li class='page-item active'><a class='page-link'>$counter</a></li>";
+            echo "<li class='page-item active'><a class='page-link active'>$counter</a></li>";
           } else {
             if (!$search) {
               echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
