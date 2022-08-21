@@ -328,11 +328,11 @@ if (isset($_POST['action'])) {
 
 
   if ($pageNum < $totalPages) {
-    $pagination .= "<li " . ($pageNum >= $totalPages ? "class='page-link disabled'" : '') . "><a ";
+    $pagination .= "<li " . ($pageNum >= $totalPages ? "class='page-link'" : '') . "><a ";
     if (!$search) {
       $pagination .= "class='page-link' data-pagecount='$nextPage' href='?page=$nextPage'";
     } else {
-      $pagination .= "class='page-link' data-pagecount='$nextPage href='?page=$nextPage&search=$search'";
+      $pagination .= "class='page-link' data-pagecount='$nextPage' href='?page=$nextPage&search=$search'";
     }
     $pagination .= ">Next</a></li>";
   }
