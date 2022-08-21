@@ -186,9 +186,19 @@ $thisMonth = date('F Y');
     /*                                    */
     ?>
     <div class="chart-div d-flex">
+      
       <canvas id="chartTotalCollectionLastMonth"></canvas>
       <canvas id="chartTotalCollectionThisMonth"></canvas>
-      <canvas id="chartTotalCollectionToday"></canvas>
+      <div style="width: 400px; height: 400px; position: relative;">
+        <div style="text-align: center; width: 100%; height: 100%; position: absolute; left: 0; top: 100px; z-index: 20;">
+          <br>
+          <br>
+          <br>
+          <br>
+          <?= $totalCollectionToday == 0 ? '<span>No collections today</span>' : '' ?>
+        </div>
+        <canvas id="chartTotalCollectionToday"></canvas>
+      </div>
     </div>
 
     <?php
