@@ -139,7 +139,7 @@ if (isset($_POST['action'])) {
     $table .= '<div class="col">';
     $table .= '<p class="jai-table-name primary-font"><span class="jai-table-label"></span> ' . '#' . $payment['b_id'] . ' ' . ucwords(strtolower($payment['borrowerfname'])) . ' ' . ucwords(strtolower($payment['borrowermname'])) . ' ' . ucwords(strtolower($payment['borrowerlname'])) . '</p>';
     $table .= '</div>';
-    $table .= '<div class="col">';
+    $table .= '<div class="col-4">';
     $table .= '<p class="primary-font">Loan Ref #' . $payment['l_id'] . '</p>';
     $table .= '</div>';
     $table .= '</div>';
