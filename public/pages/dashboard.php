@@ -171,7 +171,7 @@ $thisMonth = date('F Y');
     $totalGCashCollectionTodayCarl = $queryTotalGCashCollectionTodayCarl->fetch(PDO::FETCH_ASSOC);
 
     /* TOTAL (ALL) */
-    $totalCollection = ($totalCashCollectionTodayKing['sum'] + $totalGCashCollectionTodayKing['sum']) + ($totalCashCollectionTodayCarl['sum'] + $totalGCashCollectionTodayCarl['sum']);
+    $totalCollectionToday = ($totalCashCollectionTodayKing['sum'] + $totalGCashCollectionTodayKing['sum']) + ($totalCashCollectionTodayCarl['sum'] + $totalGCashCollectionTodayCarl['sum']);
 
     /*                                                                   */
     /*                                                                   */
@@ -191,9 +191,9 @@ $thisMonth = date('F Y');
 
       <canvas id="chartTotalCollectionThisMonth"></canvas>
       <?= 'Total collection this month (' . $thisMonth . '): ₱' . number_format($totalCollectionThisMonth, 2) ?>
-      
+
       <canvas id="chartTotalCollectionToday"></canvas>
-      <?= 'Total collection today (' . date('F d, Y') . '): ₱' . number_format($totalCollection, 2) ?>
+      <?= 'Total collection today (' . date('F d, Y') . '): ₱' . number_format($totalCollectionToday, 2) ?>
     </div>
 
     <?php
@@ -449,12 +449,41 @@ $thisMonth = date('F Y');
     ?>
 
     <script>
+      var fullDate = {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      };
+
+      var monthYear = {
+        month: 'long',
+        year: 'numeric'
+      };
+
+      var today = new Date();
+
+      function getFirstOfLastMonth() {
+        const date = new Date();
+        const lastMonth = new Date(date.getFullYear(), date.getMonth() - 1, 1);
+        return lastMonth.toLocaleDateString("en-US", monthYear);
+      }
+
+      /*     NUMBER FORMAT (2 decimals with comma)     */
+      const numberFormat = {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      };
+
+
+
 
       /*                                               */
       /*                                               */
       /*    CHART DATA TOTAL COLLECTIONS LAST MONTH    */
       /*                                               */
       /*                                               */
+
+      const totalCollectionLastMonth = <?= $totalCollectionLastMonth ?>
 
       /* Total Cash Collection Per Collector */
       const totalCashCollectionLastMonthKing = <?php
@@ -509,7 +538,10 @@ $thisMonth = date('F Y');
             },
             title: {
               display: true,
-              text: 'Total Collection Last Month'
+              text: ['Total Collection Last Month ' + getFirstOfLastMonth(), '₱ ' + totalCollectionLastMonth.toLocaleString('en', numberFormat)],
+              font: {
+                size: 14
+              }
             }
           }
 
@@ -534,6 +566,8 @@ $thisMonth = date('F Y');
       /*                                               */
       /*                                               */
 
+      const totalCollectionThisMonth = <?= $totalCollectionThisMonth ?>
+
       /* Total Cash Collection Per Collector */
       const totalCashCollectionThisMonthKing = <?php
                                                 echo json_encode($totalCashCollectionThisMonthKing['sum']);
@@ -556,7 +590,7 @@ $thisMonth = date('F Y');
       const dataThisMonth = {
         labels: ['King Cruz (Cash)', 'King Cruz (GCash)', 'Carl Corpuz (Cash)', 'Carl Corpuz (GCash)'],
         datasets: [{
-          label: 'Total Collection Last Month',
+          label: 'Total Collection This Month',
           data: [totalCashCollectionThisMonthKing, totalGCashCollectionThisMonthKing, totalCashCollectionThisMonthCarl, totalGCashCollectionThisMonthCarl],
           backgroundColor: [
             'rgba(32, 96, 229, 1)',
@@ -587,7 +621,10 @@ $thisMonth = date('F Y');
             },
             title: {
               display: true,
-              text: 'Total Collection Last Month'
+              text: ['Total Collection This Month ' + today.toLocaleDateString("en-US", monthYear), '₱ ' + totalCollectionThisMonth.toLocaleString('en', numberFormat)],
+              font: {
+                size: 14
+              }
             }
           }
 
@@ -612,6 +649,8 @@ $thisMonth = date('F Y');
       /*    CHART DATA TOTAL COLLECTIONS TODAY    */
       /*                                          */
       /*                                          */
+
+      const totalCollectionToday = <?= $totalCollectionToday ?>
 
       /* Total Cash Collection Per Collector */
       const totalCashCollectionTodayKing = <?php
@@ -666,7 +705,11 @@ $thisMonth = date('F Y');
             },
             title: {
               display: true,
-              text: 'Total Collection Today'
+              align: 'left',
+              text: ['Collection Today ' + today.toLocaleDateString("en-US", fullDate), '₱ ' + totalCollectionToday.toLocaleString('en', numberFormat)],
+              font: {
+                size: 14
+              }
             }
           }
 
