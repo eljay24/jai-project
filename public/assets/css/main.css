@@ -457,6 +457,8 @@ textarea.form-control {
 }
 .jai-table > .row:first-child {
   font-weight: bold;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
 }
 .jai-table > .row:first-child > * {
   padding-top: 10px;
@@ -465,21 +467,23 @@ textarea.form-control {
 .jai-table > .row:first-child > * + * {
   border-left: 1px solid #333;
 }
+.jai-table > .row:last-child {
+  border-bottom: 1px solid #333;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+.jai-table > .row.jai-data-row {
+  transition: all 150ms;
+}
+.jai-table > .row.jai-data-row:hover {
+  background-color: rgba(179, 179, 179, 0.39);
+}
 .jai-table > .row > * {
   padding-top: 5px;
   padding-bottom: 5px;
 }
 .jai-table > .row > * + * {
   border-left: 1px solid #333;
-}
-.jai-table > .row:first-child {
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
-}
-.jai-table > .row:last-child {
-  border-bottom: 1px solid #333;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
 }
 .jai-table > .row .jai-col-ID {
   display: flex;

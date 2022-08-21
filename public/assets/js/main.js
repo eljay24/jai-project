@@ -1,4 +1,14 @@
 $(document).ready(function () {
+  // Table Actions
+  if ($(".borrower-table").length) {
+    searchTable("refresh-borrowers.php");
+    paginateTable("refresh-borrowers.php");
+  }
+  if ($(".payments-table").length) {
+    searchTable("refresh-payments.php");
+    paginateTable("refresh-payments.php");
+  }
+
   // Form Modifications
   inputMask();
   createDatepicker();
@@ -31,30 +41,28 @@ $(document).ready(function () {
   // Modal Submit Functions START
   submitForm(
     ".submit-create",
-    ".action-form",
     "create-borrower.php",
-    messages.successMessages.borrower.create
+    messages.successMessages.borrower.create,
+    "refresh-borrowers.php"
   );
   submitForm(
     ".submit-edit",
-    ".action-form",
     "edit-borrower.php",
     messages.successMessages.borrower.update,
-    editBorrowerAction
+    "refresh-borrowers.php"
   );
 
   submitForm(
     ".submit-loan",
-    ".action-form",
     "create-loan.php",
     messages.successMessages.Loan.create
   );
 
   submitForm(
     ".submit-payment",
-    ".action-form",
     "add-payment.php",
-    messages.successMessages.Payment.create
+    messages.successMessages.Payment.create,
+    "refresh-payments.php"
   );
   // Modal Submit Functions END
 });
@@ -96,6 +104,68 @@ const messages = {
     },
   },
 };
+
+/*                                */
+/*    Table Related Functions     */
+/*                                */
+
+function searchTable(ajaxAction) {
+  $(document).on("submit", ".table-search", function (event) {
+    event.preventDefault();
+
+    let searchValue = $(this).find(".search-input").val();
+
+    refreshTable(ajaxAction, searchValue, false);
+  });
+}
+
+function paginateTable(ajaxAction) {
+  $(document).on("click", ".page-link", function (event) {
+    event.preventDefault();
+
+    let paginateValue = $(this).data("pagecount");
+
+    refreshTable(ajaxAction, false, paginateValue);
+  });
+}
+
+function refreshTable(actionFIle, search = false, page = false) {
+  if (search == false) {
+    search = $(".search-input").val();
+  }
+
+  if (page == false) {
+    page = $(".page-link.active").data("pagecount");
+  }
+
+  let table = $(".jai-table.table-container"),
+    pagination = $("ul.pagination");
+
+  $.ajax({
+    url: "../ajax-calls/" + actionFIle,
+    method: "POST",
+    data: {
+      action: "get-table",
+      search_value: search,
+      page_number: page,
+    },
+    dataType: "json",
+    beforeSend: function () {},
+    success: function (data, xhr, success) {
+      console.log(data);
+      console.log(xhr);
+      console.log(success);
+
+      table.html(data.table);
+      pagination.html(data.pagination);
+    },
+    error: function (response, xhr, data) {
+      console.log(response);
+      console.log(xhr);
+      console.log(data);
+    },
+  });
+}
 
 /*                                */
 /*    Modal Related Functions     */
@@ -167,6 +237,7 @@ function closeModal() {
     $(".btn-action").attr("class", "btn btn-primary btn-sm btn-action");
   });
   $(".modal").on("hidden.bs.modal", function () {
+    if ($("#payment").length) $("#payment").prop("readonly", false);
     if ($(".modal-content:hidden")) {
       $(".modal-content").show();
       $(".success-message").hide();
@@ -181,18 +252,21 @@ function closeModal() {
 function setToZero() {
   if ($("#type").length) {
     var selectBox = $("#type");
+    var payment = $("#payment");
     var selectedValue = selectBox.val();
+
+    clearErrors(payment);
     if (selectedValue == "Pass") {
-      $("#payment").val(0);
-      $("#payment").readOnly = true;
+      payment.val(0);
+      payment.prop("readonly", true);
     } else {
-      var paymentAmount = $("#payment").val();
+      var paymentAmount = payment.val();
       if (paymentAmount != 0) {
-        $("#payment").val(paymentAmount);
+        payment.val(paymentAmount);
       } else {
-        $("#payment").val("");
+        payment.val("");
       }
-      $("#payment").readOnly = false;
+      payment.prop("readonly", false);
     }
   }
 }
@@ -286,39 +360,6 @@ function fillInputs(id) {
   });
 }
 
-function editBorrowerAction(data, newValues, rowId) {
-  let newData = JSON.parse(data),
-    borrower =
-      newData.firstname + " " + newData.middlename + " " + newData.lastname,
-    contactno = newData.contactno,
-    address = newData.address,
-    comaker = newData.comaker,
-    comakerno = newData.comakerno;
-
-  $(".jai-data-row").each(function () {
-    if ($(this).data("row") == rowId) {
-      $(this).find(".jai-table-name .value").text(borrower);
-      $(this).find(".jai-table-contact .value").text(contactno);
-      $(this).find(".jai-table-address .value").text(address);
-      $(this).find(".jai-table-comaker .value").text(comaker);
-      $(this).find(".jai-table-comakerno .value").text(comakerno);
-
-      $(this)
-        .find(".hidden-form input")
-        .each(function () {
-          let inputName = $(this).attr("name"),
-            input = $(this);
-
-          $(newValues).each(function () {
-            if (inputName == this["name"]) {
-              input.val(this["value"]);
-            }
-          });
-        });
-    }
-  });
-}
-
 function openCreate(buttonName, modalName) {
   if ($(".action-form").length) {
     let noResetArr = [],
@@ -334,16 +375,10 @@ function openCreate(buttonName, modalName) {
   }
 }
 
-function submitForm(
-  submitBtn,
-  thisForm,
-  ajaxFile,
-  successMessage,
-  ajaxAction = false
-) {
+function submitForm(submitBtn, ajaxFile, successMessage, tableAction = false) {
   $(document).on("click", submitBtn, function (event) {
     event.preventDefault();
-    let form = $(thisForm),
+    let form = $(".action-form"),
       formValues = form.serialize(),
       newValues = form.serializeArray(),
       rowId = $(this)
@@ -351,17 +386,19 @@ function submitForm(
         .find('input[name="data-row"]')
         .val();
 
-    if (validateForm(thisForm))
+    if (validateForm(form))
       $.ajax({
         url: "../ajax-calls/" + ajaxFile,
         method: "POST",
         data: formValues,
-        dataType: "html",
+        dataType: "json",
         beforeSend: function () {
           $(submitBtn).addClass("disabled");
         },
         success: function (data) {
-          if (ajaxAction) ajaxAction(data, newValues, rowId);
+          if (tableAction) {
+            refreshTable(tableAction);
+          }
           $(".success-message .success-content").text(successMessage);
           $(".form-modal .modal-content").fadeOut(150, function (param) {
             $(".success-message").fadeIn(150, function () {

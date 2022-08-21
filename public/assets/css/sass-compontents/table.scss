@@ -31,26 +31,6 @@
     }
     &:first-child {
       font-weight: bold;
-      > * {
-        padding: {
-          top: 10px;
-          bottom: 10px;
-        }
-        + * {
-          border-left: 1px solid $jai-black;
-        }
-      }
-    }
-    > * {
-      padding: {
-        top: 5px;
-        bottom: 5px;
-      }
-      + * {
-        border-left: 1px solid $jai-black;
-      }
-    }
-    &:first-child {
       border: {
         top: {
           left: {
@@ -59,6 +39,15 @@
           right: {
             radius: 15px;
           }
+        }
+      }
+      > * {
+        padding: {
+          top: 10px;
+          bottom: 10px;
+        }
+        + * {
+          border-left: 1px solid $jai-black;
         }
       }
     }
@@ -74,6 +63,22 @@
         }
       }
     }
+    &.jai-data-row {
+      transition: all 150ms;
+      &:hover {
+        background-color: rgba(179, 179, 179, 0.39);
+      }
+    }
+    > * {
+      padding: {
+        top: 5px;
+        bottom: 5px;
+      }
+      + * {
+        border-left: 1px solid $jai-black;
+      }
+    }
+
     .jai-col-ID {
       display: flex;
       justify-content: center;
