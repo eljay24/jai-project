@@ -26,11 +26,11 @@ $thisMonth = date('F Y');
 <body>
   <div class="content-container">
     <?php
-    /*                                                               */
-    /*                                                               */
-    /*                          CHART VALUES                         */
-    /*                                                               */
-    /*                                                               */
+    /*                                                                   */
+    /*                                                                   */
+    /*                            CHART VALUES                           */
+    /*                                                                   */
+    /*                                                                   */
 
     /*                                                                   */
     /*                                                                   */
@@ -187,13 +187,8 @@ $thisMonth = date('F Y');
     ?>
     <div class="chart-div d-flex">
       <canvas id="chartTotalCollectionLastMonth"></canvas>
-      <?= 'Total collection last month (' . $lastMonth . '): ₱' . number_format($totalCollectionLastMonth, 2) ?>
-
       <canvas id="chartTotalCollectionThisMonth"></canvas>
-      <?= 'Total collection this month (' . $thisMonth . '): ₱' . number_format($totalCollectionThisMonth, 2) ?>
-
       <canvas id="chartTotalCollectionToday"></canvas>
-      <?= 'Total collection today (' . date('F d, Y') . '): ₱' . number_format($totalCollectionToday, 2) ?>
     </div>
 
     <?php
@@ -474,9 +469,6 @@ $thisMonth = date('F Y');
         maximumFractionDigits: 2
       };
 
-
-
-
       /*                                               */
       /*                                               */
       /*    CHART DATA TOTAL COLLECTIONS LAST MONTH    */
@@ -522,7 +514,7 @@ $thisMonth = date('F Y');
             'rgba(218, 81, 81, 1)'
           ],
           borderWidth: 2,
-          hoverOffset: 5
+          hoverOffset: 10
         }]
       };
 
@@ -531,10 +523,16 @@ $thisMonth = date('F Y');
         type: 'pie',
         data: dataLastMonth,
         options: {
+          layout: {
+            padding: 7
+          },
           responsive: true,
           plugins: {
             legend: {
               position: 'top',
+              labels: {
+                usePointStyle: true
+              }
             },
             title: {
               display: true,
@@ -593,19 +591,19 @@ $thisMonth = date('F Y');
           label: 'Total Collection This Month',
           data: [totalCashCollectionThisMonthKing, totalGCashCollectionThisMonthKing, totalCashCollectionThisMonthCarl, totalGCashCollectionThisMonthCarl],
           backgroundColor: [
-            'rgba(32, 96, 229, 1)',
-            'rgba(72, 121, 223, 1)',
-            'rgba(185, 36, 36, 1)',
-            'rgba(218, 81, 81, 1)'
+            'rgba(53, 118, 255, 1)',
+            'rgba(53, 118, 255, 0.85)',
+            'rgba(183, 0, 0, 1)',
+            'rgba(183, 0, 0, 0.75)'
           ],
           borderColor: [
-            'rgba(32, 96, 229, 1)',
-            'rgba(72, 121, 223, 1)',
-            'rgba(185, 36, 36, 1)',
-            'rgba(218, 81, 81, 1)'
+            'rgba(53, 118, 255, 1)',
+            'rgba(53, 118, 255, 1)',
+            'rgba(183, 0, 0, 1)',
+            'rgba(183, 0, 0, 1)'
           ],
           borderWidth: 2,
-          hoverOffset: 5
+          hoverOffset: 10
         }]
       };
 
@@ -614,10 +612,16 @@ $thisMonth = date('F Y');
         type: 'pie',
         data: dataThisMonth,
         options: {
+          layout: {
+            padding: 7
+          },
           responsive: true,
           plugins: {
             legend: {
               position: 'top',
+              labels: {
+                usePointStyle: true
+              }
             },
             title: {
               display: true,
@@ -689,7 +693,7 @@ $thisMonth = date('F Y');
             'rgba(218, 81, 81, 1)'
           ],
           borderWidth: 2,
-          hoverOffset: 5
+          hoverOffset: 10
         }]
       };
 
@@ -698,10 +702,16 @@ $thisMonth = date('F Y');
         type: 'pie',
         data: data,
         options: {
+          layout: {
+            padding: 7
+          },
           responsive: true,
           plugins: {
             legend: {
               position: 'top',
+              labels: {
+                usePointStyle: true
+              }
             },
             title: {
               display: true,
