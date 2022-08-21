@@ -2,25 +2,201 @@
 require_once "../../views/includes/dbconn.php";
 require_once "../../views/partials/header.php";
 
+/*      DATES      */
+$dateToday = date('Y-m-d');
+$firstOfThisMonth = date('Y-m-01'); // hard-coded '01' for first day
+$lastOfThisMonth  = date('Y-m-t'); // t = number of days in given month
+
+$datestring = $dateToday . 'first day of last month';
+$firstOfLastMonth = date_create($datestring);
+$firstOfLastMonth = $firstOfLastMonth->format('Y-m-01'); //2011-02
+
+$datestring = $dateToday . 'last day of last month';
+$lastOfLastMonth = date_create($datestring);
+$lastOfLastMonth = $lastOfLastMonth->format('Y-m-t');
+
+$datestring = $dateToday . 'first day of last month';
+$lastMonth = date_create($datestring);
+$lastMonth = $lastMonth->format('F Y');
+$thisMonth = date('F Y');
+
+
 ?>
 
 <body>
   <div class="content-container">
-    <?= "Hello" ?>
-    <div class="chart-div">
-      <canvas id="testChart"></canvas>
+    <?php
+    /*                                                               */
+    /*                                                               */
+    /*                          CHART VALUES                         */
+    /*                                                               */
+    /*                                                               */
+
+    /*                                                                   */
+    /*                                                                   */
+    /*       QUERIES TOTAL COLLECTION LAST MONTH PER COLLECTOR           */
+    /*                                                                   */
+    /*                                                                   */
+
+    /*      -----     CASH KING      -----     */
+    $queryTotalCashCollectionLastMonthKing = $conn->prepare("SELECT SUM(amount) as sum
+                                                  FROM jai_db.payments as p
+                                                  WHERE type = 'Cash' AND (date BETWEEN :firstoflastmonth AND :lastoflastmonth) AND c_id = 1");
+    $queryTotalCashCollectionLastMonthKing->bindValue(':firstoflastmonth', $firstOfLastMonth);
+    $queryTotalCashCollectionLastMonthKing->bindValue(':lastoflastmonth', $lastOfLastMonth);
+    $queryTotalCashCollectionLastMonthKing->execute();
+    $totalCashCollectionLastMonthKing = $queryTotalCashCollectionLastMonthKing->fetch(PDO::FETCH_ASSOC);
+
+    /*      -----     CASH CARL      -----     */
+    $queryTotalCashCollectionLastMonthCarl = $conn->prepare("SELECT SUM(amount) as sum
+                                                  FROM jai_db.payments as p
+                                                  WHERE type = 'Cash' AND (date BETWEEN :firstoflastmonth AND :lastoflastmonth) AND c_id = 2");
+    $queryTotalCashCollectionLastMonthCarl->bindValue(':firstoflastmonth', $firstOfLastMonth);
+    $queryTotalCashCollectionLastMonthCarl->bindValue(':lastoflastmonth', $lastOfLastMonth);
+    $queryTotalCashCollectionLastMonthCarl->execute();
+    $totalCashCollectionLastMonthCarl = $queryTotalCashCollectionLastMonthCarl->fetch(PDO::FETCH_ASSOC);
+
+    /*      -----     GCASH KING      -----     */
+    $queryTotalGCashCollectionLastMonthKing = $conn->prepare("SELECT SUM(amount) as sum
+                                                  FROM jai_db.payments as p
+                                                  WHERE type = 'GCash' AND (date BETWEEN :firstoflastmonth AND :lastoflastmonth) AND c_id = 1");
+    $queryTotalGCashCollectionLastMonthKing->bindValue(':firstoflastmonth', $firstOfLastMonth);
+    $queryTotalGCashCollectionLastMonthKing->bindValue(':lastoflastmonth', $lastOfLastMonth);
+    $queryTotalGCashCollectionLastMonthKing->execute();
+    $totalGCashCollectionLastMonthKing = $queryTotalGCashCollectionLastMonthKing->fetch(PDO::FETCH_ASSOC);
+
+    /*      -----     GCASH CARL      -----     */
+    $queryTotalGCashCollectionLastMonthCarl = $conn->prepare("SELECT SUM(amount) as sum
+                                                  FROM jai_db.payments as p
+                                                  WHERE type = 'GCash' AND (date BETWEEN :firstoflastmonth AND :lastoflastmonth) AND c_id = 2");
+    $queryTotalGCashCollectionLastMonthCarl->bindValue(':firstoflastmonth', $firstOfLastMonth);
+    $queryTotalGCashCollectionLastMonthCarl->bindValue(':lastoflastmonth', $lastOfLastMonth);
+    $queryTotalGCashCollectionLastMonthCarl->execute();
+    $totalGCashCollectionLastMonthCarl = $queryTotalGCashCollectionLastMonthCarl->fetch(PDO::FETCH_ASSOC);
+
+    $totalCollectionLastMonth = ($totalCashCollectionLastMonthKing['sum'] + $totalGCashCollectionLastMonthKing['sum']) + ($totalCashCollectionLastMonthCarl['sum'] + $totalGCashCollectionLastMonthCarl['sum']);
+
+    /*                                                                   */
+    /*                                                                   */
+    /*       END - QUERIES TOTAL COLLECTION LAST MONTH PER COLLECTOR     */
+    /*                                                                   */
+    /*                                                                   */
+
+    /*                                                                   */
+    /*                                                                   */
+    /*       QUERIES TOTAL COLLECTION THIS MONTH PER COLLECTOR           */
+    /*                                                                   */
+    /*                                                                   */
+
+    /*      -----     CASH KING      -----     */
+    $queryTotalCashCollectionThisMonthKing = $conn->prepare("SELECT SUM(amount) as sum
+                                                  FROM jai_db.payments as p
+                                                  WHERE type = 'Cash' AND (date BETWEEN :firstofthismonth AND :lastofthismonth) AND c_id = 1");
+    $queryTotalCashCollectionThisMonthKing->bindValue(':firstofthismonth', $firstOfThisMonth);
+    $queryTotalCashCollectionThisMonthKing->bindValue(':lastofthismonth', $lastOfThisMonth);
+    $queryTotalCashCollectionThisMonthKing->execute();
+    $totalCashCollectionThisMonthKing = $queryTotalCashCollectionThisMonthKing->fetch(PDO::FETCH_ASSOC);
+
+    /*      -----     CASH CARL      -----     */
+    $queryTotalCashCollectionThisMonthCarl = $conn->prepare("SELECT SUM(amount) as sum
+                                                  FROM jai_db.payments as p
+                                                  WHERE type = 'Cash' AND (date BETWEEN :firstofthismonth AND :lastofthismonth) AND c_id = 2");
+    $queryTotalCashCollectionThisMonthCarl->bindValue(':firstofthismonth', $firstOfThisMonth);
+    $queryTotalCashCollectionThisMonthCarl->bindValue(':lastofthismonth', $lastOfThisMonth);
+    $queryTotalCashCollectionThisMonthCarl->execute();
+    $totalCashCollectionThisMonthCarl = $queryTotalCashCollectionThisMonthCarl->fetch(PDO::FETCH_ASSOC);
+
+    /*      -----     GCASH KING      -----     */
+    $queryTotalGCashCollectionThisMonthKing = $conn->prepare("SELECT SUM(amount) as sum
+                                                  FROM jai_db.payments as p
+                                                  WHERE type = 'GCash' AND (date BETWEEN :firstofthismonth AND :lastofthismonth) AND c_id = 1");
+    $queryTotalGCashCollectionThisMonthKing->bindValue(':firstofthismonth', $firstOfThisMonth);
+    $queryTotalGCashCollectionThisMonthKing->bindValue(':lastofthismonth', $lastOfThisMonth);
+    $queryTotalGCashCollectionThisMonthKing->execute();
+    $totalGCashCollectionThisMonthKing = $queryTotalGCashCollectionThisMonthKing->fetch(PDO::FETCH_ASSOC);
+
+    /*      -----     GCASH CARL      -----     */
+    $queryTotalGCashCollectionThisMonthCarl = $conn->prepare("SELECT SUM(amount) as sum
+                                                  FROM jai_db.payments as p
+                                                  WHERE type = 'GCash' AND (date BETWEEN :firstofthismonth AND :lastofthismonth) AND c_id = 2");
+    $queryTotalGCashCollectionThisMonthCarl->bindValue(':firstofthismonth', $firstOfThisMonth);
+    $queryTotalGCashCollectionThisMonthCarl->bindValue(':lastofthismonth', $lastOfThisMonth);
+    $queryTotalGCashCollectionThisMonthCarl->execute();
+    $totalGCashCollectionThisMonthCarl = $queryTotalGCashCollectionThisMonthCarl->fetch(PDO::FETCH_ASSOC);
+
+    $totalCollectionThisMonth = ($totalCashCollectionThisMonthKing['sum'] + $totalGCashCollectionThisMonthKing['sum']) + ($totalCashCollectionThisMonthCarl['sum'] + $totalGCashCollectionThisMonthCarl['sum']);
+
+    /*                                                                   */
+    /*                                                                   */
+    /*       END - QUERIES TOTAL COLLECTION THIS MONTH PER COLLECTOR     */
+    /*                                                                   */
+    /*                                                                   */
+
+    /*                                                               */
+    /*                                                               */
+    /*       QUERIES TOTAL COLLECTION TODAY PER COLLECTOR            */
+    /*                                                               */
+    /*                                                               */
+
+    /*      -----     CASH KING      -----     */
+    $queryTotalCashCollectionTodayKing = $conn->prepare("SELECT SUM(amount) as sum
+                                                  FROM jai_db.payments as p
+                                                  WHERE type = 'Cash' AND date = :datetoday AND c_id = 1");
+    $queryTotalCashCollectionTodayKing->bindValue(':datetoday', $dateToday);
+    $queryTotalCashCollectionTodayKing->execute();
+    $totalCashCollectionTodayKing = $queryTotalCashCollectionTodayKing->fetch(PDO::FETCH_ASSOC);
+
+    /*      -----     CASH CARL      -----     */
+    $queryTotalCashCollectionTodayCarl = $conn->prepare("SELECT SUM(amount) as sum
+                                                  FROM jai_db.payments as p
+                                                  WHERE type = 'Cash' AND date = :datetoday AND c_id = 2");
+    $queryTotalCashCollectionTodayCarl->bindValue(':datetoday', $dateToday);
+    $queryTotalCashCollectionTodayCarl->execute();
+    $totalCashCollectionTodayCarl = $queryTotalCashCollectionTodayCarl->fetch(PDO::FETCH_ASSOC);
+
+    /*      -----     GCASH KING      -----     */
+    $queryTotalGCashCollectionTodayKing = $conn->prepare("SELECT SUM(amount) as sum
+                                                  FROM jai_db.payments as p
+                                                  WHERE type = 'GCash' AND date = :datetoday AND c_id = 1");
+    $queryTotalGCashCollectionTodayKing->bindValue(':datetoday', $dateToday);
+    $queryTotalGCashCollectionTodayKing->execute();
+    $totalGCashCollectionTodayKing = $queryTotalGCashCollectionTodayKing->fetch(PDO::FETCH_ASSOC);
+
+    /*      -----     GCASH CARL      -----     */
+    $queryTotalGCashCollectionTodayCarl = $conn->prepare("SELECT SUM(amount) as sum
+                                                  FROM jai_db.payments as p
+                                                  WHERE type = 'GCash' AND date = :datetoday AND c_id = 2");
+    $queryTotalGCashCollectionTodayCarl->bindValue(':datetoday', $dateToday);
+    $queryTotalGCashCollectionTodayCarl->execute();
+    $totalGCashCollectionTodayCarl = $queryTotalGCashCollectionTodayCarl->fetch(PDO::FETCH_ASSOC);
+
+    /* TOTAL (ALL) */
+    $totalCollection = ($totalCashCollectionTodayKing['sum'] + $totalGCashCollectionTodayKing['sum']) + ($totalCashCollectionTodayCarl['sum'] + $totalGCashCollectionTodayCarl['sum']);
+
+    /*                                                                   */
+    /*                                                                   */
+    /*      END - QUERIES TOTAL COLLECTION TODAY PER COLLECTOR           */
+    /*                                                                   */
+    /*                                                                   */
+
+    /*                                    */
+    /*                                    */
+    /*           END - CHART VALUES       */
+    /*                                    */
+    /*                                    */
+    ?>
+    <div class="chart-div d-flex">
+      <canvas id="chartTotalCollectionLastMonth"></canvas>
+      <?= 'Total collection last month (' . $lastMonth . '): ₱' . number_format($totalCollectionLastMonth, 2) ?>
+
+      <canvas id="chartTotalCollectionThisMonth"></canvas>
+      <?= 'Total collection this month (' . $thisMonth . '): ₱' . number_format($totalCollectionThisMonth, 2) ?>
+      
+      <canvas id="chartTotalCollectionToday"></canvas>
+      <?= 'Total collection today (' . date('F d, Y') . '): ₱' . number_format($totalCollection, 2) ?>
     </div>
 
     <?php
-    //////////////////////////////// CHART DUMMY VALUES
-    $statementTest = $conn->prepare("SELECT CONCAT(b.firstname, ' ', b.lastname) as bname, p.l_id, p.l_id, sum(p.amount) as amount
-                                     FROM jai_db.payments as p
-                                     INNER JOIN jai_db.borrowers as b
-                                     ON b.b_id = p.b_id
-                                     GROUP BY l_id");
-    $statementTest->execute();
-    $sumOfAmountsTest = $statementTest->fetchAll(PDO::FETCH_ASSOC);
-
     //////////////////////////////// COUNT ACTIVE LOANS
     $statActiveLoans = $conn->prepare("SELECT COUNT(*) as count
                                        FROM jai_db.loans as l
@@ -37,9 +213,6 @@ require_once "../../views/partials/header.php";
     /*                         THIS MONTH QUERIES                     */
     /*                                                                */
     /*                                                                */
-
-    $firstOfThisMonth = date('Y-m-01'); // hard-coded '01' for first day
-    $lastOfThisMonth  = date('Y-m-t'); // t = number of days in given month
 
     /* ----- TOTAL RELEASED & PAYABLES THIS MONTH ----- */
     $statementLoans = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
@@ -157,6 +330,7 @@ require_once "../../views/partials/header.php";
     /* ----- GET COLLECTOR DATA (FOR ACCOUNTSLIST.PHP) ----- */
     $statementCollectors = $conn->prepare("SELECT c_id, CONCAT(c.firstname, ' ', c.lastname) as name
                                            FROM jai_db.collectors as c
+                                           ORDER BY c_id ASC
                                           ");
     $statementCollectors->execute();
     $collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
@@ -253,8 +427,6 @@ require_once "../../views/partials/header.php";
 
     echo "<br>";
     echo "<br>";
-    $thisMonth = date('F Y');
-    // echo "THIS MONTH ($thisMonth)";
     echo "<br>";
     echo 'Total released: ' . number_format($totalReleasedThisMonth, 2);
     echo "<br>";
@@ -269,71 +441,249 @@ require_once "../../views/partials/header.php";
     echo 'Expected profits today: ' . number_format($totalDailyProfit, 2);
     echo "<br>";
     echo 'Expected total collection today: ' . number_format($expectedTotalCollection, 2);
-    exit;
+
+    // echo '<pre>';
+    // var_dump($totalCashCollectionTodayKing);
+    // exit;
 
     ?>
 
     <script>
-      const borrower = <?php foreach ($sumOfAmountsTest as $i => $l_id) {
-                          $borrower[] = $l_id['bname'] . " Loan#" . $l_id['l_id'];
-                        }
-                        echo json_encode($borrower);
-                        ?>;
 
-      const amount = <?php foreach ($sumOfAmountsTest as $i => $l_id) {
-                        $amount[] = $l_id['amount'];
-                      }
-                      echo json_encode($amount);
-                      ?>;
+      /*                                               */
+      /*                                               */
+      /*    CHART DATA TOTAL COLLECTIONS LAST MONTH    */
+      /*                                               */
+      /*                                               */
 
-      console.log(borrower);
+      /* Total Cash Collection Per Collector */
+      const totalCashCollectionLastMonthKing = <?php
+                                                echo json_encode($totalCashCollectionLastMonthKing['sum']);
+                                                ?>;
+
+      const totalCashCollectionLastMonthCarl = <?php
+                                                echo json_encode($totalCashCollectionLastMonthCarl['sum']);
+                                                ?>;
+
+      /* Total G-Cash Collection Per Collector */
+      const totalGCashCollectionLastMonthKing = <?php
+                                                echo json_encode($totalGCashCollectionLastMonthKing['sum']);
+                                                ?>;
+
+      const totalGCashCollectionLastMonthCarl = <?php
+                                                echo json_encode($totalGCashCollectionLastMonthCarl['sum']);
+                                                ?>;
+
+      // SETUP BLOCK
+      const dataLastMonth = {
+        labels: ['King Cruz (Cash)', 'King Cruz (GCash)', 'Carl Corpuz (Cash)', 'Carl Corpuz (GCash)'],
+        datasets: [{
+          label: 'Total Collection Last Month',
+          data: [totalCashCollectionLastMonthKing, totalGCashCollectionLastMonthKing, totalCashCollectionLastMonthCarl, totalGCashCollectionLastMonthCarl],
+          backgroundColor: [
+            'rgba(32, 96, 229, 1)',
+            'rgba(72, 121, 223, 1)',
+            'rgba(185, 36, 36, 1)',
+            'rgba(218, 81, 81, 1)'
+          ],
+          borderColor: [
+            'rgba(32, 96, 229, 1)',
+            'rgba(72, 121, 223, 1)',
+            'rgba(185, 36, 36, 1)',
+            'rgba(218, 81, 81, 1)'
+          ],
+          borderWidth: 2,
+          hoverOffset: 5
+        }]
+      };
+
+      // CONFIG BLOCK
+      const configLastMonth = {
+        type: 'pie',
+        data: dataLastMonth,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Total Collection Last Month'
+            }
+          }
+
+        }
+      };
+
+      // RENDER BLOCK
+      const myChartLastMonth = new Chart(
+        document.getElementById('chartTotalCollectionLastMonth'),
+        configLastMonth
+      );
+
+      /*                                                     */
+      /*                                                     */
+      /*    END - CHART DATA TOTAL COLLECTIONS LAST MONTH    */
+      /*                                                     */
+      /*                                                     */
+
+      /*                                               */
+      /*                                               */
+      /*    CHART DATA TOTAL COLLECTIONS THIS MONTH    */
+      /*                                               */
+      /*                                               */
+
+      /* Total Cash Collection Per Collector */
+      const totalCashCollectionThisMonthKing = <?php
+                                                echo json_encode($totalCashCollectionThisMonthKing['sum']);
+                                                ?>;
+
+      const totalCashCollectionThisMonthCarl = <?php
+                                                echo json_encode($totalCashCollectionThisMonthCarl['sum']);
+                                                ?>;
+
+      /* Total G-Cash Collection Per Collector */
+      const totalGCashCollectionThisMonthKing = <?php
+                                                echo json_encode($totalGCashCollectionThisMonthKing['sum']);
+                                                ?>;
+
+      const totalGCashCollectionThisMonthCarl = <?php
+                                                echo json_encode($totalGCashCollectionThisMonthCarl['sum']);
+                                                ?>;
+
+      // SETUP BLOCK
+      const dataThisMonth = {
+        labels: ['King Cruz (Cash)', 'King Cruz (GCash)', 'Carl Corpuz (Cash)', 'Carl Corpuz (GCash)'],
+        datasets: [{
+          label: 'Total Collection Last Month',
+          data: [totalCashCollectionThisMonthKing, totalGCashCollectionThisMonthKing, totalCashCollectionThisMonthCarl, totalGCashCollectionThisMonthCarl],
+          backgroundColor: [
+            'rgba(32, 96, 229, 1)',
+            'rgba(72, 121, 223, 1)',
+            'rgba(185, 36, 36, 1)',
+            'rgba(218, 81, 81, 1)'
+          ],
+          borderColor: [
+            'rgba(32, 96, 229, 1)',
+            'rgba(72, 121, 223, 1)',
+            'rgba(185, 36, 36, 1)',
+            'rgba(218, 81, 81, 1)'
+          ],
+          borderWidth: 2,
+          hoverOffset: 5
+        }]
+      };
+
+      // CONFIG BLOCK
+      const configThisMonth = {
+        type: 'pie',
+        data: dataThisMonth,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Total Collection Last Month'
+            }
+          }
+
+        }
+      };
+
+      // RENDER BLOCK
+      const myChartThisMonth = new Chart(
+        document.getElementById('chartTotalCollectionThisMonth'),
+        configThisMonth
+      );
+
+      /*                                                     */
+      /*                                                     */
+      /*    END - CHART DATA TOTAL COLLECTIONS THIS MONTH    */
+      /*                                                     */
+      /*                                                     */
+
+
+      /*                                          */
+      /*                                          */
+      /*    CHART DATA TOTAL COLLECTIONS TODAY    */
+      /*                                          */
+      /*                                          */
+
+      /* Total Cash Collection Per Collector */
+      const totalCashCollectionTodayKing = <?php
+                                            echo json_encode($totalCashCollectionTodayKing['sum']);
+                                            ?>;
+
+      const totalCashCollectionTodayCarl = <?php
+                                            echo json_encode($totalCashCollectionTodayCarl['sum']);
+                                            ?>;
+
+      /* Total G-Cash Collection Per Collector */
+      const totalGCashCollectionTodayKing = <?php
+                                            echo json_encode($totalGCashCollectionTodayKing['sum']);
+                                            ?>;
+
+      const totalGCashCollectionTodayCarl = <?php
+                                            echo json_encode($totalGCashCollectionTodayCarl['sum']);
+                                            ?>;
 
       // SETUP BLOCK
       const data = {
-        labels: borrower,
+        labels: ['King Cruz (Cash)', 'King Cruz (GCash)', 'Carl Corpuz (Cash)', 'Carl Corpuz (GCash)'],
         datasets: [{
-          label: 'Total Payments',
-          data: amount,
+          label: 'Total Collection Today',
+          data: [totalCashCollectionTodayKing, totalGCashCollectionTodayKing, totalCashCollectionTodayCarl, totalGCashCollectionTodayCarl],
           backgroundColor: [
-            'rgba(255, 99, 132, 0.8)',
-            'rgba(255, 159, 64, 0.8)',
-            'rgba(255, 205, 86, 0.8)',
-            'rgba(75, 192, 192, 0.8)',
-            'rgba(54, 162, 235, 0.8)',
-            'rgba(153, 102, 255, 0.8)',
-            'rgba(201, 203, 207, 0.8)'
+            'rgba(32, 96, 229, 1)',
+            'rgba(72, 121, 223, 1)',
+            'rgba(185, 36, 36, 1)',
+            'rgba(218, 81, 81, 1)'
           ],
           borderColor: [
-            'rgb(255, 99, 132)',
-            'rgb(255, 159, 64)',
-            'rgb(255, 205, 86)',
-            'rgb(75, 192, 192)',
-            'rgb(54, 162, 235)',
-            'rgb(153, 102, 255)',
-            'rgb(201, 203, 207)'
+            'rgba(32, 96, 229, 1)',
+            'rgba(72, 121, 223, 1)',
+            'rgba(185, 36, 36, 1)',
+            'rgba(218, 81, 81, 1)'
           ],
-          borderWidth: 2
+          borderWidth: 2,
+          hoverOffset: 5
         }]
       };
 
       // CONFIG BLOCK
       const config = {
-        type: 'bar',
+        type: 'pie',
         data: data,
         options: {
-          scales: {
-            y: {
-              beginAtZero: true
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Total Collection Today'
             }
           }
+
         }
       };
 
       // RENDER BLOCK
       const myChart = new Chart(
-        document.getElementById('testChart'),
+        document.getElementById('chartTotalCollectionToday'),
         config
       );
+
+      /*                                               */
+      /*                                               */
+      /*   END - CHART DATA TOTAL COLLECTIONS TODAY    */
+      /*                                               */
+      /*                                               */
     </script>
 
     <?php
