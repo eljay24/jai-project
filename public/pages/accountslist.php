@@ -139,7 +139,7 @@ if ($accounts) {
     $pdf->SetFont('Arial', '', 8);
     foreach ($updatedAccs as $i => $updatedAcc) {
         $pdf->Cell(10.86, 5, $updatedAcc['l_id'], 'LB', 0);
-        $pdf->Cell(42.86, 5, $updatedAcc['name'], 'B', 0);
+        $pdf->Cell(42.86, 5, ucwords(strtolower($updatedAcc['name'])), 'B', 0);
         $pdf->Cell(23.86, 5, $updatedAcc['releasedate'], 'B', 0);
         $pdf->Cell(20.86, 5, $updatedAcc['duedate'], 'B', 0);
         $pdf->Cell(20.86, 5, number_format($updatedAcc['amount'], 2), 'B', 0, 'R');
@@ -193,7 +193,7 @@ if ($accounts) {
     $pdf->SetFont('Arial', '', 8);
     foreach ($inArrearsAccs as $i => $inArrearsAcc) {
         $pdf->Cell(10.86, 5, $inArrearsAcc['l_id'], 'LB', 0);
-        $pdf->Cell(42.86, 5, $inArrearsAcc['name'], 'B', 0);
+        $pdf->Cell(42.86, 5, ucwords(strtolower($inArrearsAcc['name'])), 'B', 0);
         $pdf->Cell(23.86, 5, $inArrearsAcc['releasedate'], 'B', 0);
         $pdf->Cell(20.86, 5, $inArrearsAcc['duedate'], 'B', 0);
         $pdf->Cell(20.86, 5, number_format($inArrearsAcc['amount'], 2), 'B', 0, 'R');
