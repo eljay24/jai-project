@@ -918,8 +918,7 @@ $sat = date_create('saturday this week');
           [sat, '₱ ' + (satCollectionKing + satCollectionCarl).toFixed(2)]
         ],
         datasets: [{
-          barPercentage: 0.75,
-          borderRadius: 0.5,
+          barPercentage: 0.7,
           label: 'King Cruz',
           data: [monCollectionKing, tueCollectionKing, wedCollectionKing, thuCollectionKing, friCollectionKing, satCollectionKing],
           backgroundColor: [
@@ -930,6 +929,7 @@ $sat = date_create('saturday this week');
           ],
           borderWidth: 2
         }, {
+          barPercentage: 0.7,
           label: 'Carl Corpuz',
           data: [monCollectionCarl, tueCollectionCarl, wedCollectionCarl, thuCollectionCarl, friCollectionCarl, satCollectionCarl],
           backgroundColor: [
