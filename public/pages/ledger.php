@@ -103,7 +103,7 @@ class PDF extends FPDF
             $this->Cell(65.3, 6, 'Loan Amount: ' . number_format($payments[0]['loanamount'], 2), 0, 0);
             $this->Cell(65.3, 6, '      Payable: ' . number_format($payments[0]['payable'], 2), 0, 0, 'L');
             $this->Cell(65.3, 6, 'Amortization: ' . number_format($payments[0]['amortization'], 2), 0, 1, 'R');
-            $this->Cell(65.3, 6, 'Mode & Term: ' . ucwords(strtolower($payments[0]['mode'])) . '/' . ucwords(strtolower($payments[0]['term'])), 0, 0);
+            $this->Cell(65.3, 6, 'Mode & Term: ' . ucwords(strtolower($payments[0]['mode'])) . ', ' . ucwords(strtolower($payments[0]['term'])), 0, 0);
             $this->Cell(65.3, 6, '      Release Date: ' . $payments[0]['releasedate'], 0, 0, 'L');
             $this->Cell(65.3, 6, 'Due Date: ' . $payments[0]['duedate'], 0, 1, 'R');
             $this->Cell(65.3, 6, 'SCB: ' . number_format($SCB, 2), 0, 0, 'L');
