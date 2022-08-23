@@ -2,23 +2,61 @@
 require_once "../../views/includes/dbconn.php";
 require_once "../../views/partials/header.php";
 
-/*      DATES      */
+/*                           */
+/*                           */
+/*           DATES           */
+/*                           */
+/*                           */
+
 $dateToday = date('Y-m-d');
+
+/*      FIRST AND LAST OF THIS MONTH      */
 $firstOfThisMonth = date('Y-m-01'); // hard-coded '01' for first day
 $lastOfThisMonth  = date('Y-m-t'); // t = number of days in given month
 
+/*      FIRST AND LAST OF LAST MONTH      */
 $datestring = $dateToday . 'first day of last month';
 $firstOfLastMonth = date_create($datestring);
 $firstOfLastMonth = $firstOfLastMonth->format('Y-m-01'); //2011-02
-
 $datestring = $dateToday . 'last day of last month';
 $lastOfLastMonth = date_create($datestring);
 $lastOfLastMonth = $lastOfLastMonth->format('Y-m-t');
 
+/*               LAST MONTH               */
 $datestring = $dateToday . 'first day of last month';
 $lastMonth = date_create($datestring);
 $lastMonth = $lastMonth->format('F Y');
+
+/*               THIS MONTH               */
 $thisMonth = date('F Y');
+
+/*        MON & SAT OF CURRENT WEEK       */
+$startOfWeekDay = date_create('monday this week');
+$endOfWeekDay = date_create('saturday this week');
+
+$mon = date_create('monday this week');
+$tue = date_create('tuesday this week');
+$wed = date_create('wednesday this week');
+$thu = date_create('thursday this week');
+$fri = date_create('friday this week');
+$sat = date_create('saturday this week');
+
+// echo date_format(date_create('2022-06-25'), 'Y-m-d');
+// exit;
+
+// while ($startOfWeekDay <= $endOfWeekDay) {
+//   echo $startOfWeekDay->format('D');
+//   echo '<br>';
+//   $startOfWeekDay->modify('+1 day');
+// }
+// exit;
+
+
+/*                                */
+/*                                */
+/*          END - DATES           */
+/*                                */
+/*                                */
 
 
 ?>
@@ -179,6 +217,113 @@ $thisMonth = date('F Y');
     /*                                                                   */
     /*                                                                   */
 
+    /*                                                     */
+    /*                                                     */
+    /*         QUERIES COLLECTION FOR CURRENT WEEK         */
+    /*                                                     */
+    /*                                                     */
+
+    $queryCollectionThisWeek = $conn->prepare("SELECT p.c_id, CONCAT(c.lastname, ', ', c.firstname) as collectorname, p.type, p.amount, p.date
+                                               FROM jai_db.payments as p
+                                               INNER JOIN jai_db.loans as l
+                                               ON p.l_id = l.l_id
+                                               INNER JOIN jai_db.collectors as c
+                                               on p.c_id = c.c_id
+                                               WHERE date BETWEEN :startofweekday AND :endofweek
+                                               ORDER BY p.date ASC, p.c_id ASC");
+    $queryCollectionThisWeek->bindValue(':startofweekday', $startOfWeekDay->format('Y-m-d'));
+    $queryCollectionThisWeek->bindValue(':endofweek', $endOfWeekDay->format('Y-m-d'));
+    $queryCollectionThisWeek->execute();
+    $collectionThisWeek = $queryCollectionThisWeek->fetchAll(PDO::FETCH_ASSOC);
+
+    $monCollectionKing = (float)0;
+    $tueCollectionKing = (float)0;
+    $wedCollectionKing = (float)0;
+    $thuCollectionKing = (float)0;
+    $friCollectionKing = (float)0;
+    $satCollectionKing = (float)0;
+
+    $monCollectionCarl = (float)0;
+    $tueCollectionCarl = (float)0;
+    $wedCollectionCarl = (float)0;
+    $thuCollectionCarl = (float)0;
+    $friCollectionCarl = (float)0;
+    $satCollectionCarl = (float)0;
+
+    $totalCollectionThisWeek = (float)0;
+
+    foreach ($collectionThisWeek as $i => $collection) {
+
+      if ($collection['c_id'] == 1) {
+        if (date_format(date_create($collection['date']), 'D') == 'Mon') {
+          $monCollectionKing += $collection['amount'];
+        } elseif (date_format(date_create($collection['date']), 'D') == 'Tue') {
+          $tueCollectionKing += $collection['amount'];
+        } elseif (date_format(date_create($collection['date']), 'D') == 'Wed') {
+          $wedCollectionKing += $collection['amount'];
+        } elseif (date_format(date_create($collection['date']), 'D') == 'Thu') {
+          $thuCollectionKing += $collection['amount'];
+        } elseif (date_format(date_create($collection['date']), 'D') == 'Fri') {
+          $friCollectionKing += $collection['amount'];
+        } elseif (date_format(date_create($collection['date']), 'D') == 'Sat') {
+          $satCollectionKing += $collection['amount'];
+        }
+      } elseif ($collection['c_id'] == 2) {
+        if (date_format(date_create($collection['date']), 'D') == 'Mon') {
+          $monCollectionCarl += $collection['amount'];
+        } elseif (date_format(date_create($collection['date']), 'D') == 'Tue') {
+          $tueCollectionCarl += $collection['amount'];
+        } elseif (date_format(date_create($collection['date']), 'D') == 'Wed') {
+          $wedCollectionCarl += $collection['amount'];
+        } elseif (date_format(date_create($collection['date']), 'D') == 'Thu') {
+          $thuCollectionCarl += $collection['amount'];
+        } elseif (date_format(date_create($collection['date']), 'D') == 'Fri') {
+          $friCollectionCarl += $collection['amount'];
+        } elseif (date_format(date_create($collection['date']), 'D') == 'Sat') {
+          $satCollectionCarl += $collection['amount'];
+        }
+      }
+    }
+
+    $totalCollectionThisWeek = $monCollectionKing + $tueCollectionKing + $wedCollectionKing + $thuCollectionKing + $friCollectionKing + $satCollectionKing
+      + $monCollectionCarl + $tueCollectionCarl + $wedCollectionCarl + $thuCollectionCarl + $friCollectionCarl + $satCollectionCarl;
+
+    // echo 'KING<br>';
+    // echo 'Monday Collection: ' . $monCollectionKing;
+    // echo '<br>';
+    // echo 'Tuesday Collection: ' . $tueCollectionKing;
+    // echo '<br>';
+    // echo 'Wednesday Collection: ' . $wedCollectionKing;
+    // echo '<br>';
+    // echo 'Thursday Collection: ' . $thuCollectionKing;
+    // echo '<br>';
+    // echo 'Friday Collection: ' . $friCollectionKing;
+    // echo '<br>';
+    // echo 'Saturday Collection: ' . $satCollectionKing;
+
+    // echo '<br>';
+
+    // echo 'CARL<br>';
+    // echo 'Monday Collection: ' . $monCollectionCarl;
+    // echo '<br>';
+    // echo 'Tuesday Collection: ' . $tueCollectionCarl;
+    // echo '<br>';
+    // echo 'Wednesday Collection: ' . $wedCollectionCarl;
+    // echo '<br>';
+    // echo 'Thursday Collection: ' . $thuCollectionCarl;
+    // echo '<br>';
+    // echo 'Friday Collection: ' . $friCollectionCarl;
+    // echo '<br>';
+    // echo 'Saturday Collection: ' . $satCollectionCarl;
+
+    // exit;
+
+    /*                                                     */
+    /*                                                     */
+    /*      END - QUERIES COLLECTION FOR CURRENT WEEK      */
+    /*                                                     */
+    /*                                                     */
+
     /*                                    */
     /*                                    */
     /*           END - CHART VALUES       */
@@ -186,20 +331,35 @@ $thisMonth = date('F Y');
     /*                                    */
     ?>
     <div class="chart-div d-flex">
-      
+
+      <!--                                 -->
+      <!--                                 -->
+      <!--           DRAW CHARTS           -->
+      <!--                                 -->
+      <!--                                 -->
+
       <canvas id="chartTotalCollectionLastMonth"></canvas>
       <canvas id="chartTotalCollectionThisMonth"></canvas>
-      <div style="width: 400px; height: 400px; position: relative;">
-        <div style="text-align: center; width: 100%; height: 100%; position: absolute; left: 0; top: 100px; z-index: 20;">
-          <br>
-          <br>
-          <br>
-          <br>
-          <?= $totalCollectionToday == 0 ? '<span>No collections today</span>' : '' ?>
-        </div>
-        <canvas id="chartTotalCollectionToday"></canvas>
-      </div>
+      <!-- <div style="width: 400px; height: 400px; position: relative;"> -->
+      <!-- <div style="text-align: center; width: 100%; height: 100%; position: absolute; left: 0; top: 100px; z-index: 20;"> -->
+      <br>
+      <br>
+      <br>
+      <br>
+      <canvas id="chartTotalCollectionToday"></canvas>
+
+      <?= $totalCollectionToday == 0 ? '<span>No collections today</span>' : '' ?>
     </div>
+    <div class="bar-chart-div">
+      <canvas id="chartCollectionThisWeek"></canvas>
+    </div>
+
+
+    <!--                                       -->
+    <!--                                       -->
+    <!--           END - DRAW CHARTS           -->
+    <!--                                       -->
+    <!--                                       -->
 
     <?php
     //////////////////////////////// COUNT ACTIVE LOANS
@@ -488,22 +648,12 @@ $thisMonth = date('F Y');
       const totalCollectionLastMonth = <?= $totalCollectionLastMonth ?>
 
       /* Total Cash Collection Per Collector */
-      const totalCashCollectionLastMonthKing = <?php
-                                                echo json_encode($totalCashCollectionLastMonthKing['sum']);
-                                                ?>;
-
-      const totalCashCollectionLastMonthCarl = <?php
-                                                echo json_encode($totalCashCollectionLastMonthCarl['sum']);
-                                                ?>;
+      const totalCashCollectionLastMonthKing = <?= json_encode($totalCashCollectionLastMonthKing['sum']); ?>;
+      const totalCashCollectionLastMonthCarl = <?= json_encode($totalCashCollectionLastMonthCarl['sum']); ?>;
 
       /* Total G-Cash Collection Per Collector */
-      const totalGCashCollectionLastMonthKing = <?php
-                                                echo json_encode($totalGCashCollectionLastMonthKing['sum']);
-                                                ?>;
-
-      const totalGCashCollectionLastMonthCarl = <?php
-                                                echo json_encode($totalGCashCollectionLastMonthCarl['sum']);
-                                                ?>;
+      const totalGCashCollectionLastMonthKing = <?= json_encode($totalGCashCollectionLastMonthKing['sum']); ?>;
+      const totalGCashCollectionLastMonthCarl = <?= json_encode($totalGCashCollectionLastMonthCarl['sum']); ?>;
 
       // SETUP BLOCK
       const dataLastMonth = {
@@ -577,22 +727,12 @@ $thisMonth = date('F Y');
       const totalCollectionThisMonth = <?= $totalCollectionThisMonth ?>
 
       /* Total Cash Collection Per Collector */
-      const totalCashCollectionThisMonthKing = <?php
-                                                echo json_encode($totalCashCollectionThisMonthKing['sum']);
-                                                ?>;
-
-      const totalCashCollectionThisMonthCarl = <?php
-                                                echo json_encode($totalCashCollectionThisMonthCarl['sum']);
-                                                ?>;
+      const totalCashCollectionThisMonthKing = <?= json_encode($totalCashCollectionThisMonthKing['sum']); ?>;
+      const totalCashCollectionThisMonthCarl = <?= json_encode($totalCashCollectionThisMonthCarl['sum']); ?>;
 
       /* Total G-Cash Collection Per Collector */
-      const totalGCashCollectionThisMonthKing = <?php
-                                                echo json_encode($totalGCashCollectionThisMonthKing['sum']);
-                                                ?>;
-
-      const totalGCashCollectionThisMonthCarl = <?php
-                                                echo json_encode($totalGCashCollectionThisMonthCarl['sum']);
-                                                ?>;
+      const totalGCashCollectionThisMonthKing = <?= json_encode($totalGCashCollectionThisMonthKing['sum']); ?>;
+      const totalGCashCollectionThisMonthCarl = <?= json_encode($totalGCashCollectionThisMonthCarl['sum']); ?>;
 
       // SETUP BLOCK
       const dataThisMonth = {
@@ -667,22 +807,12 @@ $thisMonth = date('F Y');
       const totalCollectionToday = <?= $totalCollectionToday ?>
 
       /* Total Cash Collection Per Collector */
-      const totalCashCollectionTodayKing = <?php
-                                            echo json_encode($totalCashCollectionTodayKing['sum']);
-                                            ?>;
-
-      const totalCashCollectionTodayCarl = <?php
-                                            echo json_encode($totalCashCollectionTodayCarl['sum']);
-                                            ?>;
+      const totalCashCollectionTodayKing = <?= json_encode($totalCashCollectionTodayKing['sum']); ?>;
+      const totalCashCollectionTodayCarl = <?= json_encode($totalCashCollectionTodayCarl['sum']); ?>;
 
       /* Total G-Cash Collection Per Collector */
-      const totalGCashCollectionTodayKing = <?php
-                                            echo json_encode($totalGCashCollectionTodayKing['sum']);
-                                            ?>;
-
-      const totalGCashCollectionTodayCarl = <?php
-                                            echo json_encode($totalGCashCollectionTodayCarl['sum']);
-                                            ?>;
+      const totalGCashCollectionTodayKing = <?= json_encode($totalGCashCollectionTodayKing['sum']); ?>;
+      const totalGCashCollectionTodayCarl = <?= json_encode($totalGCashCollectionTodayCarl['sum']); ?>;
 
       // SETUP BLOCK
       const data = {
@@ -747,6 +877,116 @@ $thisMonth = date('F Y');
       /*   END - CHART DATA TOTAL COLLECTIONS TODAY    */
       /*                                               */
       /*                                               */
+
+      /*                                                    */
+      /*                                                    */
+      /*           BAR CHART COLLECTION THIS WEEK           */
+      /*                                                    */
+      /*                                                    */
+
+      const monCollectionKing = <?= json_encode($monCollectionKing) ?>;
+      const tueCollectionKing = <?= json_encode($tueCollectionKing) ?>;
+      const wedCollectionKing = <?= json_encode($wedCollectionKing) ?>;
+      const thuCollectionKing = <?= json_encode($thuCollectionKing) ?>;
+      const friCollectionKing = <?= json_encode($friCollectionKing) ?>;
+      const satCollectionKing = <?= json_encode($satCollectionKing) ?>;
+
+      const monCollectionCarl = <?= json_encode($monCollectionCarl) ?>;
+      const tueCollectionCarl = <?= json_encode($tueCollectionCarl) ?>;
+      const wedCollectionCarl = <?= json_encode($wedCollectionCarl) ?>;
+      const thuCollectionCarl = <?= json_encode($thuCollectionCarl) ?>;
+      const friCollectionCarl = <?= json_encode($friCollectionCarl) ?>;
+      const satCollectionCarl = <?= json_encode($satCollectionCarl) ?>;
+
+      const mon = <?= json_encode($mon->format('D M d')) ?>;
+      const tue = <?= json_encode($tue->format('D M d')) ?>;
+      const wed = <?= json_encode($wed->format('D M d')) ?>;
+      const thu = <?= json_encode($thu->format('D M d')) ?>;
+      const fri = <?= json_encode($fri->format('D M d')) ?>;
+      const sat = <?= json_encode($sat->format('D M d')) ?>;
+
+      const totalCollectionThisWeek = <?= json_encode($totalCollectionThisWeek) ?>
+
+      //SETUP BLOCK
+      const dataBar = {
+        labels: [
+          [mon, '₱ ' + (monCollectionKing + monCollectionCarl).toFixed(2)],
+          [tue, '₱ ' + (tueCollectionKing + tueCollectionCarl).toFixed(2)],
+          [wed, '₱ ' + (wedCollectionKing + wedCollectionCarl).toFixed(2)],
+          [thu, '₱ ' + (thuCollectionKing + thuCollectionCarl).toFixed(2)],
+          [fri, '₱ ' + (friCollectionKing + friCollectionCarl).toFixed(2)],
+          [sat, '₱ ' + (satCollectionKing + satCollectionCarl).toFixed(2)]
+        ],
+        datasets: [{
+          barPercentage: 0.75,
+          borderRadius: 0.5,
+          label: 'King Cruz',
+          data: [monCollectionKing, tueCollectionKing, wedCollectionKing, thuCollectionKing, friCollectionKing, satCollectionKing],
+          backgroundColor: [
+            'rgba(32, 96, 229, 1)'
+          ],
+          borderColor: [
+            'rgba(32, 96, 229, 1)'
+          ],
+          borderWidth: 2
+        }, {
+          label: 'Carl Corpuz',
+          data: [monCollectionCarl, tueCollectionCarl, wedCollectionCarl, thuCollectionCarl, friCollectionCarl, satCollectionCarl],
+          backgroundColor: [
+            'rgba(185, 36, 36, 1)'
+
+          ],
+          borderColor: [
+            'rgba(185, 36, 36, 1)'
+          ],
+          borderWidth: 2
+        }]
+      };
+
+      //CONFIG BLOCK
+      const configBar = {
+        type: 'bar',
+        data: dataBar,
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              stacked: true
+            },
+            x: {
+              stacked: true
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                usePointStyle: true
+              }
+            },
+            title: {
+              display: true,
+              text: ['Collection This Week', '₱ ' + totalCollectionThisWeek.toFixed(2)],
+              font: {
+                size: 14
+              }
+            }
+          }
+        }
+      };
+
+      //RENDER BLOCK
+      const barChart = new Chart(
+        document.getElementById('chartCollectionThisWeek'),
+        configBar
+      );
+
+
+      /*                                                    */
+      /*                                                    */
+      /*        END - BAR CHART COLLECTION THIS WEEK        */
+      /*                                                    */
+      /*                                                    */
     </script>
 
     <?php
