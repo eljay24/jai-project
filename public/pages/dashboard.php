@@ -990,10 +990,23 @@ $collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
       };
 
       //CONFIG BLOCK
+      let delayed;
       const configBar = {
         type: 'bar',
         data: dataBar,
         options: {
+          animation: {
+            onComplete: () => {
+              delayed = true;
+            },
+            delay: (context) => {
+              let delay = 0;
+              if (context.type === 'data' && context.mode === 'default' && !delayed) {
+                delay = context.dataIndex * 300 + context.datasetIndex * 100;
+              }
+              return delay;
+            }
+          },
           scales: {
             y: {
               beginAtZero: true,
