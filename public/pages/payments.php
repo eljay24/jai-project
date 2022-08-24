@@ -60,8 +60,8 @@ try {
   //#endregion
 
   if ($search) {
-    $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, b.contactno, l.l_id, l.mode, l.status,
-                                        p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
+    $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, b.contactno, l.l_id, l.mode, l.status, l.payable, l.amount as loanamount, l.amortization,
+                                        p.p_id, p.amount as amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
                                  FROM jai_db.payments as p
                                  INNER JOIN jai_db.collectors as c 
                                  ON p.c_id = c.c_id
@@ -80,8 +80,8 @@ try {
     $statement->bindValue(':numOfRowsPerPage', $numOfRowsPerPage, PDO::PARAM_INT); // "PDO::PARAM_INT" removes quotes from SQL
     $statement->bindValue(':search', "%$search%");
   } else {
-    $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, b.contactno, l.l_id, l.mode, l.status,
-                                        p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
+    $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, b.contactno, l.l_id, l.mode, l.status, l.payable, l.amount as loanamount, l.amortization,
+                                        p.p_id, p.amount as amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
                                  FROM jai_db.payments as p
                                  INNER JOIN jai_db.collectors as c 
                                  ON p.c_id = c.c_id
@@ -154,6 +154,13 @@ try {
     <?php
     $count = 1;
     foreach ($payments as $i => $payment) {
+
+      $profit = $payment['payable'] - $payment['loanamount'];
+      $paymentsToCloseLoan = $payment['payable'] / $payment['amortization'];
+      $profitPerPayment = $profit / $paymentsToCloseLoan;
+
+      $profitOrLoss = (($payment['amount'] - $payment['amortization']) + $profitPerPayment);
+    
 
       $date = date_create($payment['date']);
       $loanID = $payment['l_id'];
@@ -235,10 +242,12 @@ try {
           <div class="row">
             <div class="col">
               <p class="jai-table-address primary-font"> <span class="jai-table-label">Collector: </span><?php echo ucwords(strtolower($payment['collectorfname'])) . ' ' . ucwords(strtolower($payment['collectormname'])) . ' ' . ucwords(strtolower($payment['collectorlname'])) ?></p>
+              <p class="sub-font"><?= ($profitOrLoss > 0) ? 'Profit: +'.number_format($profitOrLoss, 2) : 'Loss: '.number_format($profitOrLoss, 2) ?></p>
               <!-- <textarea class="jai-table-input" type="text"></textarea> -->
             </div>
-            <div class="col-3">
+            <div class="col-4">
               <p class="primary-font"><?= $payment['status'] ?></p>
+              <p class="sub-font">Amort.: <?= $payment['amortization'] ?></p>
             </div>
           </div>
         </div>

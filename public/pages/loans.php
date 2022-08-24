@@ -300,14 +300,21 @@ try {
               /*       CALCULATE DAILY PROFIT (PER LOAN)       */
               /*                                               */
 
-              $loanNumOfDays = $loan['payable'] / $loan['amortization'];
+              $profit = $loan['payable'] - $loan['amount'];
+              $paymentsToCloseLoan = $loan['payable'] / $loan['amortization'];
+              $profitPerPayment = $profit / $paymentsToCloseLoan;
               // $dailyProfit = ($loan['payable'] - $loan['amount']) / $loanNumOfDays;
+
               $dailyProfit = ($loan['payable'] - $loan['amount']) / $days;
               echo number_format($dailyProfit, 4);
               /*    END - CALCULATE DAILY PROFIT (PER LOAN)    */
 
               ?>
             </p>
+            <br>
+            <p class="sub-font">(test)Number of payments to close loan: <?= number_format($paymentsToCloseLoan, 4) ?></p>
+            <p class="sub-font">(test)Payment w/o profit: <?= number_format(($loan['amortization'] - $profitPerPayment), 4) ?></p>
+            <p class="sub-font">(test)Profit per payment: <?= number_format($profitPerPayment, 4) ?></p>
           </div>
         </div>
         <div class="col position-relative">
