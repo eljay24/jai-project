@@ -58,6 +58,212 @@ $sat = date_create('saturday this week');
 /*                                */
 /*                                */
 
+/*                                                */
+/*                                                */
+/*                GET PROFIT QUERY                */
+/*                                                */
+/*                                                */
+
+$statementActiveLoans = $conn->prepare("SELECT *
+                                    FROM jai_db.loans
+                                    WHERE activeloan = 1");
+$statementActiveLoans->execute();
+$activeLoans = $statementActiveLoans->fetchAll(PDO::FETCH_ASSOC);
+
+$totalProfitPerPayment = (float)0;
+$totalDailyProfit = (float)0;
+$expectedTotalCollection = (float)0;
+
+foreach ($activeLoans as $i => $activeLoan) {
+
+  $releaseDate = date_create($activeLoan['releasedate']);
+  $dueDate = date_create($activeLoan['duedate']);
+
+  /*                                                                   */
+  /*       Count number of days                                        */
+  /*       from release date to due date (inclusive of both)           */
+  /*       excluding Sundays                                           */
+  /*                                                                   */
+
+  $start = new DateTime(date_format($releaseDate, 'Y-m-d'));
+  $end = new DateTime(date_format($dueDate, 'Y-m-d'));
+
+  // otherwise the  end date is excluded (bug?)
+  $end->modify('+1 day');
+
+  $interval = $end->diff($start);
+
+  // total days
+  $days = $interval->days;
+
+  // create an iterateable period of date (P1D equates to 1 day)
+  $period = new DatePeriod($start, new DateInterval('P1D'), $end);
+
+  // best stored as array, so you can add more than one
+  $holidays = array('2012-09-07');
+
+  foreach ($period as $dt) {
+    $curr = $dt->format('D');
+
+    // substract if Saturday or Sunday
+    if ($curr == 'Sun') {
+      $days--;
+    }
+
+    // (optional) for the updated question
+    elseif (in_array($dt->format('Y-m-d'), $holidays)) {
+      $days--;
+    }
+  }
+
+  /*                                        */
+  /*                                        */
+  /*       END - Count number of days       */
+  /*                                        */
+  /*                                        */
+
+  $profit = $activeLoan['payable'] - $activeLoan['amount'];
+  $paymentsToCloseLoan = $activeLoan['payable'] / $activeLoan['amortization'];
+  $profitPerPayment = $profit / $paymentsToCloseLoan;
+
+  $loanNumberOfDays = $activeLoan['payable'] / $activeLoan['amortization'];
+  $dailyProfit = ($activeLoan['payable'] - $activeLoan['amount']) / $days;
+  $totalProfitPerPayment += $profitPerPayment;
+  $totalDailyProfit += $dailyProfit;
+  $expectedTotalCollection += $activeLoan['amortization'];
+}
+
+/*                                                */
+/*                                                */
+/*            END - GET PROFIT QUERY              */
+/*                                                */
+/*                                                */
+
+//////////////////////////////// COUNT ACTIVE LOANS
+
+
+
+//////////////////////////////// END - COUNT ACTIVE LOANS
+
+
+
+/*                                                                */
+/*                                                                */
+/*                         THIS MONTH QUERIES                     */
+/*                                                                */
+/*                                                                */
+
+/* ----- TOTAL RELEASED & PAYABLES THIS MONTH ----- */
+$statementLoans = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
+                                         b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
+                                         l.l_id, l.amount, l.payable, l.mode, l.term, l.interestrate, l.amortization,
+                                         l.releasedate, l.duedate, l.status, l.c_id, CONCAT(c.firstname, ' ', c.lastname) as collector
+                                  FROM jai_db.borrowers as b
+                                  INNER JOIN jai_db.loans as l
+                                  ON b.b_id = l.b_id
+                                  INNER JOIN jai_db.collectors as c
+                                  ON l.c_id = c.c_id
+                                  WHERE b.isdeleted = 0 AND l.activeloan = 1 AND (l.releasedate BETWEEN :firstday AND :lastday)
+");
+$statementLoans->bindValue(':firstday', $firstOfThisMonth);
+$statementLoans->bindValue(':lastday', $lastOfThisMonth);
+$statementLoans->execute();
+$loans = $statementLoans->fetchAll(PDO::FETCH_ASSOC);
+
+$totalReleasedThisMonth = (float)0;
+$totalPayablesThisMonth = (float)0;
+
+foreach ($loans as $i => $loan) {
+  $totalReleasedThisMonth += $loan['amount'];
+  $totalPayablesThisMonth += $loan['payable'];
+}
+/* ----- END - TOTAL RELEASED & PAYABLES THIS MONTH ----- */
+
+/* ----- TOTAL PAYMENTS FOR LOANS THIS MONTH ----- */
+$statementPaymentsThisMonth = $conn->prepare("SELECT p.amount as amount, p.date as date, l.releasedate
+                                              FROM jai_db.payments as p
+                                              INNER JOIN jai_db.loans as l
+                                              ON p.l_id = l.l_id
+                                              WHERE l.releasedate BETWEEN :firstOfThisMonth AND :lastOfThisMonth
+                                              ORDER BY date ASC");
+$statementPaymentsThisMonth->bindValue(':firstOfThisMonth', $firstOfThisMonth);
+$statementPaymentsThisMonth->bindValue(':lastOfThisMonth', $lastOfThisMonth);
+$statementPaymentsThisMonth->execute();
+$paymentsThisMonth = $statementPaymentsThisMonth->fetchAll(PDO::FETCH_ASSOC);
+
+$totalPaymentsThisMonth = (float)0;
+foreach ($paymentsThisMonth as $i => $paymentThisMonth) {
+  $totalPaymentsThisMonth += $paymentThisMonth['amount'];
+}
+/* ----- END - TOTAL PAYMENTS FOR LOANS THIS MONTH ----- */
+
+/*                                                                */
+/*                                                                */
+/*                      END - THIS MONTH QUERIES                  */
+/*                                                                */
+/*                                                                */
+
+/*                                                                */
+/*                                                                */
+/*                        PREV MONTHS & MISC QUERIES              */
+/*                                                                */
+/*                                                                */
+
+/* ----- TOTAL PAYMENTS FOR LOANS FROM PREVIOUS MONTHS ----- */
+$statementPaymentsPrevMonths = $conn->prepare("SELECT p.amount as amount, p.date as date, l.releasedate
+                                               FROM jai_db.payments as p
+                                               INNER JOIN jai_db.loans as l
+                                               ON p.l_id = l.l_id
+                                               WHERE l.releasedate < :firstOfThisMonth
+                                               ORDER BY date ASC");
+$statementPaymentsPrevMonths->bindValue(':firstOfThisMonth', $firstOfThisMonth);
+$statementPaymentsPrevMonths->execute();
+$paymentsPrevMonths = $statementPaymentsPrevMonths->fetchAll(PDO::FETCH_ASSOC);
+
+$totalPaymentsPrevMonths = (float)0;
+foreach ($paymentsPrevMonths as $i => $paymentPrevMonths) {
+  $totalPaymentsPrevMonths += $paymentPrevMonths['amount'];
+}
+/* ----- END - TOTAL PAYMENTS FOR LOANS FROM PREVIOUS MONTHS ----- */
+
+/* ----- TOTAL RELEASED & PAYABLES PREV MONTHS ----- */
+$statementLoansPrevMonths = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
+                                             b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
+                                             l.l_id, l.amount, l.payable, l.mode, l.term, l.interestrate, l.amortization,
+                                             l.releasedate, l.duedate, l.status, l.c_id
+                                            FROM jai_db.borrowers as b
+                                            INNER JOIN jai_db.loans as l
+                                            ON b.b_id = l.b_id
+                                            WHERE b.isdeleted = 0 AND l.activeloan = 1 AND (l.releasedate < :firstday)
+");
+$statementLoansPrevMonths->bindValue(':firstday', $firstOfThisMonth);
+$statementLoansPrevMonths->execute();
+$loansPrevMonths = $statementLoansPrevMonths->fetchAll(PDO::FETCH_ASSOC);
+
+$totalReleasedPrevMonths = (float)0;
+$totalPayablesPrevMonths = (float)0;
+
+foreach ($loansPrevMonths as $i => $loanPrevMonths) {
+  $totalReleasedPrevMonths += $loanPrevMonths['amount'];
+  $totalPayablesPrevMonths += $loanPrevMonths['payable'];
+}
+/* ----- END - TOTAL RELEASED & PAYABLES PREV MONTHS ----- */
+
+
+/* ----- GET COLLECTOR DATA (FOR ACCOUNTSLIST.PHP) ----- */
+$statementCollectors = $conn->prepare("SELECT c_id, CONCAT(c.firstname, ' ', c.lastname) as name
+                                       FROM jai_db.collectors as c
+                                       ORDER BY c_id ASC
+                                      ");
+$statementCollectors->execute();
+$collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
+/* ----- END - GET COLLECTOR DATA (FOR ACCOUNTSLIST.PHP) ----- */
+
+/*                                                                */
+/*                                                                */
+/*                   END - PREV MONTHS & MISC QUERIES             */
+/*                                                                */
+/*                                                                */
 
 ?>
 
@@ -340,15 +546,10 @@ $sat = date_create('saturday this week');
 
       <canvas id="chartTotalCollectionLastMonth"></canvas>
       <canvas id="chartTotalCollectionThisMonth"></canvas>
-      <!-- <div style="width: 400px; height: 400px; position: relative;"> -->
-      <!-- <div style="text-align: center; width: 100%; height: 100%; position: absolute; left: 0; top: 100px; z-index: 20;"> -->
-      <br>
-      <br>
-      <br>
-      <br>
       <canvas id="chartTotalCollectionToday"></canvas>
-
-      <?= $totalCollectionToday == 0 ? '<span>No collections today</span>' : '' ?>
+      <div class="no-collections">
+        <?= $totalCollectionToday == 0 ? '<span>No collections today</span>' : '' ?>
+      </div>
     </div>
     <div class="bar-chart-div">
       <canvas id="chartCollectionThisWeek"></canvas>
@@ -362,159 +563,7 @@ $sat = date_create('saturday this week');
     <!--                                       -->
 
     <?php
-    //////////////////////////////// COUNT ACTIVE LOANS
-    $statActiveLoans = $conn->prepare("SELECT COUNT(*) as count
-                                       FROM jai_db.loans as l
-                                       WHERE activeloan = 1
-    ");
-    $statActiveLoans->execute();
-    $activeLoans = $statActiveLoans->fetch(PDO::FETCH_ASSOC);
-    //////////////////////////////// END - COUNT ACTIVE LOANS
 
-
-
-    /*                                                                */
-    /*                                                                */
-    /*                         THIS MONTH QUERIES                     */
-    /*                                                                */
-    /*                                                                */
-
-    /* ----- TOTAL RELEASED & PAYABLES THIS MONTH ----- */
-    $statementLoans = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
-                                        b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
-                                        l.l_id, l.amount, l.payable, l.mode, l.term, l.interestrate, l.amortization,
-                                        l.releasedate, l.duedate, l.status, l.c_id, CONCAT(c.firstname, ' ', c.lastname) as collector
-                                  FROM jai_db.borrowers as b
-                                  INNER JOIN jai_db.loans as l
-                                  ON b.b_id = l.b_id
-                                  INNER JOIN jai_db.collectors as c
-                                  ON l.c_id = c.c_id
-                                  WHERE b.isdeleted = 0 AND l.activeloan = 1 AND (l.releasedate BETWEEN :firstday AND :lastday)
-                                  ");
-    $statementLoans->bindValue(':firstday', $firstOfThisMonth);
-    $statementLoans->bindValue(':lastday', $lastOfThisMonth);
-    $statementLoans->execute();
-    $loans = $statementLoans->fetchAll(PDO::FETCH_ASSOC);
-
-    $totalReleasedThisMonth = (float)0;
-    $totalPayablesThisMonth = (float)0;
-
-    foreach ($loans as $i => $loan) {
-      $totalReleasedThisMonth += $loan['amount'];
-      $totalPayablesThisMonth += $loan['payable'];
-    }
-    /* ----- END - TOTAL RELEASED & PAYABLES THIS MONTH ----- */
-
-    /* ----- TOTAL PAYMENTS FOR LOANS THIS MONTH ----- */
-    $statementPaymentsThisMonth = $conn->prepare("SELECT p.amount as amount, p.date as date, l.releasedate
-                                         FROM jai_db.payments as p
-                                         INNER JOIN jai_db.loans as l
-                                         ON p.l_id = l.l_id
-                                         WHERE l.releasedate BETWEEN :firstOfThisMonth AND :lastOfThisMonth
-                                         ORDER BY date ASC");
-    $statementPaymentsThisMonth->bindValue(':firstOfThisMonth', $firstOfThisMonth);
-    $statementPaymentsThisMonth->bindValue(':lastOfThisMonth', $lastOfThisMonth);
-    $statementPaymentsThisMonth->execute();
-    $paymentsThisMonth = $statementPaymentsThisMonth->fetchAll(PDO::FETCH_ASSOC);
-
-    $totalPaymentsThisMonth = (float)0;
-    foreach ($paymentsThisMonth as $i => $paymentThisMonth) {
-      $totalPaymentsThisMonth += $paymentThisMonth['amount'];
-    }
-    /* ----- END - TOTAL PAYMENTS FOR LOANS THIS MONTH ----- */
-
-    /*                                                                */
-    /*                                                                */
-    /*                      END - THIS MONTH QUERIES                  */
-    /*                                                                */
-    /*                                                                */
-
-    /*                                                                */
-    /*                                                                */
-    /*                        PREV MONTHS & MISC QUERIES              */
-    /*                                                                */
-    /*                                                                */
-
-    /* ----- TOTAL PAYMENTS FOR LOANS FROM PREVIOUS MONTHS ----- */
-    $statementPaymentsPrevMonths = $conn->prepare("SELECT p.amount as amount, p.date as date, l.releasedate
-                                                   FROM jai_db.payments as p
-                                                   INNER JOIN jai_db.loans as l
-                                                   ON p.l_id = l.l_id
-                                                   WHERE l.releasedate < :firstOfThisMonth
-                                                   ORDER BY date ASC");
-    $statementPaymentsPrevMonths->bindValue(':firstOfThisMonth', $firstOfThisMonth);
-    $statementPaymentsPrevMonths->execute();
-    $paymentsPrevMonths = $statementPaymentsPrevMonths->fetchAll(PDO::FETCH_ASSOC);
-
-    $totalPaymentsPrevMonths = (float)0;
-    foreach ($paymentsPrevMonths as $i => $paymentPrevMonths) {
-      $totalPaymentsPrevMonths += $paymentPrevMonths['amount'];
-    }
-    /* ----- END - TOTAL PAYMENTS FOR LOANS FROM PREVIOUS MONTHS ----- */
-
-    /* ----- TOTAL RELEASED & PAYABLES PREV MONTHS ----- */
-    $statementLoansPrevMonths = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
-                                        b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
-                                        l.l_id, l.amount, l.payable, l.mode, l.term, l.interestrate, l.amortization,
-                                        l.releasedate, l.duedate, l.status, l.c_id
-                                  FROM jai_db.borrowers as b
-                                  INNER JOIN jai_db.loans as l
-                                  ON b.b_id = l.b_id
-                                  WHERE b.isdeleted = 0 AND l.activeloan = 1 AND (l.releasedate < :firstday)
-                                  ");
-    $statementLoansPrevMonths->bindValue(':firstday', $firstOfThisMonth);
-    $statementLoansPrevMonths->execute();
-    $loansPrevMonths = $statementLoansPrevMonths->fetchAll(PDO::FETCH_ASSOC);
-
-    $totalReleasedPrevMonths = (float)0;
-    $totalPayablesPrevMonths = (float)0;
-
-    foreach ($loansPrevMonths as $i => $loanPrevMonths) {
-      $totalReleasedPrevMonths += $loanPrevMonths['amount'];
-      $totalPayablesPrevMonths += $loanPrevMonths['payable'];
-    }
-    /* ----- END - TOTAL RELEASED & PAYABLES PREV MONTHS ----- */
-
-    /* ----- CALCULATE PROFIT ----- */
-    $statementProfits = $conn->prepare("SELECT *
-                                        FROM jai_db.loans
-                                        WHERE activeloan = 1");
-    $statementProfits->execute();
-    $profits = $statementProfits->fetchAll(PDO::FETCH_ASSOC);
-
-    $totalDailyProfit = (float)0;
-    $expectedTotalCollection = (float)0;
-    foreach ($profits as $i => $profit) {
-      $loanNumberOfDays = $profit['payable'] / $profit['amortization'];
-      $dailyProfit = ($profit['payable'] - $profit['amount']) / $loanNumberOfDays;
-      $totalDailyProfit += $dailyProfit;
-      $expectedTotalCollection += $profit['amortization'];
-    }
-    /* ----- END - CALCULATE PROFIT ----- */
-
-    /* ----- GET COLLECTOR DATA (FOR ACCOUNTSLIST.PHP) ----- */
-    $statementCollectors = $conn->prepare("SELECT c_id, CONCAT(c.firstname, ' ', c.lastname) as name
-                                           FROM jai_db.collectors as c
-                                           ORDER BY c_id ASC
-                                          ");
-    $statementCollectors->execute();
-    $collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
-    /* ----- END - GET COLLECTOR DATA (FOR ACCOUNTSLIST.PHP) ----- */
-
-    /* TEST */
-    $statementPaymentsAug3 = $conn->prepare("SELECT p.amount, l.amortization
-                                              FROM jai_db.payments as p
-                                              INNER JOIN jai_db.loans as l
-                                              ON p.l_id = l.l_id
-                                              WHERE p.date = '2022-08-03'");
-    $statementPaymentsAug3->execute();
-    $paymentsAug3 = $statementPaymentsAug3->fetchAll(PDO::FETCH_ASSOC);
-    $expectedPaymentsAug3 = (float)0;
-    $actualPaymentsAug3 = (float)0;
-    foreach ($paymentsAug3 as $i => $paymentAug3) {
-      $expectedPaymentsAug3 += $paymentAug3['amortization'];
-      $actualPaymentsAug3 += $paymentAug3['amount'];
-    }
 
     // $testFirstOfJuly = date('Y-m-01');
     // $testLastOfJuly = date('Y-m-t');
@@ -538,17 +587,10 @@ $sat = date_create('saturday this week');
     $date = strtotime("+1 day", strtotime("2007-02-28"));
     echo date("Y-m-d", $date);
     echo "<br>";
-    echo "(test)Expected Payments on Aug 3: " . number_format($expectedPaymentsAug3, 2);
-    echo "<br>";
-    echo "(test)Total Payments on Aug 3: " . number_format($actualPaymentsAug3, 2);
     /* END - TEST */
 
 
-    /*                                                                */
-    /*                                                                */
-    /*                   END - PREV MONTHS & MISC QUERIES             */
-    /*                                                                */
-    /*                                                                */
+
 
 
 
@@ -575,7 +617,7 @@ $sat = date_create('saturday this week');
     </form>
     <br>
     <?php
-    echo 'Active Loans: ' . $activeLoans['count'];
+    echo 'Active Loans: ' . count($activeLoans);
     echo "<br>";
     echo "<br>";
     echo "PREVIOUS MONTHS";
@@ -603,7 +645,9 @@ $sat = date_create('saturday this week');
 
     echo "<br>";
     echo "<br>";
-    echo 'Expected profits today: ' . number_format($totalDailyProfit, 2);
+    echo 'Expected profits today: ' . number_format($totalDailyProfit, 4);
+    echo "<br>";
+    echo 'Expected profits per payment today: ' . number_format($totalProfitPerPayment, 4);
     echo "<br>";
     echo 'Expected total collection today: ' . number_format($expectedTotalCollection, 2);
 
@@ -659,12 +703,12 @@ $sat = date_create('saturday this week');
       const dataLastMonth = {
         labels: ['King Cruz (Cash)', 'King Cruz (GCash)', 'Carl Corpuz (Cash)', 'Carl Corpuz (GCash)'],
         datasets: [{
-          label: 'Total Collection Last Month',
+          label: 'Collection Last Month',
           data: [totalCashCollectionLastMonthKing, totalGCashCollectionLastMonthKing, totalCashCollectionLastMonthCarl, totalGCashCollectionLastMonthCarl],
           backgroundColor: [
-            'rgba(32, 96, 229, 1)',
+            'rgba(32, 96, 229, 0.95)',
             'rgba(72, 121, 223, 1)',
-            'rgba(185, 36, 36, 1)',
+            'rgba(185, 36, 36, 0.9)',
             'rgba(218, 81, 81, 1)'
           ],
           borderColor: [
@@ -696,7 +740,7 @@ $sat = date_create('saturday this week');
             },
             title: {
               display: true,
-              text: ['Total Collection Last Month ' + getFirstOfLastMonth(), '₱ ' + totalCollectionLastMonth.toLocaleString('en', numberFormat)],
+              text: ['Collection Last Month ' + getFirstOfLastMonth(), '₱ ' + totalCollectionLastMonth.toLocaleString('en', numberFormat)],
               font: {
                 size: 14
               }
@@ -738,13 +782,13 @@ $sat = date_create('saturday this week');
       const dataThisMonth = {
         labels: ['King Cruz (Cash)', 'King Cruz (GCash)', 'Carl Corpuz (Cash)', 'Carl Corpuz (GCash)'],
         datasets: [{
-          label: 'Total Collection This Month',
+          label: 'Collection This Month',
           data: [totalCashCollectionThisMonthKing, totalGCashCollectionThisMonthKing, totalCashCollectionThisMonthCarl, totalGCashCollectionThisMonthCarl],
           backgroundColor: [
             'rgba(53, 118, 255, 1)',
-            'rgba(53, 118, 255, 0.85)',
+            'rgba(53, 118, 255, 0.95)',
             'rgba(183, 0, 0, 1)',
-            'rgba(183, 0, 0, 0.75)'
+            'rgba(183, 0, 0, 0.9)'
           ],
           borderColor: [
             'rgba(53, 118, 255, 1)',
@@ -775,7 +819,7 @@ $sat = date_create('saturday this week');
             },
             title: {
               display: true,
-              text: ['Total Collection This Month ' + today.toLocaleDateString("en-US", monthYear), '₱ ' + totalCollectionThisMonth.toLocaleString('en', numberFormat)],
+              text: ['Collection This Month ' + today.toLocaleDateString("en-US", monthYear), '₱ ' + totalCollectionThisMonth.toLocaleString('en', numberFormat)],
               font: {
                 size: 14
               }
@@ -822,9 +866,9 @@ $sat = date_create('saturday this week');
           data: [totalCashCollectionTodayKing, totalGCashCollectionTodayKing, totalCashCollectionTodayCarl, totalGCashCollectionTodayCarl],
           backgroundColor: [
             'rgba(32, 96, 229, 1)',
-            'rgba(72, 121, 223, 1)',
+            'rgba(72, 121, 223, 0.95)',
             'rgba(185, 36, 36, 1)',
-            'rgba(218, 81, 81, 1)'
+            'rgba(218, 81, 81, 0.9)'
           ],
           borderColor: [
             'rgba(32, 96, 229, 1)',
@@ -898,12 +942,12 @@ $sat = date_create('saturday this week');
       const friCollectionCarl = <?= json_encode($friCollectionCarl) ?>;
       const satCollectionCarl = <?= json_encode($satCollectionCarl) ?>;
 
-      const mon = <?= json_encode($mon->format('D M d')) ?>;
-      const tue = <?= json_encode($tue->format('D M d')) ?>;
-      const wed = <?= json_encode($wed->format('D M d')) ?>;
-      const thu = <?= json_encode($thu->format('D M d')) ?>;
-      const fri = <?= json_encode($fri->format('D M d')) ?>;
-      const sat = <?= json_encode($sat->format('D M d')) ?>;
+      const mon = <?= json_encode($mon->format('D M. d')) ?>;
+      const tue = <?= json_encode($tue->format('D M. d')) ?>;
+      const wed = <?= json_encode($wed->format('D M. d')) ?>;
+      const thu = <?= json_encode($thu->format('D M. d')) ?>;
+      const fri = <?= json_encode($fri->format('D M. d')) ?>;
+      const sat = <?= json_encode($sat->format('D M. d')) ?>;
 
       const totalCollectionThisWeek = <?= json_encode($totalCollectionThisWeek) ?>
 
@@ -927,7 +971,8 @@ $sat = date_create('saturday this week');
           borderColor: [
             'rgba(32, 96, 229, 1)'
           ],
-          borderWidth: 2
+          borderWidth: 0,
+          borderRadius: 4
         }, {
           barPercentage: 0.7,
           label: 'Carl Corpuz',
@@ -939,7 +984,8 @@ $sat = date_create('saturday this week');
           borderColor: [
             'rgba(185, 36, 36, 1)'
           ],
-          borderWidth: 2
+          borderWidth: 0,
+          borderRadius: 4
         }]
       };
 

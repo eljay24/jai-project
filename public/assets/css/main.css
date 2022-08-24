@@ -572,4 +572,11 @@ body.modal-open {
   width: 700px;
 }
 
+.no-collections {
+  width: 400px;
+  position: relative;
+  right: 230px;
+  top: 150px;
+}
+
 /*# sourceMappingURL=main.css.map */
