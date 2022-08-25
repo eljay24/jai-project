@@ -10,6 +10,10 @@ require_once "../../views/partials/header.php";
 
 $dateToday = date('Y-m-d');
 
+/*      Start and end of year       */
+$startOfYear = date('Y-m-d', strtotime('this year January 1st'));
+$endOfYear = date('Y-m-d', strtotime('this year December 31st'));
+
 /*      FIRST AND LAST OF THIS MONTH      */
 $firstOfThisMonth = date('Y-m-01'); // hard-coded '01' for first day
 $lastOfThisMonth  = date('Y-m-t'); // t = number of days in given month
@@ -58,221 +62,260 @@ $sat = date_create('saturday this week');
 /*                                */
 /*                                */
 
-/*                                                */
-/*                                                */
-/*                GET PROFIT QUERY                */
-/*                                                */
-/*                                                */
 
-$statementActiveLoans = $conn->prepare("SELECT *
-                                    FROM jai_db.loans
-                                    WHERE activeloan = 1");
-$statementActiveLoans->execute();
-$activeLoans = $statementActiveLoans->fetchAll(PDO::FETCH_ASSOC);
-
-$totalProfitPerPayment = (float)0;
-$totalDailyProfit = (float)0;
-$expectedTotalCollection = (float)0;
-
-foreach ($activeLoans as $i => $activeLoan) {
-
-  $releaseDate = date_create($activeLoan['releasedate']);
-  $dueDate = date_create($activeLoan['duedate']);
-
-  /*                                                                   */
-  /*       Count number of days                                        */
-  /*       from release date to due date (inclusive of both)           */
-  /*       excluding Sundays                                           */
-  /*                                                                   */
-
-  $start = new DateTime(date_format($releaseDate, 'Y-m-d'));
-  $end = new DateTime(date_format($dueDate, 'Y-m-d'));
-
-  // otherwise the  end date is excluded (bug?)
-  $end->modify('+1 day');
-
-  $interval = $end->diff($start);
-
-  // total days
-  $days = $interval->days;
-
-  // create an iterateable period of date (P1D equates to 1 day)
-  $period = new DatePeriod($start, new DateInterval('P1D'), $end);
-
-  // best stored as array, so you can add more than one
-  $holidays = array('2012-09-07');
-
-  foreach ($period as $dt) {
-    $curr = $dt->format('D');
-
-    // substract if Saturday or Sunday
-    if ($curr == 'Sun') {
-      $days--;
-    }
-
-    // (optional) for the updated question
-    elseif (in_array($dt->format('Y-m-d'), $holidays)) {
-      $days--;
-    }
-  }
-
-  /*                                        */
-  /*                                        */
-  /*       END - Count number of days       */
-  /*                                        */
-  /*                                        */
-
-  $profit = $activeLoan['payable'] - $activeLoan['amount'];
-  $paymentsToCloseLoan = $activeLoan['payable'] / $activeLoan['amortization'];
-  $profitPerPayment = $profit / $paymentsToCloseLoan;
-
-  $loanNumberOfDays = $activeLoan['payable'] / $activeLoan['amortization'];
-  $dailyProfit = ($activeLoan['payable'] - $activeLoan['amount']) / $days;
-  $totalProfitPerPayment += $profitPerPayment;
-  $totalDailyProfit += $dailyProfit;
-  $expectedTotalCollection += $activeLoan['amortization'];
-}
-
-/*                                                */
-/*                                                */
-/*            END - GET PROFIT QUERY              */
-/*                                                */
-/*                                                */
-
-//////////////////////////////// COUNT ACTIVE LOANS
-
-
-
-//////////////////////////////// END - COUNT ACTIVE LOANS
-
-
-
-/*                                                                */
-/*                                                                */
-/*                         THIS MONTH QUERIES                     */
-/*                                                                */
-/*                                                                */
-
-/* ----- TOTAL RELEASED & PAYABLES THIS MONTH ----- */
-$statementLoans = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
-                                         b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
-                                         l.l_id, l.amount, l.payable, l.mode, l.term, l.interestrate, l.amortization,
-                                         l.releasedate, l.duedate, l.status, l.c_id, CONCAT(c.firstname, ' ', c.lastname) as collector
-                                  FROM jai_db.borrowers as b
-                                  INNER JOIN jai_db.loans as l
-                                  ON b.b_id = l.b_id
-                                  INNER JOIN jai_db.collectors as c
-                                  ON l.c_id = c.c_id
-                                  WHERE b.isdeleted = 0 AND l.activeloan = 1 AND (l.releasedate BETWEEN :firstday AND :lastday)
-");
-$statementLoans->bindValue(':firstday', $firstOfThisMonth);
-$statementLoans->bindValue(':lastday', $lastOfThisMonth);
-$statementLoans->execute();
-$loans = $statementLoans->fetchAll(PDO::FETCH_ASSOC);
-
-$totalReleasedThisMonth = (float)0;
-$totalPayablesThisMonth = (float)0;
-
-foreach ($loans as $i => $loan) {
-  $totalReleasedThisMonth += $loan['amount'];
-  $totalPayablesThisMonth += $loan['payable'];
-}
-/* ----- END - TOTAL RELEASED & PAYABLES THIS MONTH ----- */
-
-/* ----- TOTAL PAYMENTS FOR LOANS THIS MONTH ----- */
-$statementPaymentsThisMonth = $conn->prepare("SELECT p.amount as amount, p.date as date, l.releasedate
-                                              FROM jai_db.payments as p
-                                              INNER JOIN jai_db.loans as l
-                                              ON p.l_id = l.l_id
-                                              WHERE l.releasedate BETWEEN :firstOfThisMonth AND :lastOfThisMonth
-                                              ORDER BY date ASC");
-$statementPaymentsThisMonth->bindValue(':firstOfThisMonth', $firstOfThisMonth);
-$statementPaymentsThisMonth->bindValue(':lastOfThisMonth', $lastOfThisMonth);
-$statementPaymentsThisMonth->execute();
-$paymentsThisMonth = $statementPaymentsThisMonth->fetchAll(PDO::FETCH_ASSOC);
-
-$totalPaymentsThisMonth = (float)0;
-foreach ($paymentsThisMonth as $i => $paymentThisMonth) {
-  $totalPaymentsThisMonth += $paymentThisMonth['amount'];
-}
-/* ----- END - TOTAL PAYMENTS FOR LOANS THIS MONTH ----- */
-
-/*                                                                */
-/*                                                                */
-/*                      END - THIS MONTH QUERIES                  */
-/*                                                                */
-/*                                                                */
-
-/*                                                                */
-/*                                                                */
-/*                        PREV MONTHS & MISC QUERIES              */
-/*                                                                */
-/*                                                                */
-
-/* ----- TOTAL PAYMENTS FOR LOANS FROM PREVIOUS MONTHS ----- */
-$statementPaymentsPrevMonths = $conn->prepare("SELECT p.amount as amount, p.date as date, l.releasedate
-                                               FROM jai_db.payments as p
-                                               INNER JOIN jai_db.loans as l
-                                               ON p.l_id = l.l_id
-                                               WHERE l.releasedate < :firstOfThisMonth
-                                               ORDER BY date ASC");
-$statementPaymentsPrevMonths->bindValue(':firstOfThisMonth', $firstOfThisMonth);
-$statementPaymentsPrevMonths->execute();
-$paymentsPrevMonths = $statementPaymentsPrevMonths->fetchAll(PDO::FETCH_ASSOC);
-
-$totalPaymentsPrevMonths = (float)0;
-foreach ($paymentsPrevMonths as $i => $paymentPrevMonths) {
-  $totalPaymentsPrevMonths += $paymentPrevMonths['amount'];
-}
-/* ----- END - TOTAL PAYMENTS FOR LOANS FROM PREVIOUS MONTHS ----- */
-
-/* ----- TOTAL RELEASED & PAYABLES PREV MONTHS ----- */
-$statementLoansPrevMonths = $conn->prepare("SELECT b.b_id, b.picture, b.firstname, b.middlename, b.lastname, b.address, b.contactno,
-                                             b.birthday, b.businessname, b.occupation, b.comaker, b.comakerno, b.remarks, b.datecreated,
-                                             l.l_id, l.amount, l.payable, l.mode, l.term, l.interestrate, l.amortization,
-                                             l.releasedate, l.duedate, l.status, l.c_id
-                                            FROM jai_db.borrowers as b
-                                            INNER JOIN jai_db.loans as l
-                                            ON b.b_id = l.b_id
-                                            WHERE b.isdeleted = 0 AND l.activeloan = 1 AND (l.releasedate < :firstday)
-");
-$statementLoansPrevMonths->bindValue(':firstday', $firstOfThisMonth);
-$statementLoansPrevMonths->execute();
-$loansPrevMonths = $statementLoansPrevMonths->fetchAll(PDO::FETCH_ASSOC);
-
-$totalReleasedPrevMonths = (float)0;
-$totalPayablesPrevMonths = (float)0;
-
-foreach ($loansPrevMonths as $i => $loanPrevMonths) {
-  $totalReleasedPrevMonths += $loanPrevMonths['amount'];
-  $totalPayablesPrevMonths += $loanPrevMonths['payable'];
-}
-/* ----- END - TOTAL RELEASED & PAYABLES PREV MONTHS ----- */
-
-
-/* ----- GET COLLECTOR DATA (FOR ACCOUNTSLIST.PHP) ----- */
-$statementCollectors = $conn->prepare("SELECT c_id, CONCAT(c.firstname, ' ', c.lastname) as name
-                                       FROM jai_db.collectors as c
-                                       ORDER BY c_id ASC
-                                      ");
-$statementCollectors->execute();
-$collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
-/* ----- END - GET COLLECTOR DATA (FOR ACCOUNTSLIST.PHP) ----- */
-
-/*                                                                */
-/*                                                                */
-/*                   END - PREV MONTHS & MISC QUERIES             */
-/*                                                                */
-/*                                                                */
 
 ?>
 
 <body>
   <div class="content-container">
     <?php
+
+    /*                                                */
+    /*                                                */
+    /*                GET PROFIT QUERY                */
+    /*                                                */
+    /*                                                */
+
+    $statementActiveLoans = $conn->prepare("SELECT *
+                                            FROM jai_db.loans
+                                            WHERE activeloan = 1");
+    $statementActiveLoans->execute();
+    $activeLoans = $statementActiveLoans->fetchAll(PDO::FETCH_ASSOC);
+
+    $totalProfitPerPayment = (float)0;
+    $totalDailyProfit = (float)0;
+    $expectedTotalCollection = (float)0;
+
+    foreach ($activeLoans as $i => $activeLoan) {
+
+      $releaseDate = date_create($activeLoan['releasedate']);
+      $dueDate = date_create($activeLoan['duedate']);
+
+      /*                                                                   */
+      /*       Count number of days                                        */
+      /*       from release date to due date (inclusive of both)           */
+      /*       excluding Sundays                                           */
+      /*                                                                   */
+
+      $start = new DateTime(date_format($releaseDate, 'Y-m-d'));
+      $end = new DateTime(date_format($dueDate, 'Y-m-d'));
+
+      // otherwise the  end date is excluded (bug?)
+      $end->modify('+1 day');
+
+      $interval = $end->diff($start);
+
+      // total days
+      $days = $interval->days;
+
+      // create an iterateable period of date (P1D equates to 1 day)
+      $period = new DatePeriod($start, new DateInterval('P1D'), $end);
+
+      // best stored as array, so you can add more than one
+      $holidays = array('2012-09-07');
+
+      foreach ($period as $dt) {
+        $curr = $dt->format('D');
+
+        // substract if Saturday or Sunday
+        if ($curr == 'Sun') {
+          $days--;
+        }
+
+        // (optional) for the updated question
+        elseif (in_array($dt->format('Y-m-d'), $holidays)) {
+          $days--;
+        }
+      }
+
+      /*                                        */
+      /*                                        */
+      /*       END - Count number of days       */
+      /*                                        */
+      /*                                        */
+
+      $profit = $activeLoan['payable'] - $activeLoan['amount'];
+      $paymentsToCloseLoan = $activeLoan['payable'] / $activeLoan['amortization'];
+      $profitPerPayment = $profit / $paymentsToCloseLoan;
+
+      $loanNumberOfDays = $activeLoan['payable'] / $activeLoan['amortization'];
+      $dailyProfit = ($activeLoan['payable'] - $activeLoan['amount']) / $days;
+      $totalProfitPerPayment += $profitPerPayment;
+      $totalDailyProfit += $dailyProfit;
+      $expectedTotalCollection += $activeLoan['amortization'];
+    }
+
+    /*                                                */
+    /*                                                */
+    /*            END - GET PROFIT QUERY              */
+    /*                                                */
+    /*                                                */
+
     /*                                                                   */
     /*                                                                   */
     /*                            CHART VALUES                           */
+    /*                                                                   */
+    /*                                                                   */
+
+    /*                                                                   */
+    /*                                                                   */
+    /*                    QUERIES OVERVIEW THIS YEAR                     */
+    /*                                                                   */
+    /*                                                                   */
+
+    $statementLoans = $conn->prepare("SELECT * FROM jai_db.loans as l WHERE l.releasedate BETWEEN :startofyear AND :endofyear");
+    $statementLoans->bindValue(':startofyear', $startOfYear);
+    $statementLoans->bindValue(':endofyear', $endOfYear);
+    $statementLoans->execute();
+    $loans = $statementLoans->fetchAll(PDO::FETCH_ASSOC);
+
+    $statementPayments = $conn->prepare("SELECT * FROM jai_db.payments as p WHERE p.date BETWEEN :startofyear AND :endofyear");
+    $statementPayments->bindValue(':startofyear', $startOfYear);
+    $statementPayments->bindValue(':endofyear', $endOfYear);
+    $statementPayments->execute();
+    $payments = $statementPayments->fetchAll(PDO::FETCH_ASSOC);
+
+    $janRelease = (float)0;
+    $febRelease = (float)0;
+    $marRelease = (float)0;
+    $aprRelease = (float)0;
+    $mayRelease = (float)0;
+    $junRelease = (float)0;
+    $julRelease = (float)0;
+    $augRelease = (float)0;
+    $sepRelease = (float)0;
+    $octRelease = (float)0;
+    $novRelease = (float)0;
+    $decRelease = (float)0;
+
+    $janPayable = (float)0;
+    $febPayable = (float)0;
+    $marPayable = (float)0;
+    $aprPayable = (float)0;
+    $mayPayable = (float)0;
+    $junPayable = (float)0;
+    $julPayable = (float)0;
+    $augPayable = (float)0;
+    $sepPayable = (float)0;
+    $octPayable = (float)0;
+    $novPayable = (float)0;
+    $decPayable = (float)0;
+
+    $janCollection = (float)0;
+    $febCollection = (float)0;
+    $marCollection = (float)0;
+    $aprCollection = (float)0;
+    $mayCollection = (float)0;
+    $junCollection = (float)0;
+    $julCollection = (float)0;
+    $augCollection = (float)0;
+    $sepCollection = (float)0;
+    $octCollection = (float)0;
+    $novCollection = (float)0;
+    $decCollection = (float)0;
+
+    foreach ($loans as $i => $loan) {
+      if (date_format(date_create($loan['releasedate']), 'M') == 'Jan') {
+        $janRelease += $loan['amount'];
+        $janPayable += $loan['payable'];
+      } else if (date_format(date_create($loan['releasedate']), 'M') == 'Feb') {
+        $febRelease += $loan['amount'];
+        $febPayable += $loan['payable'];
+      } else if (date_format(date_create($loan['releasedate']), 'M') == 'Mar') {
+        $marRelease += $loan['amount'];
+        $marPayable += $loan['payable'];
+      } else if (date_format(date_create($loan['releasedate']), 'M') == 'Apr') {
+        $aprRelease += $loan['amount'];
+        $aprPayable += $loan['payable'];
+      } else if (date_format(date_create($loan['releasedate']), 'M') == 'May') {
+        $mayRelease += $loan['amount'];
+        $mayPayable += $loan['payable'];
+      } else if (date_format(date_create($loan['releasedate']), 'M') == 'Jun') {
+        $junRelease += $loan['amount'];
+        $junPayable += $loan['payable'];
+      } else if (date_format(date_create($loan['releasedate']), 'M') == 'Jul') {
+        $julRelease += $loan['amount'];
+        $julPayable += $loan['payable'];
+      } else if (date_format(date_create($loan['releasedate']), 'M') == 'Aug') {
+        $augRelease += $loan['amount'];
+        $augPayable += $loan['payable'];
+      } else if (date_format(date_create($loan['releasedate']), 'M') == 'Sep') {
+        $sepRelease += $loan['amount'];
+        $sepPayable += $loan['payable'];
+      } else if (date_format(date_create($loan['releasedate']), 'M') == 'Oct') {
+        $octRelease += $loan['amount'];
+        $octPayable += $loan['payable'];
+      } else if (date_format(date_create($loan['releasedate']), 'M') == 'Nov') {
+        $novRelease += $loan['amount'];
+        $novPayable += $loan['payable'];
+      } else if (date_format(date_create($loan['releasedate']), 'M') == 'Dec') {
+        $decRelease += $loan['amount'];
+        $decPayable += $loan['payable'];
+      }
+    }
+
+    foreach ($payments as $i => $payment) {
+      if (date_format(date_create($payment['date']), 'M') == 'Jan') {
+        $janCollection += $payment['amount'];
+      } else if (date_format(date_create($payment['date']), 'M') == 'Feb') {
+        $febCollection += $payment['amount'];
+      } else if (date_format(date_create($payment['date']), 'M') == 'Mar') {
+        $marCollection += $payment['amount'];
+      } else if (date_format(date_create($payment['date']), 'M') == 'Apr') {
+        $aprCollection += $payment['amount'];
+      } else if (date_format(date_create($payment['date']), 'M') == 'May') {
+        $mayCollection += $payment['amount'];
+      } else if (date_format(date_create($payment['date']), 'M') == 'Jun') {
+        $junCollection += $payment['amount'];
+      } else if (date_format(date_create($payment['date']), 'M') == 'Jul') {
+        $julCollection += $payment['amount'];
+      } else if (date_format(date_create($payment['date']), 'M') == 'Aug') {
+        $augCollection += $payment['amount'];
+      } else if (date_format(date_create($payment['date']), 'M') == 'Sep') {
+        $sepCollection += $payment['amount'];
+      } else if (date_format(date_create($payment['date']), 'M') == 'Oct') {
+        $octCollection += $payment['amount'];
+      } else if (date_format(date_create($payment['date']), 'M') == 'Nov') {
+        $novCollection += $payment['amount'];
+      } else if (date_format(date_create($payment['date']), 'M') == 'Dec') {
+        $decCollection += $payment['amount'];
+      }
+    }
+
+
+    /*
+
+    echo 'Jan Release: '.number_format($janRelease, 2);
+    echo '<br>';
+    echo 'Feb Release: '.number_format($febRelease, 2);
+    echo '<br>';
+    echo 'Mar Release: '.number_format($marRelease, 2);
+    echo '<br>';
+    echo 'Apr Release: '.number_format($aprRelease, 2);
+    echo '<br>';
+    echo 'May Release: '.number_format($mayRelease, 2);
+    echo '<br>';
+    echo 'Jun Release: '.number_format($junRelease, 2);
+    echo '<br>';
+    echo 'Jul Release: '.number_format($julRelease, 2);
+    echo '<br>';
+    echo 'Aug Release: '.number_format($augRelease, 2);
+    echo '<br>';
+    echo 'Sep Release: '.number_format($sepRelease, 2);
+    echo '<br>';
+    echo 'Oct Release: '.number_format($octRelease, 2);
+    echo '<br>';
+    echo 'Nov Release: '.number_format($novRelease, 2);
+    echo '<br>';
+    echo 'Dec Release: '.number_format($decRelease, 2);
+    echo '<br>';
+
+    */
+
+
+    /*                                                                   */
+    /*                                                                   */
+    /*                 END - QUERIES OVERVIEW THIS YEAR                  */
     /*                                                                   */
     /*                                                                   */
 
@@ -535,15 +578,24 @@ $collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
     /*           END - CHART VALUES       */
     /*                                    */
     /*                                    */
+
+    $statementCollectors = $conn->prepare("SELECT c.c_id, CONCAT(c.lastname, ', ', c.firstname) as name
+                                           FROM jai_db.collectors as c");
+    $statementCollectors->execute();
+    $collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
+
+
     ?>
+
+    <!--                                 -->
+    <!--                                 -->
+    <!--           DRAW CHARTS           -->
+    <!--                                 -->
+    <!--                                 -->
+    <div class="overview-chart-div">
+      <canvas id="chartOverview"></canvas>
+    </div>
     <div class="chart-div d-flex">
-
-      <!--                                 -->
-      <!--                                 -->
-      <!--           DRAW CHARTS           -->
-      <!--                                 -->
-      <!--                                 -->
-
       <canvas id="chartTotalCollectionLastMonth"></canvas>
       <canvas id="chartTotalCollectionThisMonth"></canvas>
       <canvas id="chartTotalCollectionToday"></canvas>
@@ -551,6 +603,7 @@ $collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
         <?= $totalCollectionToday == 0 ? '<span>No collections today</span>' : '' ?>
       </div>
     </div>
+
     <div class="bar-chart-div">
       <canvas id="chartCollectionThisWeek"></canvas>
     </div>
@@ -562,47 +615,9 @@ $collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
     <!--                                       -->
     <!--                                       -->
 
-    <?php
-
-
-    // $testFirstOfJuly = date('Y-m-01');
-    // $testLastOfJuly = date('Y-m-t');
-    // $date1 = new DateTime($testFirstOfJuly);
-    // $date2 = new DateTime($testLastOfJuly);
-    // $interval = $date1->diff($date2);
-
-    // echo $testFirstOfJuly . ' - ' . $testLastOfJuly;
-    // echo "<br>";
-    // echo "difference " . $interval->y . " years, " . $interval->m." months, ".($interval->d + 1)." days "; 
-    // echo "<br>";
-
-    // $count = 0;
-    // while ($count <= $interval->d + 1) {
-    //   echo $count;
-    //   echo '<br>';
-    //   $count++;
-
-    // }
-
-    $date = strtotime("+1 day", strtotime("2007-02-28"));
-    echo date("Y-m-d", $date);
-    echo "<br>";
-    /* END - TEST */
-
-
-
-
-
-
-
-
-    // echo "<pre>";
-    // var_dump($activeLoans);
-    // exit;
-    ?>
     <br>
     <br>
-    Accounts Listtttttttttt test
+    Accounts List
     <form method="get" action="accountslist" target="_blank">
       <select name="c_id">
         <option value="" selected disabled>Select collector</option>
@@ -616,38 +631,10 @@ $collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
       <!-- <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $payment['l_id'] ?>" <?= ($payment['paymentsmade'] || $payment['passes']) == 0 ? 'disabled' : '' ?>></input> -->
     </form>
     <br>
+
     <?php
-    echo 'Active Loans: ' . count($activeLoans);
-    echo "<br>";
-    echo "<br>";
-    echo "PREVIOUS MONTHS";
-    echo "<br>";
-    echo 'Total released: ' . number_format($totalReleasedPrevMonths, 2);
-    echo "<br>";
-    echo 'Total collectibles: ' . number_format($totalPayablesPrevMonths, 2);
-    echo "<br>";
-    echo 'Expected total profit: ' . number_format($totalPayablesPrevMonths - $totalReleasedPrevMonths, 2) . ' (' . number_format(((($totalPayablesPrevMonths - $totalReleasedPrevMonths) / $totalPayablesPrevMonths) * 100), 2) . '%)';
-    echo "<br>";
-    echo 'Total collection from previous months: ' . number_format($totalPaymentsPrevMonths, 2);
-    echo "<br>";
-    echo 'Remaining Collectibles: ' . number_format($totalPayablesPrevMonths - $totalPaymentsPrevMonths, 2);
 
-    echo "<br>";
-    echo "<br>";
-    echo "<br>";
-    echo 'Total released: ' . number_format($totalReleasedThisMonth, 2);
-    echo "<br>";
-    echo 'Total collectibles: ' . number_format($totalPayablesThisMonth, 2);
-    echo "<br>";
-    echo 'Total collection for loans this month: ' . number_format($totalPaymentsThisMonth, 2);
-    echo "<br>";
-    echo 'Remaining Collectibles: ' . number_format($totalPayablesThisMonth - $totalPaymentsThisMonth, 2);
-
-    echo "<br>";
-    echo "<br>";
-    echo 'Expected profits today: ' . number_format($totalDailyProfit, 4);
-    echo "<br>";
-    echo 'Expected profits per payment today: ' . number_format($totalProfitPerPayment, 4);
+    echo 'Expected profits today: ' . number_format($totalProfitPerPayment, 4);
     echo "<br>";
     echo 'Expected total collection today: ' . number_format($expectedTotalCollection, 2);
 
@@ -668,6 +655,10 @@ $collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
         month: 'long',
         year: 'numeric'
       };
+
+      var yearOnly = {
+        year: 'numeric'
+      }
 
       var today = new Date();
 
@@ -706,18 +697,18 @@ $collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
           label: 'Collection Last Month',
           data: [totalCashCollectionLastMonthKing, totalGCashCollectionLastMonthKing, totalCashCollectionLastMonthCarl, totalGCashCollectionLastMonthCarl],
           backgroundColor: [
-            'rgba(32, 96, 229, 0.95)',
-            'rgba(72, 121, 223, 1)',
-            'rgba(185, 36, 36, 0.9)',
-            'rgba(218, 81, 81, 1)'
+            'rgba(30, 139, 195, 1)',
+            'rgba(30, 139, 195, 1)',
+            'rgba(196, 77, 86, 1)',
+            'rgba(196, 77, 86, 1)'
           ],
           borderColor: [
-            'rgba(32, 96, 229, 1)',
-            'rgba(72, 121, 223, 1)',
-            'rgba(185, 36, 36, 1)',
-            'rgba(218, 81, 81, 1)'
+            'rgba(0, 0, 0, 1)',
+            'rgba(0, 0, 0, 1)',
+            'rgba(0, 0, 0, 1)',
+            'rgba(0, 0, 0, 1)'
           ],
-          borderWidth: 2,
+          borderWidth: 1,
           hoverOffset: 10
         }]
       };
@@ -785,18 +776,18 @@ $collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
           label: 'Collection This Month',
           data: [totalCashCollectionThisMonthKing, totalGCashCollectionThisMonthKing, totalCashCollectionThisMonthCarl, totalGCashCollectionThisMonthCarl],
           backgroundColor: [
-            'rgba(53, 118, 255, 1)',
-            'rgba(53, 118, 255, 0.95)',
-            'rgba(183, 0, 0, 1)',
-            'rgba(183, 0, 0, 0.9)'
+            'rgba(30, 139, 195, 1)',
+            'rgba(30, 139, 195, 1)',
+            'rgba(196, 77, 86, 1)',
+            'rgba(196, 77, 86, 1)'
           ],
           borderColor: [
-            'rgba(53, 118, 255, 1)',
-            'rgba(53, 118, 255, 1)',
-            'rgba(183, 0, 0, 1)',
-            'rgba(183, 0, 0, 1)'
+            'rgba(0, 0, 0, 1)',
+            'rgba(0, 0, 0, 1)',
+            'rgba(0, 0, 0, 1)',
+            'rgba(0, 0, 0, 1)'
           ],
-          borderWidth: 2,
+          borderWidth: 1,
           hoverOffset: 10
         }]
       };
@@ -865,16 +856,16 @@ $collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
           label: 'Total Collection Today',
           data: [totalCashCollectionTodayKing, totalGCashCollectionTodayKing, totalCashCollectionTodayCarl, totalGCashCollectionTodayCarl],
           backgroundColor: [
-            'rgba(32, 96, 229, 1)',
-            'rgba(72, 121, 223, 0.95)',
-            'rgba(185, 36, 36, 1)',
-            'rgba(218, 81, 81, 0.9)'
+            'rgba(30, 139, 195, 1)',
+            'rgba(30, 139, 195, 1)',
+            'rgba(196, 77, 86, 1)',
+            'rgba(196, 77, 86, 1)'
           ],
           borderColor: [
-            'rgba(32, 96, 229, 1)',
-            'rgba(72, 121, 223, 1)',
-            'rgba(185, 36, 36, 1)',
-            'rgba(218, 81, 81, 1)'
+            'rgba(0, 0, 0, 1)',
+            'rgba(0, 0, 0, 1)',
+            'rgba(0, 0, 0, 1)',
+            'rgba(0, 0, 0, 1)'
           ],
           borderWidth: 2,
           hoverOffset: 10
@@ -966,26 +957,26 @@ $collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
           label: 'King Cruz',
           data: [monCollectionKing, tueCollectionKing, wedCollectionKing, thuCollectionKing, friCollectionKing, satCollectionKing],
           backgroundColor: [
-            'rgba(32, 96, 229, 1)'
+            'rgba(30, 139, 195, 1)'
           ],
           borderColor: [
-            'rgba(32, 96, 229, 1)'
+            'rgba(0, 0, 0, 1)'
           ],
-          borderWidth: 0,
-          borderRadius: 4
+          borderWidth: 1,
+          borderRadius: 1
         }, {
           barPercentage: 0.7,
           label: 'Carl Corpuz',
           data: [monCollectionCarl, tueCollectionCarl, wedCollectionCarl, thuCollectionCarl, friCollectionCarl, satCollectionCarl],
           backgroundColor: [
-            'rgba(185, 36, 36, 1)'
+            'rgba(196, 77, 86, 1)'
 
           ],
           borderColor: [
-            'rgba(185, 36, 36, 1)'
+            'rgba(0, 0, 0, 1)'
           ],
-          borderWidth: 0,
-          borderRadius: 4
+          borderWidth: 1,
+          borderRadius: 1
         }]
       };
 
@@ -1020,7 +1011,7 @@ $collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
             legend: {
               position: 'top',
               labels: {
-                usePointStyle: true
+                usePointStyle: false
               }
             },
             title: {
@@ -1044,6 +1035,138 @@ $collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
       /*                                                    */
       /*                                                    */
       /*        END - BAR CHART COLLECTION THIS WEEK        */
+      /*                                                    */
+      /*                                                    */
+
+      /*                                                    */
+      /*                                                    */
+      /*                 BAR CHART OVERVIEW                 */
+      /*                                                    */
+      /*                                                    */
+
+      const janRelease = <?= json_encode($janRelease) ?>;
+      const febRelease = <?= json_encode($febRelease) ?>;
+      const marRelease = <?= json_encode($marRelease) ?>;
+      const aprRelease = <?= json_encode($aprRelease) ?>;
+      const mayRelease = <?= json_encode($mayRelease) ?>;
+      const junRelease = <?= json_encode($junRelease) ?>;
+      const julRelease = <?= json_encode($julRelease) ?>;
+      const augRelease = <?= json_encode($augRelease) ?>;
+      const sepRelease = <?= json_encode($sepRelease) ?>;
+      const octRelease = <?= json_encode($octRelease) ?>;
+      const novRelease = <?= json_encode($novRelease) ?>;
+      const decRelease = <?= json_encode($decRelease) ?>;
+
+      const janPayable = <?= json_encode($janPayable) ?>;
+      const febPayable = <?= json_encode($febPayable) ?>;
+      const marPayable = <?= json_encode($marPayable) ?>;
+      const aprPayable = <?= json_encode($aprPayable) ?>;
+      const mayPayable = <?= json_encode($mayPayable) ?>;
+      const junPayable = <?= json_encode($junPayable) ?>;
+      const julPayable = <?= json_encode($julPayable) ?>;
+      const augPayable = <?= json_encode($augPayable) ?>;
+      const sepPayable = <?= json_encode($sepPayable) ?>;
+      const octPayable = <?= json_encode($octPayable) ?>;
+      const novPayable = <?= json_encode($novPayable) ?>;
+      const decPayable = <?= json_encode($decPayable) ?>;
+
+      const janCollection = <?= json_encode($janCollection) ?>;
+      const febCollection = <?= json_encode($febCollection) ?>;
+      const marCollection = <?= json_encode($marCollection) ?>;
+      const aprCollection = <?= json_encode($aprCollection) ?>;
+      const mayCollection = <?= json_encode($mayCollection) ?>;
+      const junCollection = <?= json_encode($junCollection) ?>;
+      const julCollection = <?= json_encode($julCollection) ?>;
+      const augCollection = <?= json_encode($augCollection) ?>;
+      const sepCollection = <?= json_encode($sepCollection) ?>;
+      const octCollection = <?= json_encode($octCollection) ?>;
+      const novCollection = <?= json_encode($novCollection) ?>;
+      const decCollection = <?= json_encode($decCollection) ?>;
+
+      //SETUP BLOCK
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const dataOverview = {
+        labels: months,
+        datasets: [{
+          barPercentage: 0.85,
+          label: 'Released',
+          data: [janRelease, febRelease, marRelease, aprRelease, mayRelease, junRelease, julRelease, augRelease, sepRelease, octRelease, novRelease, decRelease],
+          backgroundColor: [
+            'rgba(3, 201, 169, 1)'
+          ],
+          borderColor: [
+            'rgb(0, 0, 0)'
+          ],
+          borderWidth: 1
+        }, {
+          barPercentage: 0.85,
+          label: 'Payable',
+          data: [janPayable, febPayable, marPayable, aprPayable, mayPayable, junPayable, julPayable, augPayable, sepPayable, octPayable, novPayable, decPayable],
+          backgroundColor: [
+            'rgba(230, 126, 34, 1)'
+          ],
+          borderColor: [
+            'rgb(0, 0, 0)'
+          ],
+          borderWidth: 1
+        }, {
+          barPercentage: 0.85,
+          label: 'Collection',
+          data: [janCollection, febCollection, marCollection, aprCollection, mayCollection, junCollection, julCollection, augCollection, sepCollection, octCollection, novCollection, decCollection],
+          backgroundColor: [
+            'rgba(30, 139, 195, 1)'
+          ],
+          borderColor: [
+            'rgb(0, 0, 0)'
+          ],
+          borderWidth: 1
+        }]
+      };
+
+      //CONFIG BLOCK
+      const configOverview = {
+        type: 'bar',
+        data: dataOverview,
+        options: {
+          // animation: {
+          //   onComplete: () => {
+          //     delayed = true;
+          //   },
+          //   delay: (context) => {
+          //     let delay = 0;
+          //     if (context.type === 'data' && context.mode === 'default' && !delayed) {
+          //       delay = context.dataIndex * 300 + context.datasetIndex * 100;
+          //     }
+          //     return delay;
+          //   }
+          // },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: ['Overview for ' + today.toLocaleDateString("en-US", yearOnly)],
+              font: {
+                size: 14
+              }
+            }
+          }
+        },
+      };
+
+      //RENDER BLOCK
+      const overviewChart = new Chart(
+        document.getElementById('chartOverview'),
+        configOverview
+      );
+
+
+      /*                                                    */
+      /*                                                    */
+      /*              END - BAR CHART OVERVIEW              */
       /*                                                    */
       /*                                                    */
     </script>
