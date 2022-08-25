@@ -572,6 +572,10 @@ body.modal-open {
   width: 700px;
 }
 
+.overview-chart-div {
+  width: 1200px;
+}
+
 .no-collections {
   width: 400px;
   position: relative;
