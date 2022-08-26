@@ -147,16 +147,14 @@ try {
             </div>
             <div class="col">
               <div class="row">
-                <p class="jai-table-name primary-font <?= $borrower['firstname'] == 'Angelo' ? 'red' : ''; ?>
-                                                <?= $borrower['firstname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Name:</span> <span class="value"><?= ucwords(strtolower($borrower['firstname'])) . ' ' . ucwords(strtolower($borrower['middlename'])) . ' ' . ucwords(strtolower($borrower['lastname'])) ?></span></p>
+                <p class="jai-table-name primary-font"><span class="jai-table-label">Name:</span> <span class="value"><?= ucwords(strtolower($borrower['firstname'])) . ' ' . ucwords(strtolower($borrower['middlename'])) . ' ' . ucwords(strtolower($borrower['lastname'])) ?></span></p>
                 <p class="jai-table-contact primary-font"> <span class="jai-table-label">Contact: </span> <span class="value"><?= $borrower['contactno'] ?></span></p>
               </div>
             </div>
           </div>
           <div class="row">
             <p class="jai-table-address sub-font"> <span class="jai-table-label">Address: </span> <span class="value"><?= $borrower['address'] ?></span></p>
-            <p class="jai-table-comaker sub-font <?= $borrower['firstname'] == 'Angelo' ? 'red' : ''; ?>
-                                                <?= $borrower['firstname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Comaker:</span> <span class="value"><?= ucwords(strtolower($borrower['comaker'])) ?></span></p>
+            <p class="jai-table-comaker sub-font"><span class="jai-table-label">Comaker:</span> <span class="value"><?= ucwords(strtolower($borrower['comaker'])) ?></span></p>
             <p class="jai-table-comakerno sub-font"> <span class="jai-table-label">Contact: </span> <span class="value"><?= $borrower['comakerno'] ?></span></p>
           </div>
         </div>
