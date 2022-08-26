@@ -169,7 +169,11 @@ $sat = date_create('saturday this week');
     $statementLoans->execute();
     $loans = $statementLoans->fetchAll(PDO::FETCH_ASSOC);
 
-    $statementPayments = $conn->prepare("SELECT * FROM jai_db.payments as p WHERE p.date BETWEEN :startofyear AND :endofyear");
+    $statementPayments = $conn->prepare("SELECT p.date, p.type, p.amount, l.amount as loanamount, l.payable, l.amortization
+                                         FROM jai_db.payments as p
+                                         INNER JOIN jai_db.loans as l
+                                         ON p.l_id = l.l_id
+                                         WHERE p.date BETWEEN :startofyear AND :endofyear");
     $statementPayments->bindValue(':startofyear', $startOfYear);
     $statementPayments->bindValue(':endofyear', $endOfYear);
     $statementPayments->execute();
@@ -214,7 +218,48 @@ $sat = date_create('saturday this week');
     $novCollection = (float)0;
     $decCollection = (float)0;
 
+    $janProfitOrLoss = (float)0;
+    $febProfitOrLoss = (float)0;
+    $marProfitOrLoss = (float)0;
+    $aprProfitOrLoss = (float)0;
+    $mayProfitOrLoss = (float)0;
+    $junProfitOrLoss = (float)0;
+    $julProfitOrLoss = (float)0;
+    $augProfitOrLoss = (float)0;
+    $sepProfitOrLoss = (float)0;
+    $octProfitOrLoss = (float)0;
+    $novProfitOrLoss = (float)0;
+    $decProfitOrLoss = (float)0;
+
+    $janPasses = (int)0;
+    $febPasses = (int)0;
+    $marPasses = (int)0;
+    $aprPasses = (int)0;
+    $mayPasses = (int)0;
+    $junPasses = (int)0;
+    $julPasses = (int)0;
+    $augPasses = (int)0;
+    $sepPasses = (int)0;
+    $octPasses = (int)0;
+    $novPasses = (int)0;
+    $decPasses = (int)0;
+
+    $janPassAmount = (float)0;
+    $febPassAmount = (float)0;
+    $marPassAmount = (float)0;
+    $aprPassAmount = (float)0;
+    $mayPassAmount = (float)0;
+    $junPassAmount = (float)0;
+    $julPassAmount = (float)0;
+    $augPassAmount = (float)0;
+    $sepPassAmount = (float)0;
+    $octPassAmount = (float)0;
+    $novPassAmount = (float)0;
+    $decPassAmount = (float)0;
+
     foreach ($loans as $i => $loan) {
+
+      // VALUES OF RELEASE AND PAYABLE PER MONTH
       if (date_format(date_create($loan['releasedate']), 'M') == 'Jan') {
         $janRelease += $loan['amount'];
         $janPayable += $loan['payable'];
@@ -255,59 +300,121 @@ $sat = date_create('saturday this week');
     }
 
     foreach ($payments as $i => $payment) {
+
+      //GET PROFIT/LOSS PER PAYMENT
+      $profit = $payment['payable'] - $payment['loanamount'];
+      $paymentsToCloseLoan = $payment['payable'] / $payment['amortization'];
+      $profitPerPayment = $profit / $paymentsToCloseLoan;
+
+      $profitOrLoss = (($payment['amount'] - $payment['amortization']) + $profitPerPayment);
+
+      // TOTAL COLLECTION PER MONTH & ADD PROFIT/LOSS TO RESPECTIVE MONTH
       if (date_format(date_create($payment['date']), 'M') == 'Jan') {
         $janCollection += $payment['amount'];
+        $janProfitOrLoss += $profitOrLoss;
       } else if (date_format(date_create($payment['date']), 'M') == 'Feb') {
         $febCollection += $payment['amount'];
+        $febProfitOrLoss += $profitOrLoss;
       } else if (date_format(date_create($payment['date']), 'M') == 'Mar') {
         $marCollection += $payment['amount'];
+        $marProfitOrLoss += $profitOrLoss;
       } else if (date_format(date_create($payment['date']), 'M') == 'Apr') {
         $aprCollection += $payment['amount'];
+        $aprProfitOrLoss += $profitOrLoss;
       } else if (date_format(date_create($payment['date']), 'M') == 'May') {
         $mayCollection += $payment['amount'];
+        $mayProfitOrLoss += $profitOrLoss;
       } else if (date_format(date_create($payment['date']), 'M') == 'Jun') {
         $junCollection += $payment['amount'];
+        $junProfitOrLoss += $profitOrLoss;
       } else if (date_format(date_create($payment['date']), 'M') == 'Jul') {
         $julCollection += $payment['amount'];
+        $julProfitOrLoss += $profitOrLoss;
       } else if (date_format(date_create($payment['date']), 'M') == 'Aug') {
         $augCollection += $payment['amount'];
+        $augProfitOrLoss += $profitOrLoss;
       } else if (date_format(date_create($payment['date']), 'M') == 'Sep') {
         $sepCollection += $payment['amount'];
+        $sepProfitOrLoss += $profitOrLoss;
       } else if (date_format(date_create($payment['date']), 'M') == 'Oct') {
         $octCollection += $payment['amount'];
+        $octProfitOrLoss += $profitOrLoss;
       } else if (date_format(date_create($payment['date']), 'M') == 'Nov') {
         $novCollection += $payment['amount'];
+        $novProfitOrLoss += $profitOrLoss;
       } else if (date_format(date_create($payment['date']), 'M') == 'Dec') {
         $decCollection += $payment['amount'];
+        $decProfitOrLoss += $profitOrLoss;
+      }
+
+      //GET TOTAL PASSES AND PASS AMOUNT PER MONTH
+      if ($payment['type'] == 'Pass') {
+        if (date_format(date_create($payment['date']), 'M') == 'Jan') {
+          $janPasses++;
+          $janPassAmount += $payment['amortization'];
+        } else if (date_format(date_create($payment['date']), 'M') == 'Feb') {
+          $febPasses++;
+          $febPassAmount += $payment['amortization'];
+        } else if (date_format(date_create($payment['date']), 'M') == 'Mar') {
+          $marPasses++;
+          $marPassAmount += $payment['amortization'];
+        } else if (date_format(date_create($payment['date']), 'M') == 'Apr') {
+          $aprPasses++;
+          $aprPassAmount += $payment['amortization'];
+        } else if (date_format(date_create($payment['date']), 'M') == 'May') {
+          $mayPasses++;
+          $mayPassAmount += $payment['amortization'];
+        } else if (date_format(date_create($payment['date']), 'M') == 'Jun') {
+          $junPasses++;
+          $junPassAmount += $payment['amortization'];
+        } else if (date_format(date_create($payment['date']), 'M') == 'Jul') {
+          $julPasses++;
+          $julPassAmount += $payment['amortization'];
+        } else if (date_format(date_create($payment['date']), 'M') == 'Aug') {
+          $augPasses++;
+          $augPassAmount += $payment['amortization'];
+        } else if (date_format(date_create($payment['date']), 'M') == 'Sep') {
+          $sepPasses++;
+          $sepPassAmount += $payment['amortization'];
+        } else if (date_format(date_create($payment['date']), 'M') == 'Oct') {
+          $octPasses++;
+          $octPassAmount += $payment['amortization'];
+        } else if (date_format(date_create($payment['date']), 'M') == 'Nov') {
+          $novPasses++;
+          $novPassAmount += $payment['amortization'];
+        } else if (date_format(date_create($payment['date']), 'M') == 'Dec') {
+          $decPasses++;
+          $decPassAmount += $payment['amortization'];
+        }
       }
     }
 
 
     /*
 
-    echo 'Jan Release: '.number_format($janRelease, 2);
+    echo 'Jan Profit/Loss: '.number_format($janProfitOrLoss, 2);
     echo '<br>';
-    echo 'Feb Release: '.number_format($febRelease, 2);
+    echo 'Feb Profit/Loss: '.number_format($febProfitOrLoss, 2);
     echo '<br>';
-    echo 'Mar Release: '.number_format($marRelease, 2);
+    echo 'Mar Profit/Loss: '.number_format($marProfitOrLoss, 2);
     echo '<br>';
-    echo 'Apr Release: '.number_format($aprRelease, 2);
+    echo 'Apr Profit/Loss: '.number_format($aprProfitOrLoss, 2);
     echo '<br>';
-    echo 'May Release: '.number_format($mayRelease, 2);
+    echo 'May Profit/Loss: '.number_format($mayProfitOrLoss, 2);
     echo '<br>';
-    echo 'Jun Release: '.number_format($junRelease, 2);
+    echo 'Jun Profit/Loss: '.number_format($junProfitOrLoss, 2);
     echo '<br>';
-    echo 'Jul Release: '.number_format($julRelease, 2);
+    echo 'Jul Profit/Loss: '.number_format($julProfitOrLoss, 2);
     echo '<br>';
-    echo 'Aug Release: '.number_format($augRelease, 2);
+    echo 'Aug Profit/Loss: '.number_format($augProfitOrLoss, 2);
     echo '<br>';
-    echo 'Sep Release: '.number_format($sepRelease, 2);
+    echo 'Sep Profit/Loss: '.number_format($sepProfitOrLoss, 2);
     echo '<br>';
-    echo 'Oct Release: '.number_format($octRelease, 2);
+    echo 'Oct Profit/Loss: '.number_format($octProfitOrLoss, 2);
     echo '<br>';
-    echo 'Nov Release: '.number_format($novRelease, 2);
+    echo 'Nov Profit/Loss: '.number_format($novProfitOrLoss, 2);
     echo '<br>';
-    echo 'Dec Release: '.number_format($decRelease, 2);
+    echo 'Dec Profit/Loss: '.number_format($decProfitOrLoss, 2);
     echo '<br>';
 
     */
@@ -583,7 +690,6 @@ $sat = date_create('saturday this week');
                                            FROM jai_db.collectors as c");
     $statementCollectors->execute();
     $collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
-
 
     ?>
 
@@ -867,7 +973,7 @@ $sat = date_create('saturday this week');
             'rgba(0, 0, 0, 1)',
             'rgba(0, 0, 0, 1)'
           ],
-          borderWidth: 2,
+          borderWidth: 1,
           hoverOffset: 10
         }]
       };
@@ -1083,11 +1189,65 @@ $sat = date_create('saturday this week');
       const novCollection = <?= json_encode($novCollection) ?>;
       const decCollection = <?= json_encode($decCollection) ?>;
 
+      const janProfitOrLoss = <?= json_encode($janProfitOrLoss) ?>;
+      const febProfitOrLoss = <?= json_encode($febProfitOrLoss) ?>;
+      const marProfitOrLoss = <?= json_encode($marProfitOrLoss) ?>;
+      const aprProfitOrLoss = <?= json_encode($aprProfitOrLoss) ?>;
+      const mayProfitOrLoss = <?= json_encode($mayProfitOrLoss) ?>;
+      const junProfitOrLoss = <?= json_encode($junProfitOrLoss) ?>;
+      const julProfitOrLoss = <?= json_encode($julProfitOrLoss) ?>;
+      const augProfitOrLoss = <?= json_encode($augProfitOrLoss) ?>;
+      const sepProfitOrLoss = <?= json_encode($sepProfitOrLoss) ?>;
+      const octProfitOrLoss = <?= json_encode($octProfitOrLoss) ?>;
+      const novProfitOrLoss = <?= json_encode($novProfitOrLoss) ?>;
+      const decProfitOrLoss = <?= json_encode($decProfitOrLoss) ?>;
+
+      const janPasses = <?= json_encode($janPasses) ?>;
+      const febPasses = <?= json_encode($febPasses) ?>;
+      const marPasses = <?= json_encode($marPasses) ?>;
+      const aprPasses = <?= json_encode($aprPasses) ?>;
+      const mayPasses = <?= json_encode($mayPasses) ?>;
+      const junPasses = <?= json_encode($junPasses) ?>;
+      const julPasses = <?= json_encode($julPasses) ?>;
+      const augPasses = <?= json_encode($augPasses) ?>;
+      const sepPasses = <?= json_encode($sepPasses) ?>;
+      const octPasses = <?= json_encode($octPasses) ?>;
+      const novPasses = <?= json_encode($novPasses) ?>;
+      const decPasses = <?= json_encode($decPasses) ?>;
+
+      const janPassAmount = <?= json_encode($janPassAmount) ?>;
+      const febPassAmount = <?= json_encode($febPassAmount) ?>;
+      const marPassAmount = <?= json_encode($marPassAmount) ?>;
+      const aprPassAmount = <?= json_encode($aprPassAmount) ?>;
+      const mayPassAmount = <?= json_encode($mayPassAmount) ?>;
+      const junPassAmount = <?= json_encode($junPassAmount) ?>;
+      const julPassAmount = <?= json_encode($julPassAmount) ?>;
+      const augPassAmount = <?= json_encode($augPassAmount) ?>;
+      const sepPassAmount = <?= json_encode($sepPassAmount) ?>;
+      const octPassAmount = <?= json_encode($octPassAmount) ?>;
+      const novPassAmount = <?= json_encode($novPassAmount) ?>;
+      const decPassAmount = <?= json_encode($decPassAmount) ?>;
+
       //SETUP BLOCK
       const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
       const dataOverview = {
         labels: months,
         datasets: [{
+          label: 'Profit',
+          data: [janProfitOrLoss.toFixed(2), febProfitOrLoss.toFixed(2), marProfitOrLoss.toFixed(2), aprProfitOrLoss.toFixed(2), mayProfitOrLoss.toFixed(2), junProfitOrLoss.toFixed(2), julProfitOrLoss.toFixed(2), augProfitOrLoss.toFixed(2), sepProfitOrLoss.toFixed(2), octProfitOrLoss.toFixed(2), novProfitOrLoss.toFixed(2), decProfitOrLoss.toFixed(2)],
+          backgroundColor: [
+            'rgba(243, 225, 107, 1)'
+          ],
+          borderColor: [
+            'rgb(0, 0, 0)'
+          ],
+          borderWidth: 1,
+          type: 'line',
+          pointStyle: 'circle',
+          pointRadius: 6,
+          hoverRadius: 10,
+          tension: 0.15
+        }, {
           barPercentage: 0.85,
           label: 'Released',
           data: [janRelease, febRelease, marRelease, aprRelease, mayRelease, junRelease, julRelease, augRelease, sepRelease, octRelease, novRelease, decRelease],
@@ -1112,9 +1272,31 @@ $sat = date_create('saturday this week');
         }, {
           barPercentage: 0.85,
           label: 'Collection',
-          data: [janCollection, febCollection, marCollection, aprCollection, mayCollection, junCollection, julCollection, augCollection, sepCollection, octCollection, novCollection, decCollection],
+          data: [janCollection.toFixed(2), febCollection.toFixed(2), marCollection.toFixed(2), aprCollection.toFixed(2), mayCollection.toFixed(2), junCollection.toFixed(2), julCollection.toFixed(2), augCollection.toFixed(2), sepCollection.toFixed(2), octCollection.toFixed(2), novCollection.toFixed(2), decCollection.toFixed(2)],
           backgroundColor: [
             'rgba(30, 139, 195, 1)'
+          ],
+          borderColor: [
+            'rgb(0, 0, 0)'
+          ],
+          borderWidth: 1
+        }, {
+          barPercentage: 0.85,
+          label: 'Passes',
+          data: [janPasses, febPasses, marPasses, aprPasses, mayPasses, junPasses, julPasses, augPasses, sepPasses, octPasses, novPasses, decPasses],
+          backgroundColor: [
+            'rgba(150, 40, 27, 1)'
+          ],
+          borderColor: [
+            'rgb(0, 0, 0)'
+          ],
+          borderWidth: 1
+        }, {
+          barPercentage: 0.85,
+          label: 'Pass Amount',
+          data: [janPassAmount, febPassAmount, marPassAmount, aprPassAmount, mayPassAmount, junPassAmount, julPassAmount, augPassAmount, sepPassAmount, octPassAmount, novPassAmount, decPassAmount],
+          backgroundColor: [
+            'rgba(140, 20, 252, 1)'
           ],
           borderColor: [
             'rgb(0, 0, 0)'
