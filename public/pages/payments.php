@@ -159,8 +159,8 @@ try {
       $paymentsToCloseLoan = $payment['payable'] / $payment['amortization'];
       $profitPerPayment = $profit / $paymentsToCloseLoan;
 
-      $profitOrLoss = (($payment['amount'] - $payment['amortization']) + $profitPerPayment);
-    
+      // $profitOrLoss = (($payment['amount'] - $payment['amortization']) + $profitPerPayment);
+      $profitOrLoss = ($profitPerPayment / $payment['amortization']) * $payment['amount'];
 
       $date = date_create($payment['date']);
       $loanID = $payment['l_id'];
