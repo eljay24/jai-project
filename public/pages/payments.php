@@ -242,7 +242,7 @@ try {
           <div class="row">
             <div class="col">
               <p class="jai-table-address primary-font"> <span class="jai-table-label">Collector: </span><?php echo ucwords(strtolower($payment['collectorfname'])) . ' ' . ucwords(strtolower($payment['collectormname'])) . ' ' . ucwords(strtolower($payment['collectorlname'])) ?></p>
-              <p class="sub-font"><?= ($profitOrLoss > 0) ? 'Profit: +'.number_format($profitOrLoss, 2) : 'Loss: '.number_format($profitOrLoss, 2) ?></p>
+              <p class="sub-font"><?= ($profitOrLoss > 0) ? '(test)Profit: +'.number_format($profitOrLoss, 2) : '(test)Loss: '.number_format($profitOrLoss, 2) ?></p>
               <!-- <textarea class="jai-table-input" type="text"></textarea> -->
             </div>
             <div class="col-4">
