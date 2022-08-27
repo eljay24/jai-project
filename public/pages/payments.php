@@ -254,11 +254,11 @@ try {
         <div class="col-1 d-flex align-items-center justify-content-around">
           <!-- <a href="update.php?id=<?php //echo $borrower['b_id'] 
                                       ?>" class="btn btn-primary btn-sm edit-btn">Edit</a> -->
-          <a title="Edit" href="#" class="btn btn-primary btn-sm edit-btn">Edit</a>
-          <button title="Delete" type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower" disabled>Delete</button>
+          <!-- <a title="Edit" href="#" class="btn btn-primary btn-sm edit-btn">Edit</a> -->
           <form method="get" action="ledger" target="_blank">
             <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $loanID ?>" <?= ($totalPayment || $totalPass) == 0 ? 'disabled' : '' ?>></input>
           </form>
+          <button title="Delete" type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower" disabled>Delete</button>
 
         </div>
         <div class="d-none hidden-field">
