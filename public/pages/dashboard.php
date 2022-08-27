@@ -133,16 +133,6 @@ $sat = date_create('saturday this week');
       /*       END - Count number of days       */
       /*                                        */
       /*                                        */
-
-      $profit = $activeLoan['payable'] - $activeLoan['amount'];
-      $paymentsToCloseLoan = $activeLoan['payable'] / $activeLoan['amortization'];
-      $profitPerPayment = $profit / $paymentsToCloseLoan;
-
-      $loanNumberOfDays = $activeLoan['payable'] / $activeLoan['amortization'];
-      $dailyProfit = ($activeLoan['payable'] - $activeLoan['amount']) / $days;
-      $totalProfitPerPayment += $profitPerPayment;
-      $totalDailyProfit += $dailyProfit;
-      $expectedTotalCollection += $activeLoan['amortization'];
     }
 
     /*                                                */
@@ -306,7 +296,7 @@ $sat = date_create('saturday this week');
       $paymentsToCloseLoan = $payment['payable'] / $payment['amortization'];
       $profitPerPayment = $profit / $paymentsToCloseLoan;
 
-      $profitOrLoss = (($payment['amount'] - $payment['amortization']) + $profitPerPayment);
+      $profitOrLoss = ($profitPerPayment / $payment['amortization']) * $payment['amount'];
 
       // TOTAL COLLECTION PER MONTH & ADD PROFIT/LOSS TO RESPECTIVE MONTH
       if (date_format(date_create($payment['date']), 'M') == 'Jan') {
@@ -579,7 +569,8 @@ $sat = date_create('saturday this week');
     /*                                                     */
     /*                                                     */
 
-    $queryCollectionThisWeek = $conn->prepare("SELECT p.c_id, CONCAT(c.lastname, ', ', c.firstname) as collectorname, p.type, p.amount, p.date
+    $queryCollectionThisWeek = $conn->prepare("SELECT p.c_id, CONCAT(c.lastname, ', ', c.firstname) as collectorname, p.type, p.amount, p.date,
+                                                      l.amount as loanamount, l.payable, l.amortization
                                                FROM jai_db.payments as p
                                                INNER JOIN jai_db.loans as l
                                                ON p.l_id = l.l_id
@@ -606,9 +597,22 @@ $sat = date_create('saturday this week');
     $friCollectionCarl = (float)0;
     $satCollectionCarl = (float)0;
 
+    $monProfit = (float)0;
+    $tueProfit = (float)0;
+    $wedProfit = (float)0;
+    $thuProfit = (float)0;
+    $friProfit = (float)0;
+    $satProfit = (float)0;
+
     $totalCollectionThisWeek = (float)0;
 
     foreach ($collectionThisWeek as $i => $collection) {
+
+      $profitThisWeek = $collection['payable'] - $collection['loanamount'];
+      $paymentsToCloseLoan = $collection['payable'] / $collection['amortization'];
+      $profitPerPaymentThisWeek = $profitThisWeek / $paymentsToCloseLoan;
+
+      $profitOrLossThisWeek = ($profitPerPaymentThisWeek / $collection['amortization']) * $collection['amount'];
 
       if ($collection['c_id'] == 1) {
         if (date_format(date_create($collection['date']), 'D') == 'Mon') {
@@ -639,7 +643,23 @@ $sat = date_create('saturday this week');
           $satCollectionCarl += $collection['amount'];
         }
       }
+
+      if (date_format(date_create($collection['date']), 'D') == 'Mon') {
+        $monProfit += $profitOrLossThisWeek;
+      } elseif (date_format(date_create($collection['date']), 'D') == 'Tue') {
+        $tueProfit += $profitOrLossThisWeek;
+      } elseif (date_format(date_create($collection['date']), 'D') == 'Wed') {
+        $wedProfit += $profitOrLossThisWeek;
+      } elseif (date_format(date_create($collection['date']), 'D') == 'Thu') {
+        $thuProfit += $profitOrLossThisWeek;
+      } elseif (date_format(date_create($collection['date']), 'D') == 'Fri') {
+        $friProfit += $profitOrLossThisWeek;
+      } elseif (date_format(date_create($collection['date']), 'D') == 'Sat') {
+        $satProfit += $profitOrLossThisWeek;
+      }
     }
+
+
 
     $totalCollectionThisWeek = $monCollectionKing + $tueCollectionKing + $wedCollectionKing + $thuCollectionKing + $friCollectionKing + $satCollectionKing
       + $monCollectionCarl + $tueCollectionCarl + $wedCollectionCarl + $thuCollectionCarl + $friCollectionCarl + $satCollectionCarl;
@@ -693,33 +713,60 @@ $sat = date_create('saturday this week');
 
     ?>
 
+
+
+
+
+
+
+
+
+
     <!--                                 -->
     <!--                                 -->
     <!--           DRAW CHARTS           -->
     <!--                                 -->
     <!--                                 -->
-    <div class="overview-chart-div">
-      <canvas id="chartOverview"></canvas>
-    </div>
-    <div class="chart-div d-flex">
-      <canvas id="chartTotalCollectionLastMonth"></canvas>
-      <canvas id="chartTotalCollectionThisMonth"></canvas>
-      <canvas id="chartTotalCollectionToday"></canvas>
-      <div class="no-collections">
-        <?= $totalCollectionToday == 0 ? '<span>No collections today</span>' : '' ?>
+    <div class="card-overview-chart jai-card">
+      <div class="overview-chart-div">
+        <canvas id="chartOverview"></canvas>
       </div>
     </div>
 
-    <div class="bar-chart-div">
-      <canvas id="chartCollectionThisWeek"></canvas>
+    <div class="card-chart-div d-flex jai-card">
+      <div class="chart-div">
+        <canvas id="chartTotalCollectionLastMonth"></canvas>
+      </div>
+      <div class="chart-div">
+        <canvas id="chartTotalCollectionThisMonth"></canvas>
+      </div>
+      <div class="chart-div">
+        <canvas id="chartTotalCollectionToday"></canvas>
+        <div class="no-collections">
+          <?= $totalCollectionToday == 0 ? '<span>No collections today</span>' : '' ?>
+        </div>
+      </div>
     </div>
 
+    <div class="card-bar-chart-div jai-card">
+      <div class="bar-chart-div">
+        <canvas id="chartCollectionThisWeek"></canvas>
+      </div>
+    </div>
 
     <!--                                       -->
     <!--                                       -->
     <!--           END - DRAW CHARTS           -->
     <!--                                       -->
     <!--                                       -->
+
+
+
+
+
+
+
+
 
     <br>
     <br>
@@ -737,7 +784,6 @@ $sat = date_create('saturday this week');
       <!-- <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $payment['l_id'] ?>" <?= ($payment['paymentsmade'] || $payment['passes']) == 0 ? 'disabled' : '' ?>></input> -->
     </form>
     <br>
-
     <?php
 
     echo 'Expected profits today: ' . number_format($totalProfitPerPayment, 4);
@@ -841,6 +887,14 @@ $sat = date_create('saturday this week');
               font: {
                 size: 14
               }
+            },
+            tooltip: {
+              titleFont: {
+                size: 14
+              },
+              bodyFont: {
+                size: 14
+              }
             }
           }
 
@@ -918,6 +972,14 @@ $sat = date_create('saturday this week');
               display: true,
               text: ['Collection This Month ' + today.toLocaleDateString("en-US", monthYear), '₱ ' + totalCollectionThisMonth.toLocaleString('en', numberFormat)],
               font: {
+                size: 14
+              }
+            },
+            tooltip: {
+              titleFont: {
+                size: 14
+              },
+              bodyFont: {
                 size: 14
               }
             }
@@ -1001,6 +1063,14 @@ $sat = date_create('saturday this week');
               font: {
                 size: 14
               }
+            },
+            tooltip: {
+              titleFont: {
+                size: 14
+              },
+              bodyFont: {
+                size: 14
+              }
             }
           }
 
@@ -1039,6 +1109,13 @@ $sat = date_create('saturday this week');
       const friCollectionCarl = <?= json_encode($friCollectionCarl) ?>;
       const satCollectionCarl = <?= json_encode($satCollectionCarl) ?>;
 
+      const monProfit = <?= json_encode($monProfit) ?>;
+      const tueProfit = <?= json_encode($tueProfit) ?>;
+      const wedProfit = <?= json_encode($wedProfit) ?>;
+      const thuProfit = <?= json_encode($thuProfit) ?>;
+      const friProfit = <?= json_encode($friProfit) ?>;
+      const satProfit = <?= json_encode($satProfit) ?>;
+
       const mon = <?= json_encode($mon->format('D M. d')) ?>;
       const tue = <?= json_encode($tue->format('D M. d')) ?>;
       const wed = <?= json_encode($wed->format('D M. d')) ?>;
@@ -1059,9 +1136,25 @@ $sat = date_create('saturday this week');
           [sat, '₱ ' + (satCollectionKing + satCollectionCarl).toFixed(2)]
         ],
         datasets: [{
+          type: 'line',
+          label: 'Profit',
+          data: [monProfit.toFixed(2), tueProfit.toFixed(2), wedProfit.toFixed(2), thuProfit.toFixed(2), friProfit.toFixed(2), satProfit.toFixed(2)],
+          backgroundColor: [
+            'rgba(243, 225, 107, 1)'
+          ],
+          borderColor: [
+            'rgb(0, 0, 0)'
+          ],
+          borderWidth: 1,
+          type: 'line',
+          pointStyle: 'circle',
+          pointRadius: 6,
+          hoverRadius: 10,
+          tension: 0.15
+        }, {
           barPercentage: 0.7,
           label: 'King Cruz',
-          data: [monCollectionKing, tueCollectionKing, wedCollectionKing, thuCollectionKing, friCollectionKing, satCollectionKing],
+          data: [monCollectionKing.toFixed(2), tueCollectionKing.toFixed(2), wedCollectionKing.toFixed(2), thuCollectionKing.toFixed(2), friCollectionKing.toFixed(2), satCollectionKing.toFixed(2)],
           backgroundColor: [
             'rgba(30, 139, 195, 1)'
           ],
@@ -1073,7 +1166,7 @@ $sat = date_create('saturday this week');
         }, {
           barPercentage: 0.7,
           label: 'Carl Corpuz',
-          data: [monCollectionCarl, tueCollectionCarl, wedCollectionCarl, thuCollectionCarl, friCollectionCarl, satCollectionCarl],
+          data: [monCollectionCarl.toFixed(2), tueCollectionCarl.toFixed(2), wedCollectionCarl.toFixed(2), thuCollectionCarl.toFixed(2), friCollectionCarl.toFixed(2), satCollectionCarl.toFixed(2)],
           backgroundColor: [
             'rgba(196, 77, 86, 1)'
 
@@ -1122,8 +1215,16 @@ $sat = date_create('saturday this week');
             },
             title: {
               display: true,
-              text: ['Collection This Week', '₱ ' + totalCollectionThisWeek.toFixed(2)],
+              text: ['Collection This Week', '₱ ' + totalCollectionThisWeek.toLocaleString('en-US', numberFormat)],
               font: {
+                size: 14
+              }
+            },
+            tooltip: {
+              titleFont: {
+                size: 14
+              },
+              bodyFont: {
                 size: 14
               }
             }
@@ -1332,6 +1433,14 @@ $sat = date_create('saturday this week');
               display: true,
               text: ['Overview for ' + today.toLocaleDateString("en-US", yearOnly)],
               font: {
+                size: 14
+              }
+            },
+            tooltip: {
+              titleFont: {
+                size: 14
+              },
+              bodyFont: {
                 size: 14
               }
             }
