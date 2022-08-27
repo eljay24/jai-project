@@ -1128,12 +1128,12 @@ $sat = date_create('saturday this week');
       //SETUP BLOCK
       const dataBar = {
         labels: [
-          [mon, '₱ ' + (monCollectionKing + monCollectionCarl).toFixed(2)],
-          [tue, '₱ ' + (tueCollectionKing + tueCollectionCarl).toFixed(2)],
-          [wed, '₱ ' + (wedCollectionKing + wedCollectionCarl).toFixed(2)],
-          [thu, '₱ ' + (thuCollectionKing + thuCollectionCarl).toFixed(2)],
-          [fri, '₱ ' + (friCollectionKing + friCollectionCarl).toFixed(2)],
-          [sat, '₱ ' + (satCollectionKing + satCollectionCarl).toFixed(2)]
+          [mon, '₱ ' + (monCollectionKing + monCollectionCarl).toLocaleString('en-US', numberFormat),'(Profit: ' + (isNaN((monProfit / ((monCollectionKing + monCollectionCarl) - monProfit)) * 100) ? 0 : ((monProfit / ((monCollectionKing + monCollectionCarl) - monProfit)) * 100)).toFixed(2) + '%)'],
+          [tue, '₱ ' + (tueCollectionKing + tueCollectionCarl).toLocaleString('en-US', numberFormat),'(Profit: ' + (isNaN((tueProfit / ((tueCollectionKing + tueCollectionCarl) - tueProfit)) * 100) ? 0 : ((tueProfit / ((tueCollectionKing + tueCollectionCarl) - tueProfit)) * 100)).toFixed(2) + '%)'],
+          [wed, '₱ ' + (wedCollectionKing + wedCollectionCarl).toLocaleString('en-US', numberFormat),'(Profit: ' + (isNaN((wedProfit / ((wedCollectionKing + wedCollectionCarl) - wedProfit)) * 100) ? 0 : ((wedProfit / ((wedCollectionKing + wedCollectionCarl) - wedProfit)) * 100)).toFixed(2) + '%)'],
+          [thu, '₱ ' + (thuCollectionKing + thuCollectionCarl).toLocaleString('en-US', numberFormat),'(Profit: ' + (isNaN((thuProfit / ((thuCollectionKing + thuCollectionCarl) - thuProfit)) * 100) ? 0 : ((thuProfit / ((thuCollectionKing + thuCollectionCarl) - thuProfit)) * 100)).toFixed(2) + '%)'],
+          [fri, '₱ ' + (friCollectionKing + friCollectionCarl).toLocaleString('en-US', numberFormat),'(Profit: ' + (isNaN((friProfit / ((friCollectionKing + friCollectionCarl) - friProfit)) * 100) ? 0 : ((friProfit / ((friCollectionKing + friCollectionCarl) - friProfit)) * 100)).toFixed(2) + '%)'],
+          [sat, '₱ ' + (satCollectionKing + satCollectionCarl).toLocaleString('en-US', numberFormat),'(Profit: ' + (isNaN((satProfit / ((satCollectionKing + satCollectionCarl) - satProfit)) * 100) ? 0 : ((satProfit / ((satCollectionKing + satCollectionCarl) - satProfit)) * 100)).toFixed(2) + '%)']
         ],
         datasets: [{
           type: 'line',
@@ -1147,10 +1147,28 @@ $sat = date_create('saturday this week');
           ],
           borderWidth: 1,
           type: 'line',
-          pointStyle: 'circle',
-          pointRadius: 6,
+          pointStyle: 'rectRot',
+          pointRadius: 7.5,
           hoverRadius: 10,
           tension: 0.15
+          // tooltip: {
+          //   callbacks: {
+          //     label: function(tooltipItem, data) {
+          //       //get the concerned dataset
+          //       var dataset = data.datasets[tooltipItem.datasetIndex];
+          //       //calculate the total of this data set
+          //       var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+          //         return previousValue + currentValue;
+          //       });
+          //       //get the current items value
+          //       var currentValue = dataset.data[tooltipItem.index];
+          //       //calculate the precentage based on the total and current item, also this does a rough rounding to give a whole number
+          //       var percentage = Math.floor(((currentValue / total) * 100) + 0.5);
+
+          //       return percentage + "%";
+          //     }
+          //   }
+          // }
         }, {
           barPercentage: 0.7,
           label: 'King Cruz',
@@ -1192,7 +1210,7 @@ $sat = date_create('saturday this week');
             delay: (context) => {
               let delay = 0;
               if (context.type === 'data' && context.mode === 'default' && !delayed) {
-                delay = context.dataIndex * 300 + context.datasetIndex * 100;
+                delay = context.dataIndex * 100 + context.datasetIndex * 15;
               }
               return delay;
             }
@@ -1329,10 +1347,36 @@ $sat = date_create('saturday this week');
       const novPassAmount = <?= json_encode($novPassAmount) ?>;
       const decPassAmount = <?= json_encode($decPassAmount) ?>;
 
+      const janPercent = isNaN((janProfitOrLoss / (janCollection - janProfitOrLoss)) * 100) ? 0 : (janProfitOrLoss / (janCollection - janProfitOrLoss)) * 100;
+      const febPercent = isNaN((febProfitOrLoss / (febCollection - febProfitOrLoss)) * 100) ? 0 : (febProfitOrLoss / (febCollection - febProfitOrLoss)) * 100;
+      const marPercent = isNaN((marProfitOrLoss / (marCollection - marProfitOrLoss)) * 100) ? 0 : (marProfitOrLoss / (marCollection - marProfitOrLoss)) * 100;
+      const aprPercent = isNaN((aprProfitOrLoss / (aprCollection - aprProfitOrLoss)) * 100) ? 0 : (aprProfitOrLoss / (aprCollection - aprProfitOrLoss)) * 100;
+      const mayPercent = isNaN((mayProfitOrLoss / (mayCollection - mayProfitOrLoss)) * 100) ? 0 : (mayProfitOrLoss / (mayCollection - mayProfitOrLoss)) * 100;
+      const junPercent = isNaN((junProfitOrLoss / (junCollection - junProfitOrLoss)) * 100) ? 0 : (junProfitOrLoss / (junCollection - junProfitOrLoss)) * 100;
+      const julPercent = isNaN((julProfitOrLoss / (julCollection - julProfitOrLoss)) * 100) ? 0 : (julProfitOrLoss / (julCollection - julProfitOrLoss)) * 100;
+      const augPercent = isNaN((augProfitOrLoss / (augCollection - augProfitOrLoss)) * 100) ? 0 : (augProfitOrLoss / (augCollection - augProfitOrLoss)) * 100;
+      const sepPercent = isNaN((sepProfitOrLoss / (sepCollection - sepProfitOrLoss)) * 100) ? 0 : (sepProfitOrLoss / (sepCollection - sepProfitOrLoss)) * 100;
+      const octPercent = isNaN((octProfitOrLoss / (octCollection - octProfitOrLoss)) * 100) ? 0 : (octProfitOrLoss / (octCollection - octProfitOrLoss)) * 100;
+      const novPercent = isNaN((novProfitOrLoss / (novCollection - novProfitOrLoss)) * 100) ? 0 : (novProfitOrLoss / (novCollection - novProfitOrLoss)) * 100;
+      const decPercent = isNaN((decProfitOrLoss / (decCollection - decProfitOrLoss)) * 100) ? 0 : (decProfitOrLoss / (decCollection - decProfitOrLoss)) * 100;
+
       //SETUP BLOCK
       const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
       const dataOverview = {
-        labels: months,
+        labels: [
+          ['January', '(Profit: ' + janPercent.toFixed(2) + '%)'],
+          ['February', '(Profit: ' + febPercent.toFixed(2) + '%)'],
+          ['March', '(Profit: ' + marPercent.toFixed(2) + '%)'],
+          ['April', '(Profit: ' + aprPercent.toFixed(2) + '%)'],
+          ['May', '(Profit: ' + mayPercent.toFixed(2) + '%)'],
+          ['June', '(Profit: ' + junPercent.toFixed(2) + '%)'],
+          ['July', '(Profit: ' + julPercent.toFixed(2) + '%)'],
+          ['August', '(Profit: ' + augPercent.toFixed(2) + '%)'],
+          ['September', '(Profit: ' + sepPercent.toFixed(2) + '%)'],
+          ['October', '(Profit: ' + octPercent.toFixed(2) + '%)'],
+          ['November', '(Profit: ' + novPercent.toFixed(2) + '%)'],
+          ['December', '(Profit: ' + decPercent.toFixed(2) + '%)']
+        ],
         datasets: [{
           label: 'Profit',
           data: [janProfitOrLoss.toFixed(2), febProfitOrLoss.toFixed(2), marProfitOrLoss.toFixed(2), aprProfitOrLoss.toFixed(2), mayProfitOrLoss.toFixed(2), junProfitOrLoss.toFixed(2), julProfitOrLoss.toFixed(2), augProfitOrLoss.toFixed(2), sepProfitOrLoss.toFixed(2), octProfitOrLoss.toFixed(2), novProfitOrLoss.toFixed(2), decProfitOrLoss.toFixed(2)],
@@ -1344,8 +1388,8 @@ $sat = date_create('saturday this week');
           ],
           borderWidth: 1,
           type: 'line',
-          pointStyle: 'circle',
-          pointRadius: 6,
+          pointStyle: 'rectRot',
+          pointRadius: 7.5,
           hoverRadius: 10,
           tension: 0.15
         }, {
