@@ -30,6 +30,8 @@ if (isset($_POST['firstname'])) {
   $remarks = $_POST['remarks'];
   $datecreated = '';
 
+  $fullname = $firstname . '-' . $middlename . '-' . $lastname;
+
 
   $details = [
     'firstname' => $firstname,
@@ -47,6 +49,35 @@ if (isset($_POST['firstname'])) {
 
   ];
 
+  if (!is_dir(__DIR__ . '/../borrower-pictures')) {
+    mkdir(__DIR__ . '/../borrower-pictures');
+  }
+
+  // PICTURE
+
+  $picture = $_FILES['picture'] ?? null;
+  // $picturePath = $borrower['picture'];
+
+  if ($picture && $picture['name']) {
+
+    // if ($borrower['picture']) {
+    //   unlink(__DIR__ . '/public/' . $borrower['picture']);
+    // }
+
+    $picturePath = 'borrower-pictures/' . $fullname . '/' . $picture['name'];
+
+    if (!is_dir($picturePath)) {
+      mkdir(dirname(__DIR__ . '/../borrower-pictures/' . $picturePath));
+    }
+    move_uploaded_file($picture['tmp_name'], __DIR__ . '/../borrower-pictures/' . $picturePath);
+  } elseif (!isset($picture['name'])) {
+
+    // DEFAULT BORROWER PICTURE (IF NONE SELECTED)
+    $picturePath = 'assets/icons/borrower-picture-placeholder.jpg';
+  }
+
+  // END - PICTURE
+
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
@@ -56,7 +87,7 @@ if (isset($_POST['firstname'])) {
    VALUES (:picture, :firstname, :middlename, :lastname, :address, :contactno, :birthday, :businessname,
             :occupation, :comaker, :comakerno, :remarks, :datecreated)");
 
-      $statement->bindValue(':picture', 'assets/icons/borrower-picture-placeholder.jpg');
+      $statement->bindValue(':picture', $picturePath);
       $statement->bindValue(':firstname', $firstname);
       $statement->bindValue(':middlename', $middlename);
       $statement->bindValue(':lastname', $lastname);
@@ -73,7 +104,7 @@ if (isset($_POST['firstname'])) {
 
       $statement->execute();
 
-      echo json_encode($details);
+      echo json_encode($picture);
     } else {
     }
   }
