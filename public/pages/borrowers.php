@@ -394,7 +394,7 @@ try {
                 <div class="col-3">
                   <div class="form-image-container">
                     <img id="formImg" class="form-image" src="../assets/icons/borrower-picture-placeholder.jpg" alt="your image" />
-                    <input accept="image/*" type='file' id="imgInp" class="img-input d-none" />
+                    <input accept="image/*" type='file' id="imgInp" name="picture" class="img-input d-none" />
                   </div>
                 </div>
                 <div class="col">
@@ -436,7 +436,7 @@ try {
                   <div class="row">
                     <div class="col">
                       <div class="jai-mb-2">
-                        <input placeholder="Address" type="text" class="form-control alphanumeric" name="address" value="" required>
+                        <input placeholder="Address" type="text" class="form-control" name="address" value="" required>
                       </div>
                     </div>
                   </div>
@@ -448,7 +448,7 @@ try {
                     </div>
                     <div class="col">
                       <div class="jai-mb-2">
-                        <input placeholder="Business name" type="text" class="form-control alphanumeric" name="businessname" value="" required>
+                        <input placeholder="Business name" type="text" class="form-control" name="businessname" value="" required>
                       </div>
                     </div>
                   </div>
