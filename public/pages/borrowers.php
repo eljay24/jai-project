@@ -414,7 +414,7 @@ try {
                     </div>
                     <div class="col">
                       <div class="jai-mb-2">
-                        <input placeholder="Middle name" type="text" class="form-control letters-only" name="middlename" value="" required>
+                        <input placeholder="Middle name" type="text" class="form-control letters-only" name="middlename" value="">
                       </div>
                     </div>
                     <div class="col">
