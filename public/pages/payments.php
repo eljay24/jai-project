@@ -298,7 +298,7 @@ try {
           <h5 class="modal-title">Create Payment</h5>
         </div>
         <div class="modal-body">
-          <form class="action-form" autocomplete="off" action="payment-loan" method="post" enctype="multipart/form-data">
+          <form class="action-form payment-form" autocomplete="off" action="payment-loan" method="post" enctype="multipart/form-data">
             <input type="hidden" class="d-none" name="b_id" value="">
             <input name="data-row" type="hidden" class="d-none" value=''>
             <div class="container">

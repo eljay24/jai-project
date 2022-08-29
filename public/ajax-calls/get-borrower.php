@@ -21,11 +21,17 @@ if (isset($_POST['action'])) {
     $statementPayments = $conn->prepare("SELECT SUM(p.amount) as paymentsum
                                 FROM jai_db.payments as p
                                 WHERE p.l_id = :l_id");
-    $statementPayments->bindValue(':l_id', $payable['l_id']);
-    $statementPayments->execute();
-    $payments = $statementPayments->fetch(PDO::FETCH_ASSOC);
 
-    $remainingBalance = $payable['payable'] - $payments['paymentsum'];
+    $payments = '';
+    $remainingBalance = '';
+
+    if (isset($payable['payable'])) {
+        $statementPayments->bindValue(':l_id', $payable['l_id']);
+        $statementPayments->execute();
+        $payments = $statementPayments->fetch(PDO::FETCH_ASSOC);
+
+        $remainingBalance = $payable['payable'] - $payments['paymentsum'];
+    }
 
     $statement = $conn->prepare("SELECT 
                                 b.b_id, b.firstname as bfname, b.middlename as bmname, b.lastname as blname, l.l_id, l.amount, l.payable, (:remainingbalance) as balance, l.amortization, l.mode, l.term, l.c_id,
@@ -42,7 +48,7 @@ if (isset($_POST['action'])) {
     $statement->execute();
     $borrower = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-    
+
 
     echo json_encode($borrower);
 }
