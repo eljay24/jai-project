@@ -288,7 +288,7 @@ function autoFillAction(input, actionFile) {
         thisInput.siblings(".suggestions-container").html(data);
         // console.log(data);
         // console.log(xhr);
-        console.log(success);
+        // console.log(success);
       },
       error: function (response, xhr, data) {
         console.log(xhr);
@@ -309,17 +309,21 @@ function autofillChoiceActions() {
   });
 
   $(document).on("click", ".suggestion-container", function () {
-    let datePickerSelector = $(this)
-        .parents(".action-form")
-        .find(".set-min-date"),
-      setMinDate = $(this).data("releasedate");
+    let datePickerSelector, setMinDate;
 
+    console.log($(this).text());
     $(this).parent().siblings(".autocomplete-input").val($(this).text());
     $(this).parent().siblings(".borrower-id").val($(this).data("borrower"));
     fillInputs($(this).data("borrower"));
     clearErrors($(this).parent().siblings(".autocomplete-input"));
     checkEmptyInput($(this).parent().siblings(".autocomplete-input"));
-    datePickerSelector.datepicker("option", "minDate", new Date(setMinDate));
+    if ($(this).parents(".action-form").find(".set-min-date").length) {
+      datePickerSelector = $(this)
+        .parents(".action-form")
+        .find(".set-min-date");
+      setMinDate = $(this).data("releasedate");
+      datePickerSelector.datepicker("option", "minDate", new Date(setMinDate));
+    }
     $("#payment").focus();
   });
 }
@@ -348,7 +352,7 @@ function fillInputs(id) {
       );
       $("#type").val("");
       $("#payment").val("");
-      payment.placeholder = parseFloat(
+      $("#payment").placeholder = parseFloat(
         borrowerDetails[0]["amortization"]
       ).toFixed(2);
     },
