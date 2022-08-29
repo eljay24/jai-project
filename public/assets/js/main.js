@@ -115,7 +115,7 @@ function searchTable(ajaxAction) {
 
     let searchValue = $(this).find(".search-input").val();
 
-    refreshTable(ajaxAction, searchValue, false);
+    refreshTable(ajaxAction, searchValue, 1) ;
   });
 }
 
@@ -139,7 +139,7 @@ function refreshTable(actionFIle, search = false, page = false) {
   }
 
   let table = $(".jai-table.table-container"),
-    pagination = $("ul.pagination");
+    pagination = $(".pagination-container");
 
   $.ajax({
     url: "../ajax-calls/" + actionFIle,

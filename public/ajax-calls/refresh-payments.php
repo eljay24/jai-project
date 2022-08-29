@@ -208,6 +208,11 @@ if (isset($_POST['action'])) {
     $count++;
   }
 
+  $pagination .= '<div style="padding: 10px 20px 0px; border-top: dotted 1px #CCC;">';
+  $pagination .= '<strong>Page' . $pageNum . " of " . $totalPages . '</strong>';
+  $pagination .= '</div>';
+
+  $pagination .= '<ul class="pagination">';
   if ($pageNum > 1) {
     if (!$search) {
       $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>First Page</a></li>";
@@ -345,6 +350,9 @@ if (isset($_POST['action'])) {
       $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'>Last &rsaquo;&rsaquo;</a></li>";
     }
   }
+
+  $pagination .= '</ul>';
+
 
   $data['table'] = $table;
   $data['pagination'] = $pagination;
