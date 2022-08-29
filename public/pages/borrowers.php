@@ -84,9 +84,14 @@ try {
 
   $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
   $statement->bindValue(':numOfRowsPerPage', $numOfRowsPerPage, PDO::PARAM_INT); // "PDO::PARAM_INT" removes quotes from SQL
-
   $statement->execute();
   $borrowers = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+  $statementLastBorrower = $conn->prepare("SELECT MAX(b.b_id) as id
+                                           FROM jai_db.borrowers AS b");
+  $statementLastBorrower->execute();
+  $lastBorrower = $statementLastBorrower->fetch(PDO::FETCH_ASSOC);
+
 
   // echo "DB connected successfully";
 } catch (PDOException $e) {
@@ -400,7 +405,7 @@ try {
                 <div class="col">
                   <div class="row">
                     <div class="col">
-                      <h5 class="modal-body-label">Borrower</h5>
+                      <h5 class="modal-body-label">New Borrower (#<?= $lastBorrower['id'] + 1 ?>)</h5>
                     </div>
                   </div>
                   <div class="row">
