@@ -84,9 +84,14 @@ try {
 
   $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
   $statement->bindValue(':numOfRowsPerPage', $numOfRowsPerPage, PDO::PARAM_INT); // "PDO::PARAM_INT" removes quotes from SQL
-
   $statement->execute();
   $borrowers = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+  $statementLastBorrower = $conn->prepare("SELECT MAX(b.b_id) as id
+                                           FROM jai_db.borrowers AS b");
+  $statementLastBorrower->execute();
+  $lastBorrower = $statementLastBorrower->fetch(PDO::FETCH_ASSOC);
+
 
   // echo "DB connected successfully";
 } catch (PDOException $e) {
@@ -147,16 +152,14 @@ try {
             </div>
             <div class="col">
               <div class="row">
-                <p class="jai-table-name primary-font <?= $borrower['firstname'] == 'Angelo' ? 'red' : ''; ?>
-                                                <?= $borrower['firstname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Name:</span> <span class="value"><?= ucwords(strtolower($borrower['firstname'])) . ' ' . ucwords(strtolower($borrower['middlename'])) . ' ' . ucwords(strtolower($borrower['lastname'])) ?></span></p>
+                <p class="jai-table-name primary-font"><span class="jai-table-label">Name:</span> <span class="value"><?= ucwords(strtolower($borrower['firstname'])) . ' ' . ucwords(strtolower($borrower['middlename'])) . ' ' . ucwords(strtolower($borrower['lastname'])) ?></span></p>
                 <p class="jai-table-contact primary-font"> <span class="jai-table-label">Contact: </span> <span class="value"><?= $borrower['contactno'] ?></span></p>
               </div>
             </div>
           </div>
           <div class="row">
             <p class="jai-table-address sub-font"> <span class="jai-table-label">Address: </span> <span class="value"><?= $borrower['address'] ?></span></p>
-            <p class="jai-table-comaker sub-font <?= $borrower['firstname'] == 'Angelo' ? 'red' : ''; ?>
-                                                <?= $borrower['firstname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Comaker:</span> <span class="value"><?= ucwords(strtolower($borrower['comaker'])) ?></span></p>
+            <p class="jai-table-comaker sub-font"><span class="jai-table-label">Comaker:</span> <span class="value"><?= ucwords(strtolower($borrower['comaker'])) ?></span></p>
             <p class="jai-table-comakerno sub-font"> <span class="jai-table-label">Contact: </span> <span class="value"><?= $borrower['comakerno'] ?></span></p>
           </div>
         </div>
@@ -396,13 +399,13 @@ try {
                 <div class="col-3">
                   <div class="form-image-container">
                     <img id="formImg" class="form-image" src="../assets/icons/borrower-picture-placeholder.jpg" alt="your image" />
-                    <input accept="image/*" type='file' id="imgInp" class="img-input d-none" />
+                    <input accept="image/*" type='file' id="imgInp" name="picture" class="img-input d-none" />
                   </div>
                 </div>
                 <div class="col">
                   <div class="row">
                     <div class="col">
-                      <h5 class="modal-body-label">Borrower</h5>
+                      <h5 class="modal-body-label">New Borrower (#<?= $lastBorrower['id'] + 1 ?>)</h5>
                     </div>
                   </div>
                   <div class="row">
@@ -438,7 +441,7 @@ try {
                   <div class="row">
                     <div class="col">
                       <div class="jai-mb-2">
-                        <input placeholder="Address" type="text" class="form-control alphanumeric" name="address" value="" required>
+                        <input placeholder="Address" type="text" class="form-control" name="address" value="" required>
                       </div>
                     </div>
                   </div>
@@ -450,7 +453,7 @@ try {
                     </div>
                     <div class="col">
                       <div class="jai-mb-2">
-                        <input placeholder="Business name" type="text" class="form-control alphanumeric" name="businessname" value="" required>
+                        <input placeholder="Business name" type="text" class="form-control" name="businessname" value="" required>
                       </div>
                     </div>
                   </div>

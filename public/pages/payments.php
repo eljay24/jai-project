@@ -159,8 +159,8 @@ try {
       $paymentsToCloseLoan = $payment['payable'] / $payment['amortization'];
       $profitPerPayment = $profit / $paymentsToCloseLoan;
 
-      $profitOrLoss = (($payment['amount'] - $payment['amortization']) + $profitPerPayment);
-    
+      // $profitOrLoss = (($payment['amount'] - $payment['amortization']) + $profitPerPayment);
+      $profitOrLoss = ($profitPerPayment / $payment['amortization']) * $payment['amount'];
 
       $date = date_create($payment['date']);
       $loanID = $payment['l_id'];
@@ -242,7 +242,7 @@ try {
           <div class="row">
             <div class="col">
               <p class="jai-table-address primary-font"> <span class="jai-table-label">Collector: </span><?php echo ucwords(strtolower($payment['collectorfname'])) . ' ' . ucwords(strtolower($payment['collectormname'])) . ' ' . ucwords(strtolower($payment['collectorlname'])) ?></p>
-              <p class="sub-font"><?= ($profitOrLoss > 0) ? 'Profit: +'.number_format($profitOrLoss, 2) : 'Loss: '.number_format($profitOrLoss, 2) ?></p>
+              <p class="sub-font"><?= ($profitOrLoss > 0) ? '(test)Profit: +'.number_format($profitOrLoss, 2) : '(test)Loss: '.number_format($profitOrLoss, 2) ?></p>
               <!-- <textarea class="jai-table-input" type="text"></textarea> -->
             </div>
             <div class="col-4">
@@ -254,11 +254,11 @@ try {
         <div class="col-1 d-flex align-items-center justify-content-around">
           <!-- <a href="update.php?id=<?php //echo $borrower['b_id'] 
                                       ?>" class="btn btn-primary btn-sm edit-btn">Edit</a> -->
-          <a title="Edit" href="#" class="btn btn-primary btn-sm edit-btn">Edit</a>
-          <button title="Delete" type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower" disabled>Delete</button>
+          <!-- <a title="Edit" href="#" class="btn btn-primary btn-sm edit-btn">Edit</a> -->
           <form method="get" action="ledger" target="_blank">
             <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $loanID ?>" <?= ($totalPayment || $totalPass) == 0 ? 'disabled' : '' ?>></input>
           </form>
+          <button title="Delete" type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower" disabled>Delete</button>
 
         </div>
         <div class="d-none hidden-field">

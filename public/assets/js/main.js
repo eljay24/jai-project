@@ -399,7 +399,10 @@ function submitForm(submitBtn, ajaxFile, successMessage, tableAction = false) {
         beforeSend: function () {
           $(submitBtn).addClass("disabled");
         },
-        success: function (data) {
+        success: function (response, xhr, data) {
+          console.log(response);
+          console.log(xhr);
+          console.log(data);
           if (tableAction) {
             refreshTable(tableAction);
           }
