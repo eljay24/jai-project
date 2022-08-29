@@ -31,8 +31,8 @@ if (isset($_POST['b_id'])) {
 
     if (empty($errors)) {
 
-      $statement2 = $conn->prepare("INSERT INTO jai_db.loans (b_id, amount, mode, term, payable, balance, interestrate, amortization, releasedate, duedate, status, c_id, activeloan)
-                                    VALUES (:b_id, :amount, :mode, :term, :payable, :balance, :interestrate, :amortization, :releasedate, :duedate, :status, :c_id, :activeloan);
+      $statement2 = $conn->prepare("INSERT INTO jai_db.loans (b_id, amount, mode, term, payable, interestrate, amortization, releasedate, duedate, status, c_id, activeloan)
+                                    VALUES (:b_id, :amount, :mode, :term, :payable, :interestrate, :amortization, :releasedate, :duedate, :status, :c_id, :activeloan);
                                     UPDATE jai_db.borrowers
                                     SET activeloan = 1
                                     WHERE b_id = :b_id");
@@ -41,7 +41,6 @@ if (isset($_POST['b_id'])) {
       $statement2->bindValue(':c_id', $collector);
       $statement2->bindValue(':amount', $amount);
       $statement2->bindValue(':payable', $rates['payable']);
-      $statement2->bindValue(':balance', $rates['payable']);
       $statement2->bindValue(':interestrate', $rates['interestrate']);
       $statement2->bindValue(':amortization', $rates['amortization']);
       $statement2->bindValue(':mode',  $mode);
