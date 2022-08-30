@@ -62,7 +62,7 @@ try {
                                         OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                         OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
                                         OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search)
-                                 ORDER BY b.b_id ASC
+                                 ORDER BY b.activeloan DESC, b.b_id ASC
                                  LIMIT :offset, :numOfRowsPerPage");
     $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
     $statement->bindValue(':numOfRowsPerPage', $numOfRowsPerPage, PDO::PARAM_INT); // "PDO::PARAM_INT" removes quotes from SQL
@@ -198,7 +198,7 @@ try {
         </div> -->
         <div class="col-1 d-flex align-items-center justify-content-around">
           <a title="Edit" href="#" class="btn btn-primary btn-sm edit-btn">Edit</a>
-          <button title="Delete" type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower" <?= $borrower['activeloan'] == 1 ? 'disabled' : '' ?>>Delete</button>
+          <button title="Delete" type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower" disabled <?php /* $borrower['activeloan'] == 1 ? 'disabled' : '' */ ?>>Delete</button>
         </div>
         <div class="d-none hidden-field">
           <form id="hidden-form-<?= $count; ?>" class="hidden-form" action="">
