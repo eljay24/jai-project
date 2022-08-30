@@ -72,7 +72,7 @@ $sat = date_create('saturday this week');
 
     /*                                                */
     /*                                                */
-    /*                GET PROFIT QUERY                */
+    /*            GET PROFIT QUERY (UNUSED)           */
     /*                                                */
     /*                                                */
 
@@ -137,7 +137,7 @@ $sat = date_create('saturday this week');
 
     /*                                                */
     /*                                                */
-    /*            END - GET PROFIT QUERY              */
+    /*        END - GET PROFIT QUERY (UNUSED)         */
     /*                                                */
     /*                                                */
 
