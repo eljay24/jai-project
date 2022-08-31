@@ -614,6 +614,27 @@ $sat = date_create('saturday this week');
     /* TOTAL (ALL) */
     $totalCollectionToday = ($totalCashCollectionTodayKing['sum'] + $totalGCashCollectionTodayKing['sum']) + ($totalCashCollectionTodayCarl['sum'] + $totalGCashCollectionTodayCarl['sum']);
 
+    /* GET PROFIT TODAY */
+    $queryPaymentsToday = $conn->prepare("SELECT p.amount, l.amount as loanamount, l.payable, l.amortization
+                                      FROM jai_db.payments as p
+                                      INNER JOIN jai_db.loans as l
+                                      ON p.l_id = l.l_id
+                                      WHERE (p.date = :datetoday)");
+    $queryPaymentsToday->bindValue(':datetoday', $dateToday);
+    $queryPaymentsToday->execute();
+    $paymentsToday = $queryPaymentsToday->fetchAll(PDO::FETCH_ASSOC);
+
+    $profitOrLossToday = (float)0;
+
+    foreach ($paymentsToday as $i => $paymentToday) {
+
+      $profit = $paymentToday['payable'] - $paymentToday['loanamount'];
+      $paymentsToCloseLoan = $paymentToday['payable'] / $paymentToday['amortization'];
+      $profitPerPaymentToday = $profit / $paymentsToCloseLoan;
+
+      $profitOrLossToday += ($profitPerPaymentToday / $paymentToday['amortization']) * $paymentToday['amount'];
+    }
+
     /*                                                                   */
     /*                                                                   */
     /*      END - QUERIES TOTAL COLLECTION TODAY PER COLLECTOR           */
@@ -662,6 +683,7 @@ $sat = date_create('saturday this week');
     $satProfit = (float)0;
 
     $totalCollectionThisWeek = (float)0;
+    $totalProfitThisWeek = (float)0;
 
     foreach ($collectionThisWeek as $i => $collection) {
 
@@ -714,6 +736,8 @@ $sat = date_create('saturday this week');
       } elseif (date_format(date_create($collection['date']), 'D') == 'Sat') {
         $satProfit += $profitOrLossThisWeek;
       }
+
+      $totalProfitThisWeek += $profitOrLossThisWeek;
     }
 
 
@@ -793,16 +817,17 @@ $sat = date_create('saturday this week');
     <div class="card-chart-div d-flex jai-card">
       <div class="chart-div">
         <canvas id="chartTotalCollectionLastMonth"></canvas>
-        <center>Profit: <?= number_format($profitOrLossLastMonth, 2) ?> </center>
+        <center>Profit last month: ₱ <?= number_format($profitOrLossLastMonth, 2) ?> </center>
       </div>
       <div class="chart-div">
         <canvas id="chartTotalCollectionThisMonth"></canvas>
-        <center>Profit: <?= number_format($profitOrLossThisMonth, 2) ?></center>
+        <center>Profit this month: ₱ <?= number_format($profitOrLossThisMonth, 2) ?></center>
         <center><?= ($profitDifference >= 0 ? '+' : '') . number_format($profitDifference, 4) . "% vs last month's profit (test)" ?></center>
         <center><?= ($collectionDifference >= 0 ? '+' : '') . number_format($collectionDifference, 4) . "% vs last month's collection (test)" ?></center>
       </div>
       <div class="chart-div">
         <canvas id="chartTotalCollectionToday"></canvas>
+        <center>Profit today: ₱ <?= number_format($profitOrLossToday, 2) ?></center>
         <div class="no-collections">
           <?= $totalCollectionToday == 0 ? '<span>No collections today</span>' : '' ?>
         </div>
@@ -812,6 +837,7 @@ $sat = date_create('saturday this week');
     <div class="card-bar-chart-div jai-card">
       <div class="bar-chart-div">
         <canvas id="chartCollectionThisWeek"></canvas>
+        <center>Profit this week: ₱ <?= number_format($totalProfitThisWeek, 2) ?></center>
       </div>
     </div>
 
