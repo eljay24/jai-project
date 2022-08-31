@@ -569,9 +569,10 @@ body.modal-open {
 }
 
 .card-bar-chart-div {
+  /* background-image: linear-gradient(195deg,#6bb9f0,#c5eff7); */
   position: relative;
   top: 60px;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.4);
   transition: 0.3s;
   width: 95%;
   border-radius: 10px;
@@ -579,7 +580,7 @@ body.modal-open {
 }
 
 .card-bar-chart-div:hover {
-  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.4);
 }
 
 .chart-div {
@@ -591,9 +592,10 @@ body.modal-open {
 }
 
 .card-chart-div {
+  /* background-image: linear-gradient(195deg,#6bb9f0,#c5eff7); */
   position: relative;
   top: 30px;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.4);
   transition: 0.3s;
   width: 95%;
   border-radius: 10px;
@@ -601,23 +603,25 @@ body.modal-open {
 }
 
 .card-chart-div:hover {
-  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.4);
 }
 
 .overview-chart-div {
   width: 100%;
 }
 
+
 .card-overview-chart {
+  /* background-image: linear-gradient(195deg,#80c1f0,#c5eff7); */
   width: 95%;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.4);
   transition: 0.3s;
   border-radius: 10px;
   padding: 30px;
 }
 
 .card-overview-chart:hover {
-  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.4);
 }
 
 .no-collections {
