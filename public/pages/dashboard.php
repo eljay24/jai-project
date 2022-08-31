@@ -561,7 +561,11 @@ $sat = date_create('saturday this week');
       $collectionDifference = 0;
     }
 
-    $profitDifference = (($profitOrLossThisMonth - $profitOrLossLastMonth) / $profitOrLossLastMonth) * 100;
+    if ($profitOrLossLastMonth != 0) {
+      $profitDifference = (($profitOrLossThisMonth - $profitOrLossLastMonth) / $profitOrLossLastMonth) * 100;
+    } elseif ($profitOrLossLastMonth == 0) {
+      $profitDifference = 0;
+    }
 
     /*                                                                   */
     /*                                                                   */
