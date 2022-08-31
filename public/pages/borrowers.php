@@ -23,7 +23,17 @@ try {
 
   if ($search) {
     $statementTotalRows = $conn->prepare("SELECT COUNT(*) as count FROM jai_db.borrowers as b
-                                          WHERE (isdeleted = 0) AND (firstname LIKE :search OR middlename LIKE :search OR lastname LIKE :search OR comaker LIKE :search OR b.b_id LIKE :search) ORDER BY b.b_id ASC
+                                          LEFT JOIN jai_db.loans as l
+                                          ON l.l_id = (SELECT MAX(l_id)
+                                                       FROM jai_db.loans as l2
+                                                       WHERE l2.b_id = b.b_id LIMIT 1) 
+                                          WHERE (isdeleted = 0) AND (firstname LIKE :search OR middlename LIKE :search OR lastname LIKE :search OR comaker LIKE :search OR b.b_id LIKE :search
+                                          OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
+                                          OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
+                                          OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
+                                          OR CONCAT('l', l.l_id) LIKE :search
+                                          OR CONCAT('b', b.b_id) LIKE :search)
+                                          ORDER BY b.b_id ASC
                                           ");
     $statementTotalRows->bindValue(':search', "%$search%");
   } else {
@@ -61,7 +71,9 @@ try {
                                  WHERE (isdeleted = 0) AND (firstname LIKE :search OR middlename LIKE :search OR lastname LIKE :search OR comaker LIKE :search OR b.b_id LIKE :search
                                         OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                         OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
-                                        OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search)
+                                        OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
+                                        OR CONCAT('l', l.l_id) LIKE :search
+                                        OR CONCAT('b', b.b_id) LIKE :search)
                                  ORDER BY b.activeloan DESC, b.b_id ASC
                                  LIMIT :offset, :numOfRowsPerPage");
     $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
@@ -299,22 +311,22 @@ try {
           $counter++
         ) {
           if ($counter == $pageNum) {
-            echo "<li class='page-item active'><a class='page-link active' data-pagecount='". $counter ."'>$counter</a></li>";
+            echo "<li class='page-item active'><a class='page-link active' data-pagecount='" . $counter . "'>$counter</a></li>";
           } else {
             if (!$search) {
-              echo "<li class='page-item'><a class='page-link' data-pagecount='". $counter ."' href='?page=$counter'>$counter</a></li>";
+              echo "<li class='page-item'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter'>$counter</a></li>";
             } else {
-              echo "<li class='page-item'><a class='page-link' data-pagecount='". $counter ."' href='?page=$counter&search=$search'>$counter</a></li>";
+              echo "<li class='page-item'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter&search=$search'>$counter</a></li>";
             }
           }
         }
         echo "<li class='page-item'><a class='page-link'>...</a></li>";
         if (!$search) {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='". $secondLast ."' href='?page=$secondLast'>$secondLast</a></li>";
-          echo "<li class='page-item'><a class='page-link' data-pagecount='". $totalPages ."' href='?page=$totalPages'>$totalPages</a></li>";
+          echo "<li class='page-item'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast'>$secondLast</a></li>";
+          echo "<li class='page-item'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages'>$totalPages</a></li>";
         } else {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='". $secondLast ."' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
-          echo "<li class='page-item'><a class='page-link' data-pagecount='". $totalPages ."' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
+          echo "<li class='page-item'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
+          echo "<li class='page-item'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
         }
       } else {
         if (!$search) {
