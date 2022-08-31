@@ -30,8 +30,9 @@ if (isset($_POST['action'])) {
                                                  OR c.firstname LIKE :search OR c.middlename LIKE :search OR c.lastname LIKE :search OR p.type LIKE :search
                                                  OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                                  OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
-                                                 OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search) ORDER BY p.date ASC
-                                          ");
+                                                 OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search)
+                                                 OR CONCAT('loan ', l.l_id) LIKE :search
+                                          ORDER BY p.date ASC");
     $statementTotalRows->bindValue(':search', "%$search%");
   } else {
     $statementTotalRows = $conn->prepare("SELECT COUNT(*) as count FROM jai_db.payments");
@@ -58,6 +59,7 @@ if (isset($_POST['action'])) {
                                        OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                        OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
                                        OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
+                                       OR CONCAT('loan ', l.l_id) LIKE :search
                                  ORDER BY p.date DESC, p.p_id DESC
                                  LIMIT :offset, :numOfRowsPerPage");
     $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
