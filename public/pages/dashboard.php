@@ -871,18 +871,7 @@ $sat = date_create('saturday this week');
       <!-- <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $payment['l_id'] ?>" <?= ($payment['paymentsmade'] || $payment['passes']) == 0 ? 'disabled' : '' ?>></input> -->
     </form>
     <br>
-    <?php
-
-    echo 'Expected profits today: ' . number_format($totalProfitPerPayment, 4);
-    echo "<br>";
-    echo 'Expected total collection today: ' . number_format($expectedTotalCollection, 2);
-
-    // echo '<pre>';
-    // var_dump($totalCashCollectionTodayKing);
-    // exit;
-
-    ?>
-
+    
     <script>
       var fullDate = {
         year: 'numeric',
