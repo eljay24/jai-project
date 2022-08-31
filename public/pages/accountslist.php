@@ -32,7 +32,7 @@ $statement = $conn->prepare("SELECT DISTINCT l.l_id, CONCAT(b.lastname, ', ', b.
                                              FROM jai_db.payments as p1
                                              WHERE p1.l_id = l.l_id) as lasttransaction,
 
-                                             CONCAT(c.lastname, ', ', c.firstname) as collector
+                                             CONCAT(c.lastname, ', ', c.firstname, ' ', c.middlename) as collector
 
                              FROM jai_db.loans as l
                              INNER JOIN jai_db.borrowers as b
