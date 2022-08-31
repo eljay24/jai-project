@@ -31,7 +31,9 @@ try {
                                           WHERE (b.b_id LIKE :search OR b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search OR l.status LIKE :search
                                                  OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                                  OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
-                                                 OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search)
+                                                 OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
+                                                 OR CONCAT('loan ', l.l_id) LIKE :search
+                                                 OR CONCAT('b ', b.b_id) LIKE :search)
                                           ORDER BY l.activeloan DESC, l.l_id DESC
                                           ");
     $statementTotalRows->bindValue(':search', "%$search%");
@@ -68,7 +70,9 @@ try {
                                  WHERE (b.b_id LIKE :search OR b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search OR l.status LIKE :search
                                         OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                         OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
-                                        OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search)
+                                        OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
+                                        OR CONCAT('loan ', l.l_id) LIKE :search
+                                        OR CONCAT('b ', b.b_id) LIKE :search)
                                  ORDER BY l.activeloan DESC, l.l_id DESC
                                  LIMIT :offset, :numOfRowsPerPage");
     $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
