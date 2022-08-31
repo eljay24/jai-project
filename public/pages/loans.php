@@ -191,6 +191,59 @@ try {
       /* ----- END - GET EST. PASS AMOUNT ----- */
 
 
+
+      /*                                                                   */
+      /*       Count number of days                                        */
+      /*       from release date to due date (inclusive of both)           */
+      /*       excluding Sundays                                           */
+      /*                                                                   */
+      $start = new DateTime(date_format($releaseDate, 'Y-m-d'));
+      $end = new DateTime(date_format($dueDate, 'Y-m-d'));
+
+      // otherwise the  end date is excluded (bug?)
+      $end->modify('+1 day');
+
+      $interval = $end->diff($start);
+
+      // total days
+      $days = $interval->days;
+
+      // create an iterateable period of date (P1D equates to 1 day)
+      $period = new DatePeriod($start, new DateInterval('P1D'), $end);
+
+      // best stored as array, so you can add more than one
+      $holidays = array('2012-09-07');
+
+      foreach ($period as $dt) {
+        $curr = $dt->format('D');
+
+        // substract if Saturday or Sunday
+        if ($curr == 'Sun') {
+          $days--;
+        }
+
+        // (optional) for the updated question
+        elseif (in_array($dt->format('Y-m-d'), $holidays)) {
+          $days--;
+        }
+      }
+      /*                                                                   */
+      /*       END - Count number of days                                  */
+      /*       from release date to due date (inclusive of both)           */
+      /*       excluding Sundays                                           */
+      /*                                                                   */
+
+
+      /*                                                         */
+      /*       CALCULATE PROFIT (PER PAYMENT / PER LOAN)         */
+      /*                                                         */
+
+      $profit = $loan['payable'] - $loan['amount'];
+      $paymentsToCloseLoan = $loan['payable'] / $loan['amortization'];
+      $profitPerPayment = $profit / $paymentsToCloseLoan;
+
+      /*    END - CALCULATE PROFIT (PER PAYMENT / PER LOAN)      */
+
       // echo "<pre>";
       // echo $loanID;
 
@@ -246,75 +299,20 @@ try {
           <div class="row">
             <p class="sub-font">Collector: <?= $loan['collector'] ?></p>
             <br>
-            <p class="sub-font">(test)Number of days from release to due date:
+            <p class="sub-font">Number of days from release to due date: <?= $days ?></p>
+            <!-- <p class="sub-font">(test)Daily profit:
               <?php
 
-              /*                                                                   */
-              /*       Count number of days                                        */
-              /*       from release date to due date (inclusive of both)           */
-              /*       excluding Sundays                                           */
-              /*                                                                   */
-              $start = new DateTime(date_format($releaseDate, 'Y-m-d'));
-              $end = new DateTime(date_format($dueDate, 'Y-m-d'));
 
-              // otherwise the  end date is excluded (bug?)
-              $end->modify('+1 day');
-
-              $interval = $end->diff($start);
-
-              // total days
-              $days = $interval->days;
-
-              // create an iterateable period of date (P1D equates to 1 day)
-              $period = new DatePeriod($start, new DateInterval('P1D'), $end);
-
-              // best stored as array, so you can add more than one
-              $holidays = array('2012-09-07');
-
-              foreach ($period as $dt) {
-                $curr = $dt->format('D');
-
-                // substract if Saturday or Sunday
-                if ($curr == 'Sun') {
-                  $days--;
-                }
-
-                // (optional) for the updated question
-                elseif (in_array($dt->format('Y-m-d'), $holidays)) {
-                  $days--;
-                }
-              }
-
-              echo $days;
-              /*                                                                   */
-              /*       END - Count number of days                                  */
-              /*       from release date to due date (inclusive of both)           */
-              /*       excluding Sundays                                           */
-              /*                                                                   */
-
-              ?></p>
-            <p class="sub-font">(test)Daily profit:
-              <?php
-
-              /*                                               */
-              /*       CALCULATE DAILY PROFIT (PER LOAN)       */
-              /*                                               */
-
-              $profit = $loan['payable'] - $loan['amount'];
-              $paymentsToCloseLoan = $loan['payable'] / $loan['amortization'];
-              $profitPerPayment = $profit / $paymentsToCloseLoan;
-              // $dailyProfit = ($loan['payable'] - $loan['amount']) / $loanNumOfDays;
-
-              $dailyProfit = ($loan['payable'] - $loan['amount']) / $days;
-              echo number_format($dailyProfit, 4);
-              /*    END - CALCULATE DAILY PROFIT (PER LOAN)    */
 
               ?>
-            </p>
+            </p> -->
+            <p class="sub-font">Number of payments to close loan: <?= number_format($paymentsToCloseLoan, 4) ?></p>
             <br>
-            <p class="sub-font">(test)Number of payments to close loan: <?= number_format($paymentsToCloseLoan, 4) ?></p>
-            <p class="sub-font">(test)Payment w/o profit: <?= number_format(($loan['amortization'] - $profitPerPayment), 4) ?></p>
-            <p class="sub-font">(test)Profit per payment: <?= number_format($profitPerPayment, 4) ?></p>
+            <p class="sub-font">Payment breakdown (based on amortization):</p>
+            <p class="sub-font">Principal amount: <?= number_format(($loan['amortization'] - $profitPerPayment), 4) ?></p>
+            <p class="sub-font">Interest amount: <?= number_format($profitPerPayment, 4) ?></p>
+            <p class="sub-font">% of interest per payment: <?= number_format((($profitPerPayment / $loan['amortization']) * 100), 4) . '%' ?></p>
           </div>
         </div>
         <div class="col position-relative">
@@ -444,22 +442,22 @@ try {
           $counter++
         ) {
           if ($counter == $pageNum) {
-            echo "<li class='page-item active'><a class='page-link' data-pagecount='". $counter ."'>$counter</a></li>";
+            echo "<li class='page-item active'><a class='page-link' data-pagecount='" . $counter . "'>$counter</a></li>";
           } else {
             if (!$search) {
-              echo "<li class='page-item'><a class='page-link' data-pagecount='". $counter ."' href='?page=$counter'>$counter</a></li>";
+              echo "<li class='page-item'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter'>$counter</a></li>";
             } else {
-              echo "<li class='page-item'><a class='page-link' data-pagecount='". $counter ."' href='?page=$counter&search=$search'>$counter</a></li>";
+              echo "<li class='page-item'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter&search=$search'>$counter</a></li>";
             }
           }
         }
         echo "<li class='page-item'><a class='page-link'>...</a></li>";
         if (!$search) {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='". $secondLast ."' href='?page=$secondLast'>$secondLast</a></li>";
-          echo "<li class='page-item'><a class='page-link' data-pagecount='". $totalPages ."' href='?page=$totalPages'>$totalPages</a></li>";
+          echo "<li class='page-item'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast'>$secondLast</a></li>";
+          echo "<li class='page-item'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages'>$totalPages</a></li>";
         } else {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='". $secondLast ."' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
-          echo "<li class='page-item'><a class='page-link' data-pagecount='". $totalPages ."' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
+          echo "<li class='page-item'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
+          echo "<li class='page-item'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
         }
       } else {
         if (!$search) {
