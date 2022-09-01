@@ -195,6 +195,7 @@ try {
                 <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Payable: </span> <span class="value"><?= "₱ " . number_format($borrower['payable'], 2) ?></span></p>
                 <p class="jai-table-mode sub-font"> <span class="jai-table-label">Mode & Term: </span> <span class="value"><?= ucwords(strtolower($borrower['mode'] . ', ' . $borrower['term'])) ?></span></p>
                 <p class="jai-table-amort sub-font"> <span class="jai-table-label">Amortization: </span> <span class="value"><?= "₱ " . number_format($borrower['amortization'], 2) ?></span></p>
+                <?= (date('Y-m-d') > date_format(date_create($borrower['duedate']), 'Y-m-d')  ? '<p class="primary-font red">(PAST DUE)</p>' : '') ?>
               </div>
               <div class="col">
                 <p class="jai-table-release sub-font"> <span class="jai-table-label">Release Date: </span> <?= date_format(date_create($borrower['releasedate']), 'M-d-Y') ?></p>

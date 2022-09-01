@@ -282,6 +282,7 @@ try {
         <div class="col">
           <div class="row">
             <p class="jai-table-name primary-font"><span class="jai-table-label">Loan Reference #<?= $loan['l_id'] ?></span></p>
+            <?= (date('Y-m-d') > $dueDate->format('Y-m-d') ? '<p class="jai-table-name primary-font red">(PAST DUE)</p>' : '') ?>
           </div>
           <div class="row">
             <div class="col">
