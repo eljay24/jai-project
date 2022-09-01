@@ -1213,12 +1213,12 @@ $sat = date_create('saturday this week');
           // [sat, '₱ ' + (satCollectionKing + satCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((satProfit / ((satCollectionKing + satCollectionCarl) - satProfit)) * 100) ? 0 : ((satProfit / ((satCollectionKing + satCollectionCarl) - satProfit)) * 100)).toFixed(4) + '%)']
 
           // Calculates % of profit from collection
-          [mon, '₱ ' + (monCollectionKing + monCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((monProfit / (monCollectionKing + monCollectionCarl)) * 100) ? 0 : ((monProfit / (monCollectionKing + monCollectionCarl)) * 100)).toFixed(2) + '%)'],
-          [tue, '₱ ' + (tueCollectionKing + tueCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((tueProfit / (tueCollectionKing + tueCollectionCarl)) * 100) ? 0 : ((tueProfit / (tueCollectionKing + tueCollectionCarl)) * 100)).toFixed(2) + '%)'],
-          [wed, '₱ ' + (wedCollectionKing + wedCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((wedProfit / (wedCollectionKing + wedCollectionCarl)) * 100) ? 0 : ((wedProfit / (wedCollectionKing + wedCollectionCarl)) * 100)).toFixed(2) + '%)'],
-          [thu, '₱ ' + (thuCollectionKing + thuCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((thuProfit / (thuCollectionKing + thuCollectionCarl)) * 100) ? 0 : ((thuProfit / (thuCollectionKing + thuCollectionCarl)) * 100)).toFixed(2) + '%)'],
-          [fri, '₱ ' + (friCollectionKing + friCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((friProfit / (friCollectionKing + friCollectionCarl)) * 100) ? 0 : ((friProfit / (friCollectionKing + friCollectionCarl)) * 100)).toFixed(2) + '%)'],
-          [sat, '₱ ' + (satCollectionKing + satCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((satProfit / (satCollectionKing + satCollectionCarl)) * 100) ? 0 : ((satProfit / (satCollectionKing + satCollectionCarl)) * 100)).toFixed(2) + '%)']
+          [mon, '₱ ' + (monCollectionKing + monCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((monProfit / (monCollectionKing + monCollectionCarl)) * 100) ? 0 : (((monProfit / (monCollectionKing + monCollectionCarl)) * 100)).toFixed(2)) + '%)'],
+          [tue, '₱ ' + (tueCollectionKing + tueCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((tueProfit / (tueCollectionKing + tueCollectionCarl)) * 100) ? 0 : (((tueProfit / (tueCollectionKing + tueCollectionCarl)) * 100)).toFixed(2)) + '%)'],
+          [wed, '₱ ' + (wedCollectionKing + wedCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((wedProfit / (wedCollectionKing + wedCollectionCarl)) * 100) ? 0 : (((wedProfit / (wedCollectionKing + wedCollectionCarl)) * 100)).toFixed(2)) + '%)'],
+          [thu, '₱ ' + (thuCollectionKing + thuCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((thuProfit / (thuCollectionKing + thuCollectionCarl)) * 100) ? 0 : (((thuProfit / (thuCollectionKing + thuCollectionCarl)) * 100)).toFixed(2)) + '%)'],
+          [fri, '₱ ' + (friCollectionKing + friCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((friProfit / (friCollectionKing + friCollectionCarl)) * 100) ? 0 : (((friProfit / (friCollectionKing + friCollectionCarl)) * 100)).toFixed(2)) + '%)'],
+          [sat, '₱ ' + (satCollectionKing + satCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((satProfit / (satCollectionKing + satCollectionCarl)) * 100) ? 0 : (((satProfit / (satCollectionKing + satCollectionCarl)) * 100)).toFixed(2)) + '%)']
 
         ],
         datasets: [{
