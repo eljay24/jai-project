@@ -871,7 +871,7 @@ $sat = date_create('saturday this week');
       <!-- <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $payment['l_id'] ?>" <?= ($payment['paymentsmade'] || $payment['passes']) == 0 ? 'disabled' : '' ?>></input> -->
     </form>
     <br>
-    
+
     <script>
       var fullDate = {
         year: 'numeric',
@@ -1492,11 +1492,12 @@ $sat = date_create('saturday this week');
           type: 'line',
           pointStyle: 'rectRot',
           pointRadius: 7.5,
-          hoverRadius: 10,
+          hoverRadius: 12,
           tension: 0.15
         }, {
           barPercentage: 0.85,
           label: 'Released',
+          hidden: true,
           data: [janRelease, febRelease, marRelease, aprRelease, mayRelease, junRelease, julRelease, augRelease, sepRelease, octRelease, novRelease, decRelease],
           backgroundColor: [
             'rgba(3, 201, 169, 1)'
@@ -1508,6 +1509,7 @@ $sat = date_create('saturday this week');
         }, {
           barPercentage: 0.85,
           label: 'Payable',
+          hidden: true,
           data: [janPayable, febPayable, marPayable, aprPayable, mayPayable, junPayable, julPayable, augPayable, sepPayable, octPayable, novPayable, decPayable],
           backgroundColor: [
             'rgba(230, 126, 34, 1)'
@@ -1529,10 +1531,11 @@ $sat = date_create('saturday this week');
           borderWidth: 1
         }, {
           barPercentage: 0.85,
-          label: 'Passes',
-          data: [janPasses, febPasses, marPasses, aprPasses, mayPasses, junPasses, julPasses, augPasses, sepPasses, octPasses, novPasses, decPasses],
+          label: 'Pass Amount',
+          hidden: true,
+          data: [janPassAmount, febPassAmount, marPassAmount, aprPassAmount, mayPassAmount, junPassAmount, julPassAmount, augPassAmount, sepPassAmount, octPassAmount, novPassAmount, decPassAmount],
           backgroundColor: [
-            'rgba(150, 40, 27, 1)'
+            'rgba(140, 20, 252, 1)'
           ],
           borderColor: [
             'rgb(0, 0, 0)'
@@ -1540,10 +1543,11 @@ $sat = date_create('saturday this week');
           borderWidth: 1
         }, {
           barPercentage: 0.85,
-          label: 'Pass Amount',
-          data: [janPassAmount, febPassAmount, marPassAmount, aprPassAmount, mayPassAmount, junPassAmount, julPassAmount, augPassAmount, sepPassAmount, octPassAmount, novPassAmount, decPassAmount],
+          label: 'Passes',
+          hidden: true,
+          data: [janPasses, febPasses, marPasses, aprPasses, mayPasses, junPasses, julPasses, augPasses, sepPasses, octPasses, novPasses, decPasses],
           backgroundColor: [
-            'rgba(140, 20, 252, 1)'
+            'rgba(150, 40, 27, 1)'
           ],
           borderColor: [
             'rgb(0, 0, 0)'
