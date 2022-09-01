@@ -268,7 +268,7 @@ try {
             </div>
             <div class="col">
               <p class="jai-table-name primary-font <?= $totalPass >= 5 ? 'red' : ''; ?>
-                                              <?= $totalPass < 5 ? 'green' : '' ?>"><span class="jai-table-label"></span> <?= ucwords(strtolower($loan['firstname'])) . ' ' . ucwords(strtolower($loan['middlename'])) . ' ' . ucwords(strtolower($loan['lastname'])) ?></p>
+                                              <?= $totalPass < 5 ? 'green' : '' ?>"><span class="jai-table-label"></span> <?= ucwords(strtolower($loan['firstname'])) . ' ' . ucwords(strtolower(substr($loan['middlename'], 0, 1))) . '. ' . ucwords(strtolower($loan['lastname'])) ?></p>
               <p class="jai-table-name primary-font"><?= $loan['status'] ?></p>
               <?php
               if ($loan['isdeleted'] == 1) {
