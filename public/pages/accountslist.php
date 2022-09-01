@@ -54,11 +54,12 @@ $pastDueAccs = [];
 $forLitigationAccs = [];
 
 foreach ($accounts as $i => $account) {
-    if ($account['arrears'] < 0) {
+    if ($account['arrears'] <= 0) {
         array_push($updatedAccs, $accounts[$i]);
-    } elseif ($account['arrears'] >= 0) {
+    } elseif ($account['arrears'] > 0) {
         if (date('Y-m-d') > date($account['duedate'])) {
-            if (strtotime($account['lasttransaction']) < strtotime('-30 days') || strtotime($account['duedate']) < strtotime('-90 days')) {
+            /* --- Check if last transaction is past 1 month or due date is past 3 months --- */
+            if (strtotime($account['lasttransaction']) < strtotime('-1 month') || strtotime($account['duedate']) < strtotime('-3 months')) {
                 array_push($forLitigationAccs, $accounts[$i]);
             } else {
                 array_push($pastDueAccs, $accounts[$i]);
@@ -307,8 +308,8 @@ if ($accounts) {
         $pdf->Cell(310.2, 5, '', 0, 1);
     }
 
-     /* ----- FOR LITIGATION ACCOUNTS ----- */
-     if ($forLitigationAccs) {
+    /* ----- FOR LITIGATION ACCOUNTS ----- */
+    if ($forLitigationAccs) {
         $pdf->SetFont('Arial', 'I', 8);
         $pdf->SetTextColor(0, 0, 0); //BLACK
         $pdf->Cell(310.2, 6, 'STATUS: FOR LITIGATION', 'TLR', 1);
