@@ -58,7 +58,7 @@ foreach ($accounts as $i => $account) {
         array_push($updatedAccs, $accounts[$i]);
     } elseif ($account['arrears'] >= 0) {
         if (date('Y-m-d') > date($account['duedate'])) {
-            if (strtotime($account['lasttransaction']) < strtotime('-30 days')) {
+            if (strtotime($account['lasttransaction']) < strtotime('-30 days') || strtotime($account['duedate']) < strtotime('-90 days')) {
                 array_push($forLitigationAccs, $accounts[$i]);
             } else {
                 array_push($pastDueAccs, $accounts[$i]);
@@ -88,7 +88,9 @@ class PDF extends FPDF
             $this->SetFont('Courier', '', 10);
             $this->Cell(103.4, 4, 'Date: ' . date('Y-m-d, D'), 0, 1, 'R');
             $this->Cell(103.4, 8, '', 0, 0, 'C');
+            $this->SetFont('Courier', 'B', 10);
             $this->Cell(103.4, 8, 'List of Active Loans by Collector', 0, 0, 'C');
+            $this->SetFont('Courier', '', 10);
             $this->Cell(103.4, 8, 'Time: ' . date('g:i:s A'), 0, 1, 'R');
             $this->Cell(155.1, 4, 'Collector: ' . $accounts[0]['collector'], 0, 0, 'L');
             $this->Cell(155.1, 4, 'Total accounts: ' . count($accounts), 0, 1, 'R');
@@ -116,7 +118,9 @@ class PDF extends FPDF
             $this->SetFont('Courier', '', 10);
             $this->Cell(103.4, 4, 'Date: ' . date('Y-m-d'), 0, 1, 'R');
             $this->Cell(103.4, 8, '', 0, 0, 'C');
+            $this->SetFont('Courier', 'B', 10);
             $this->Cell(103.4, 8, 'List of Accounts by Collector', 0, 0, 'C');
+            $this->SetFont('Courier', '', 10);
             $this->Cell(103.4, 8, 'Time: ' . date('g:i:s A'), 0, 1, 'R');
         }
     }
@@ -140,7 +144,7 @@ if ($accounts) {
     /* ----- UPDATED ACCOUNTS ----- */
     if ($updatedAccs) {
         $pdf->SetFont('Arial', 'I', 8);
-        $pdf->Cell(310.2, 6, 'STATUS: UPDATED' . ' (' . count($updatedAccs) . (count($updatedAccs) == 1 ? ' account)' : ' accounts)'), 'LR', 1);
+        $pdf->Cell(310.2, 6, 'STATUS: UPDATED', 'LR', 1);
         $updatedAccsTotalOutBal = (float)0;
         $updatedAccsTotalSCB = (float)0;
         $updatedAccsTotalArrears = (float)0;
@@ -197,7 +201,7 @@ if ($accounts) {
     if ($inArrearsAccs) {
         $pdf->SetFont('Arial', 'I', 8);
         $pdf->SetTextColor(0, 0, 0); //BLACK
-        $pdf->Cell(310.2, 6, 'STATUS: IN ARREARS' . ' (' . count($inArrearsAccs) . (count($inArrearsAccs) == 1 ? ' account)' : ' accounts)'), 'TLR', 1);
+        $pdf->Cell(310.2, 6, 'STATUS: IN ARREARS', 'TLR', 1);
         $inArrearsAccsTotalOutBal = (float)0;
         $inArrearsAccsTotalSCB = (float)0;
         $inArrearsAccsTotalArrears = (float)0;
@@ -252,7 +256,7 @@ if ($accounts) {
     if ($pastDueAccs) {
         $pdf->SetFont('Arial', 'I', 8);
         $pdf->SetTextColor(0, 0, 0); //BLACK
-        $pdf->Cell(310.2, 6, 'STATUS: PAST DUE' . ' (' . count($pastDueAccs) . (count($pastDueAccs) == 1 ? ' account)' : ' accounts)'), 'TLR', 1);
+        $pdf->Cell(310.2, 6, 'STATUS: PAST DUE', 'TLR', 1);
         $pastDueAccsTotalOutBal = (float)0;
         $pastDueAccsTotalSCB = (float)0;
         $pastDueAccsTotalArrears = (float)0;
@@ -307,7 +311,7 @@ if ($accounts) {
      if ($forLitigationAccs) {
         $pdf->SetFont('Arial', 'I', 8);
         $pdf->SetTextColor(0, 0, 0); //BLACK
-        $pdf->Cell(310.2, 6, 'STATUS: FOR LITIGATION' . ' (' . count($forLitigationAccs) . (count($forLitigationAccs) == 1 ? ' account)' : ' accounts)'), 'TLR', 1);
+        $pdf->Cell(310.2, 6, 'STATUS: FOR LITIGATION', 'TLR', 1);
         $forLitigationAccsTotalOutBal = (float)0;
         $forLitigationAccsTotalSCB = (float)0;
         $forLitigationAccsTotalArrears = (float)0;
