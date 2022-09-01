@@ -304,7 +304,7 @@ try {
           <div class="row">
             <p class="sub-font">Collector: <?= $loan['collector'] ?></p>
             <br>
-            <p class="sub-font">Number of days from release to due date: <?= $days ?></p>
+            <p class="sub-font">Loan duration: <?= $days ?> days</p>
             <!-- <p class="sub-font">(test)Daily profit:
               <?php
 
