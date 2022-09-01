@@ -56,7 +56,11 @@ foreach ($accounts as $i => $account) {
     if ($account['arrears'] < 0) {
         array_push($updatedAccs, $accounts[$i]);
     } elseif ($account['arrears'] >= 0) {
-        array_push($inArrearsAccs, $accounts[$i]);
+        if (date('Y-m-d') > date($account['duedate'])) {
+            array_push($pastDueAccs, $accounts[$i]);
+        } else {
+            array_push($inArrearsAccs, $accounts[$i]);
+        }
     }
 }
 /* ----- END - ASSIGN ACCOUNTS TO DIFFERENT STATUS ----- */
@@ -138,6 +142,7 @@ if ($accounts) {
     $updatedAccsTotalArrears = (float)0;
     $pdf->SetFont('Arial', '', 8);
     foreach ($updatedAccs as $i => $updatedAcc) {
+
         $pdf->Cell(10.86, 5, $updatedAcc['l_id'], 'LB', 0);
         $pdf->Cell(42.86, 5, ucwords(strtolower($updatedAcc['name'])), 'B', 0);
         $pdf->Cell(23.86, 5, $updatedAcc['releasedate'], 'B', 0);
@@ -157,6 +162,12 @@ if ($accounts) {
         $updatedAccsTotalArrears += $updatedAcc['arrears'];
     }
 
+    if (!$updatedAccs) {
+        $pdf->SetFont('Arial', 'I', 8);
+        $pdf->Cell(310.2, 5, '** NO ACCOUNTS IN THIS CATEGORY **', 'RLB', 1, 'L');
+        $pdf->SetFont('Arial', '', 8);
+    }
+
     /* ----- UPDATED ACCOUNTS SUMMARY ----- */
     $pdf->Cell(310.2, 2, '', 0, 1);
     $pdf->Cell(50.4, 6, 'Updated Accounts Summary', 'B', 0, 'C');
@@ -166,26 +177,26 @@ if ($accounts) {
     $pdf->SetFont('Arial', '', 8);
     $pdf->Cell(37.2, 6, 'Total Outstanding Balance:', 'B', 0);
     $pdf->SetFont('Arial', 'B', 8.5);
-    $pdf->SetTextColor(0,76,153); //BLUE
+    $pdf->SetTextColor(0, 76, 153); //BLUE
     $pdf->Cell(37.2, 6, number_format($updatedAccsTotalOutBal, 2), 'B', 0);
     $pdf->SetFont('Arial', '', 8);
-    $pdf->SetTextColor(0,0,0); //BLACK
+    $pdf->SetTextColor(0, 0, 0); //BLACK
     $pdf->Cell(17.2, 6, 'Total SCB:', 'B', 0);
     $pdf->SetFont('Arial', 'B', 8.5);
-    $pdf->SetTextColor(0,76,153); //BLUE
+    $pdf->SetTextColor(0, 76, 153); //BLUE
     $pdf->Cell(45.2, 6, number_format($updatedAccsTotalSCB, 2), 'B', 0);
     $pdf->SetFont('Arial', '', 8);
-    $pdf->SetTextColor(0,0,0); //BLACK
+    $pdf->SetTextColor(0, 0, 0); //BLACK
     $pdf->Cell(20.2, 6, 'Total Arrears:', 'B', 0);
     $pdf->SetFont('Arial', 'B', 8.5);
-    $pdf->SetTextColor(76,153,0); //GREEN
+    $pdf->SetTextColor(76, 153, 0); //GREEN
     $pdf->Cell(42.2, 6, number_format($updatedAccsTotalArrears, 2), 'B', 1);
     $pdf->Cell(310.2, 5, '', 0, 1);
 
 
     /* ----- IN ARREARS ACCOUNTS ----- */
     $pdf->SetFont('Arial', 'I', 8);
-    $pdf->SetTextColor(0,0,0); //BLACK
+    $pdf->SetTextColor(0, 0, 0); //BLACK
     $pdf->Cell(310.2, 6, 'STATUS: IN ARREARS', 'TLR', 1);
     $inArrearsAccsTotalOutBal = (float)0;
     $inArrearsAccsTotalSCB = (float)0;
@@ -211,6 +222,12 @@ if ($accounts) {
         $inArrearsAccsTotalArrears += $inArrearsAcc['arrears'];
     }
 
+    if (!$inArrearsAccs) {
+        $pdf->SetFont('Arial', 'I', 8);
+        $pdf->Cell(310.2, 5, '** NO ACCOUNTS IN THIS CATEGORY **', 'RLB', 1, 'L');
+        $pdf->SetFont('Arial', '', 8);
+    }
+
     /* ----- IN ARREARS ACCOUNTS SUMMARY ----- */
     $pdf->Cell(310.2, 2, '', 0, 1);
     $pdf->Cell(50.4, 6, 'In Arrears Accounts Summary', 'B', 0, 'C');
@@ -220,30 +237,89 @@ if ($accounts) {
     $pdf->SetFont('Arial', '', 8);
     $pdf->Cell(37.2, 6, 'Total Outstanding Balance:', 'B', 0);
     $pdf->SetFont('Arial', 'B', 8.5);
-    $pdf->SetTextColor(0,76,153); //BLUE
+    $pdf->SetTextColor(0, 76, 153); //BLUE
     $pdf->Cell(37.2, 6, number_format($inArrearsAccsTotalOutBal, 2), 'B', 0);
     $pdf->SetFont('Arial', '', 8);
-    $pdf->SetTextColor(0,0,0); //BLACK
+    $pdf->SetTextColor(0, 0, 0); //BLACK
     $pdf->Cell(17.2, 6, 'Total SCB:', 'B', 0);
     $pdf->SetFont('Arial', 'B', 8.5);
-    $pdf->SetTextColor(0,76,153); //BLUE
+    $pdf->SetTextColor(0, 76, 153); //BLUE
     $pdf->Cell(45.2, 6, number_format($inArrearsAccsTotalSCB, 2), 'B', 0);
     $pdf->SetFont('Arial', '', 8);
-    $pdf->SetTextColor(0,0,0); //BLACK
+    $pdf->SetTextColor(0, 0, 0); //BLACK
     $pdf->Cell(20.2, 6, 'Total Arrears:', 'B', 0);
     $pdf->SetFont('Arial', 'B', 8.5);
-    $pdf->SetTextColor(204,0,0); //RED
+    $pdf->SetTextColor(204, 0, 0); //RED
     $pdf->Cell(42.2, 6, number_format($inArrearsAccsTotalArrears, 2), 'B', 1);
+    $pdf->Cell(310.2, 5, '', 0, 1);
+
+    /* ----- PAST DUE ACCOUNTS ----- */
+    $pdf->SetFont('Arial', 'I', 8);
+    $pdf->SetTextColor(0, 0, 0); //BLACK
+    $pdf->Cell(310.2, 6, 'STATUS: PAST DUE', 'TLR', 1);
+    $pastDueAccsTotalOutBal = (float)0;
+    $pastDueAccsTotalSCB = (float)0;
+    $pastDueAccsTotalArrears = (float)0;
+    $pdf->SetFont('Arial', '', 8);
+    foreach ($pastDueAccs as $i => $pastDueAcc) {
+        $pdf->Cell(10.86, 5, $pastDueAcc['l_id'], 'LB', 0);
+        $pdf->Cell(42.86, 5, ucwords(strtolower($pastDueAcc['name'])), 'B', 0);
+        $pdf->Cell(23.86, 5, $pastDueAcc['releasedate'], 'B', 0);
+        $pdf->Cell(20.86, 5, $pastDueAcc['duedate'], 'B', 0);
+        $pdf->Cell(20.86, 5, number_format($pastDueAcc['amount'], 2), 'B', 0, 'R');
+        $pdf->Cell(23.86, 5, number_format($pastDueAcc['payable'], 2), 'B', 0, 'R');
+        $pdf->Cell(23.86, 5, number_format($pastDueAcc['amortization'], 2), 'B', 0, 'R');
+        $pdf->Cell(23.86, 5, $pastDueAcc['term'], 'B', 0, 'R');
+        $pdf->Cell(23.86, 5, $pastDueAcc['mode'], 'B', 0, 'R');
+        $pdf->Cell(23.86, 5, number_format($pastDueAcc['outstandingbalance'], 2), 'B', 0, 'R');
+        $pdf->Cell(23.86, 5, number_format($pastDueAcc['SCB'], 2), 'B', 0, 'R');
+        $pdf->Cell(23.86, 5, number_format($pastDueAcc['arrears'], 2), 'B', 0, 'R');
+        $pdf->Cell(23.86, 5, $pastDueAcc['lasttransaction'], 'RB', 1, 'R');
+
+        $pastDueAccsTotalOutBal += $pastDueAcc['outstandingbalance'];
+        $pastDueAccsTotalSCB += $pastDueAcc['SCB'];
+        $pastDueAccsTotalArrears += $pastDueAcc['arrears'];
+    }
+
+    if (!$pastDueAccs) {
+        $pdf->SetFont('Arial', 'I', 8);
+        $pdf->Cell(310.2, 5, '** NO ACCOUNTS IN THIS CATEGORY **', 'RLB', 1, 'L');
+        $pdf->SetFont('Arial', '', 8);
+    }
+
+    /* ----- IN ARREARS ACCOUNTS SUMMARY ----- */
+    $pdf->Cell(310.2, 2, '', 0, 1);
+    $pdf->Cell(50.4, 6, 'Past Due Accounts Summary', 'B', 0, 'C');
+    $pdf->Cell(31.2, 6, 'Total Accounts:', 'B', 0, 'R');
+    $pdf->SetFont('Arial', 'B', 8.5);
+    $pdf->Cell(31.2, 6, count($pastDueAccs), 'B', 0);
+    $pdf->SetFont('Arial', '', 8);
+    $pdf->Cell(37.2, 6, 'Total Outstanding Balance:', 'B', 0);
+    $pdf->SetFont('Arial', 'B', 8.5);
+    $pdf->SetTextColor(0, 76, 153); //BLUE
+    $pdf->Cell(37.2, 6, number_format($pastDueAccsTotalOutBal, 2), 'B', 0);
+    $pdf->SetFont('Arial', '', 8);
+    $pdf->SetTextColor(0, 0, 0); //BLACK
+    $pdf->Cell(17.2, 6, 'Total SCB:', 'B', 0);
+    $pdf->SetFont('Arial', 'B', 8.5);
+    $pdf->SetTextColor(0, 76, 153); //BLUE
+    $pdf->Cell(45.2, 6, number_format($pastDueAccsTotalSCB, 2), 'B', 0);
+    $pdf->SetFont('Arial', '', 8);
+    $pdf->SetTextColor(0, 0, 0); //BLACK
+    $pdf->Cell(20.2, 6, 'Total Arrears:', 'B', 0);
+    $pdf->SetFont('Arial', 'B', 8.5);
+    $pdf->SetTextColor(204, 0, 0); //RED
+    $pdf->Cell(42.2, 6, number_format($pastDueAccsTotalArrears, 2), 'B', 1);
     $pdf->Cell(310.2, 5, '', 0, 1);
 } else {
     $pdf->SetFont('Courier', 'B', 22);
     $pdf->Cell(310.2, 50, '', 0, 1, 'C');
-    $pdf->Cell(310.2, 20, 'INVALID COLLECTOR ID / NO DATA RETRIEVED', 0, 1, 'C');
+    $pdf->Cell(310.2, 20, 'NO DATA RETRIEVED OR INVALID COLLECTOR ID', 0, 1, 'C');
     $pdf->Cell(310.2, 6, 'ACCOUNTS LIST UNAVAILABLE', 0, 1, 'C');
 }
 
 if ($accounts) {
-    $pdf->Output('I', 'JAI Accounts List_' . $accounts[0]['collector'] . '_' . date('Y-m-d') . '_' . date('giA') .'.pdf');
+    $pdf->Output('I', 'JAI Accounts List_' . $accounts[0]['collector'] . '_' . date('Y-m-d') . '_' . date('giA') . '.pdf');
 } else {
     $pdf->Output('I', 'JAI Invalid Accounts List.pdf');
 }
