@@ -868,7 +868,6 @@ $sat = date_create('saturday this week');
         ?>
       </select>
       <button title="View accounts list" class="btn-primary" type="submit">View accounts list</button>
-      <!-- <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $payment['l_id'] ?>" <?= ($payment['paymentsmade'] || $payment['passes']) == 0 ? 'disabled' : '' ?>></input> -->
     </form>
     <br>
 
