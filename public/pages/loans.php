@@ -315,9 +315,9 @@ try {
             <p class="sub-font">Number of payments to close loan: <?= number_format($paymentsToCloseLoan, 4) ?></p>
             <br>
             <p class="sub-font">Payment breakdown (based on amortization):</p>
-            <p class="sub-font">Principal amount: <?= number_format(($loan['amortization'] - $profitPerPayment), 4) ?></p>
-            <p class="sub-font">Interest amount: <?= number_format($profitPerPayment, 4) ?></p>
-            <p class="sub-font">% of interest per payment: <?= number_format((($profitPerPayment / $loan['amortization']) * 100), 4) . '%' ?></p>
+            <p class="sub-font">Principal amount: <?= '₱ ' . number_format(($loan['amortization'] - $profitPerPayment), 4) ?></p>
+            <p class="sub-font">Interest amount: <?= '₱ ' . number_format($profitPerPayment, 4) ?></p>
+            <p class="sub-font">Interest per payment: <?= number_format((($profitPerPayment / $loan['amortization']) * 100), 4) . '%' ?></p>
           </div>
         </div>
         <div class="col position-relative">
