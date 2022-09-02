@@ -71,8 +71,9 @@ class PDF extends FPDF
             $this->Cell(65.3, 6, 'Date: ' . date('Y-m-d'), 0, 1, 'R');
 
 
+            $this->SetFont('Courier', '', 10);
+            $this->Cell(65.3, 6, '#' . $payments[0]['b_id'], 0, 0);
             $this->SetFont('Courier', '', 14);
-            $this->Cell(65.3, 6, '', 0, 0);
             $this->Cell(65.3, 6, 'Ledger', 0, 0, 'C');
             $this->SetFont('Courier', '', 10);
             $this->Cell(65.3, 6, 'Time: '.date('g:i:s A'), 0, 1, 'R');
@@ -176,10 +177,10 @@ if ($payments) {
 
     $payable = $payments[0]['payable'];
     foreach ($payments as $i => $payment) {
-        $pdf->Cell(48.975, 7, $payment['date'], 'L', 0);
-        $pdf->Cell(48.975, 7, $payment['type'] == 'Pass' ? $payment['type'] : ($payment['type'] == 'GCash' ? $payment['type'] . ' Payment' : 'Payment'), 'L', 0);
-        $pdf->Cell(48.975, 7, number_format($payment['paymentamount'], 2), 'L', 0, 'R');
-        $pdf->Cell(48.975, 7, number_format($payable -= $payment['paymentamount'], 2), 'LR', 1, 'R');
+        $pdf->Cell(48.975, 5.5, $payment['date'], 'L', 0);
+        $pdf->Cell(48.975, 5.5, $payment['type'] == 'Pass' ? $payment['type'] : ($payment['type'] == 'GCash' ? $payment['type'] . ' Payment' : 'Payment'), 'L', 0);
+        $pdf->Cell(48.975, 5.5, number_format($payment['paymentamount'], 2), 'L', 0, 'R');
+        $pdf->Cell(48.975, 5.5, number_format($payable -= $payment['paymentamount'], 2), 'LR', 1, 'R');
     }
     $pdf->Cell(195.9, 7, '', 'T', 1, 'C');
 
