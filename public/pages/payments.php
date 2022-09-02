@@ -324,29 +324,29 @@ try {
                   <div class="row">
                     <div class="col">
                       <div class="jai-mb-2">
-                        <input id="loanamount" name="loan-amount" placeholder="Loan Amount" type="text" class="form-control" readonly required>
+                        <input id="loanamount" tabindex="-1" name="loan-amount" placeholder="Loan Amount" type="text" class="form-control" readonly required>
                       </div>
                     </div>
                     <div class="col">
                       <div class="jai-mb-2">
-                        <input id="remainingbalance" name="remaining-balance" placeholder="Remaining Balance" type="text" class="form-control" readonly required>
+                        <input id="remainingbalance" tabindex="-1" name="remaining-balance" placeholder="Remaining Balance" type="text" class="form-control" readonly required>
                       </div>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col">
                       <div class="jai-mb-2">
-                        <input id="mode" name="mode" placeholder="Mode" type="text" class="form-control" readonly required>
+                        <input id="mode" tabindex="-1" name="mode" placeholder="Mode" type="text" class="form-control" readonly required>
                       </div>
                     </div>
                     <div class="col">
                       <div class="jai-mb-2">
-                        <input id="term" name="term" placeholder="Term" type="text" class="form-control" readonly required>
+                        <input id="term" tabindex="-1" name="term" placeholder="Term" type="text" class="form-control" readonly required>
                       </div>
                     </div>
                     <div class="col">
                       <div class="jai-mb-2">
-                        <input id="amortization" name="amortization" placeholder="Amortization" type="text" class="form-control" readonly required>
+                        <input id="amortization" tabindex="-1" name="amortization" placeholder="Amortization" type="text" class="form-control" readonly required>
                       </div>
                     </div>
                   </div>
