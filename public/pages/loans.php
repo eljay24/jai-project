@@ -31,7 +31,9 @@ try {
                                           WHERE (b.b_id LIKE :search OR b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search OR l.status LIKE :search
                                                  OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                                  OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
-                                                 OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search)
+                                                 OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
+                                                 OR CONCAT('l', l.l_id) LIKE :search
+                                                 OR CONCAT('b', b.b_id) LIKE :search)
                                           ORDER BY l.activeloan DESC, l.l_id DESC
                                           ");
     $statementTotalRows->bindValue(':search', "%$search%");
@@ -68,7 +70,9 @@ try {
                                  WHERE (b.b_id LIKE :search OR b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search OR l.status LIKE :search
                                         OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                         OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
-                                        OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search)
+                                        OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
+                                        OR CONCAT('l', l.l_id) LIKE :search
+                                        OR CONCAT('b', b.b_id) LIKE :search)
                                  ORDER BY l.activeloan DESC, l.l_id DESC
                                  LIMIT :offset, :numOfRowsPerPage");
     $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
@@ -191,6 +195,59 @@ try {
       /* ----- END - GET EST. PASS AMOUNT ----- */
 
 
+
+      /*                                                                   */
+      /*       Count number of days                                        */
+      /*       from release date to due date (inclusive of both)           */
+      /*       excluding Sundays                                           */
+      /*                                                                   */
+      $start = new DateTime(date_format($releaseDate, 'Y-m-d'));
+      $end = new DateTime(date_format($dueDate, 'Y-m-d'));
+
+      // otherwise the  end date is excluded (bug?)
+      $end->modify('+1 day');
+
+      $interval = $end->diff($start);
+
+      // total days
+      $days = $interval->days;
+
+      // create an iterateable period of date (P1D equates to 1 day)
+      $period = new DatePeriod($start, new DateInterval('P1D'), $end);
+
+      // best stored as array, so you can add more than one
+      $holidays = array('2012-09-07');
+
+      foreach ($period as $dt) {
+        $curr = $dt->format('D');
+
+        // substract if Saturday or Sunday
+        if ($curr == 'Sun') {
+          $days--;
+        }
+
+        // (optional) for the updated question
+        elseif (in_array($dt->format('Y-m-d'), $holidays)) {
+          $days--;
+        }
+      }
+      /*                                                                   */
+      /*       END - Count number of days                                  */
+      /*       from release date to due date (inclusive of both)           */
+      /*       excluding Sundays                                           */
+      /*                                                                   */
+
+
+      /*                                                         */
+      /*       CALCULATE PROFIT (PER PAYMENT / PER LOAN)         */
+      /*                                                         */
+
+      $profit = $loan['payable'] - $loan['amount'];
+      $paymentsToCloseLoan = $loan['payable'] / $loan['amortization'];
+      $profitPerPayment = $profit / $paymentsToCloseLoan;
+
+      /*    END - CALCULATE PROFIT (PER PAYMENT / PER LOAN)      */
+
       // echo "<pre>";
       // echo $loanID;
 
@@ -211,7 +268,7 @@ try {
             </div>
             <div class="col">
               <p class="jai-table-name primary-font <?= $totalPass >= 5 ? 'red' : ''; ?>
-                                              <?= $totalPass < 5 ? 'green' : '' ?>"><span class="jai-table-label"></span> <?= ucwords(strtolower($loan['firstname'])) . ' ' . ucwords(strtolower($loan['middlename'])) . ' ' . ucwords(strtolower($loan['lastname'])) ?></p>
+                                              <?= $totalPass < 5 ? 'green' : '' ?>"><span class="jai-table-label"></span> <?= ucwords(strtolower($loan['firstname'])) . ' ' . ucwords(strtolower(substr($loan['middlename'], 0, 1))) . '. ' . ucwords(strtolower($loan['lastname'])) ?></p>
               <p class="jai-table-name primary-font"><?= $loan['status'] ?></p>
               <?php
               if ($loan['isdeleted'] == 1) {
@@ -225,6 +282,7 @@ try {
         <div class="col">
           <div class="row">
             <p class="jai-table-name primary-font"><span class="jai-table-label">Loan Reference #<?= $loan['l_id'] ?></span></p>
+            <?= (date('Y-m-d') > $dueDate->format('Y-m-d') ? '<p class="jai-table-name primary-font red">(PAST DUE)</p>' : '') ?>
           </div>
           <div class="row">
             <div class="col">
@@ -246,75 +304,20 @@ try {
           <div class="row">
             <p class="sub-font">Collector: <?= $loan['collector'] ?></p>
             <br>
-            <p class="sub-font">(test)Number of days from release to due date:
+            <p class="sub-font">Loan duration: <?= $days ?> days</p>
+            <!-- <p class="sub-font">(test)Daily profit:
               <?php
 
-              /*                                                                   */
-              /*       Count number of days                                        */
-              /*       from release date to due date (inclusive of both)           */
-              /*       excluding Sundays                                           */
-              /*                                                                   */
-              $start = new DateTime(date_format($releaseDate, 'Y-m-d'));
-              $end = new DateTime(date_format($dueDate, 'Y-m-d'));
 
-              // otherwise the  end date is excluded (bug?)
-              $end->modify('+1 day');
-
-              $interval = $end->diff($start);
-
-              // total days
-              $days = $interval->days;
-
-              // create an iterateable period of date (P1D equates to 1 day)
-              $period = new DatePeriod($start, new DateInterval('P1D'), $end);
-
-              // best stored as array, so you can add more than one
-              $holidays = array('2012-09-07');
-
-              foreach ($period as $dt) {
-                $curr = $dt->format('D');
-
-                // substract if Saturday or Sunday
-                if ($curr == 'Sun') {
-                  $days--;
-                }
-
-                // (optional) for the updated question
-                elseif (in_array($dt->format('Y-m-d'), $holidays)) {
-                  $days--;
-                }
-              }
-
-              echo $days;
-              /*                                                                   */
-              /*       END - Count number of days                                  */
-              /*       from release date to due date (inclusive of both)           */
-              /*       excluding Sundays                                           */
-              /*                                                                   */
-
-              ?></p>
-            <p class="sub-font">(test)Daily profit:
-              <?php
-
-              /*                                               */
-              /*       CALCULATE DAILY PROFIT (PER LOAN)       */
-              /*                                               */
-
-              $profit = $loan['payable'] - $loan['amount'];
-              $paymentsToCloseLoan = $loan['payable'] / $loan['amortization'];
-              $profitPerPayment = $profit / $paymentsToCloseLoan;
-              // $dailyProfit = ($loan['payable'] - $loan['amount']) / $loanNumOfDays;
-
-              $dailyProfit = ($loan['payable'] - $loan['amount']) / $days;
-              echo number_format($dailyProfit, 4);
-              /*    END - CALCULATE DAILY PROFIT (PER LOAN)    */
 
               ?>
-            </p>
+            </p> -->
+            <p class="sub-font">Number of payments to close loan: <?= number_format($paymentsToCloseLoan, 4) ?></p>
             <br>
-            <p class="sub-font">(test)Number of payments to close loan: <?= number_format($paymentsToCloseLoan, 4) ?></p>
-            <p class="sub-font">(test)Payment w/o profit: <?= number_format(($loan['amortization'] - $profitPerPayment), 4) ?></p>
-            <p class="sub-font">(test)Profit per payment: <?= number_format($profitPerPayment, 4) ?></p>
+            <p class="sub-font">Payment breakdown (based on amortization):</p>
+            <p class="sub-font">Principal amount: <?= number_format(($loan['amortization'] - $profitPerPayment), 4) ?></p>
+            <p class="sub-font">Interest amount: <?= number_format($profitPerPayment, 4) ?></p>
+            <p class="sub-font">% of interest per payment: <?= number_format((($profitPerPayment / $loan['amortization']) * 100), 4) . '%' ?></p>
           </div>
         </div>
         <div class="col position-relative">
@@ -368,49 +371,37 @@ try {
   </div>
 
   <!-- PAGE NAVIGATION -->
-  <div style='padding: 10px 20px 0px; border-top: dotted 1px #CCC;'>
-    <strong>Page <?= $pageNum . " of " . $totalPages; ?></strong>
-  </div>
+  <div class="pagination-container">
+    <div style='padding: 10px 20px 0px; border-top: dotted 1px #CCC;'>
+      <strong>Page <?= $pageNum . " of " . $totalPages; ?></strong>
+    </div>
 
-  <ul class="pagination">
-    <?php if ($pageNum > 1) {
-      if (!$search) {
-        echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>First Page</a></li>";
-      } else {
-        echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>First Page</a></li>";
-      }
-    } ?>
-
-    <li <?php if ($pageNum <= 1) {
-          echo "class='page-link disabled'";
-        } ?>>
-      <a <?php if ($pageNum > 1) {
-            if (!$search) {
-              echo "class='page-link' data-pagecount='$previousPage' href='?page=$previousPage'";
-            } else {
-              echo "class='page-link' data-pagecount='$previousPage' href='?page=$previousPage&search=$search'";
-            }
-          } ?>>Previous</a>
-    </li>
-
-    <?php
-    if ($totalPages <= 10) {
-      for ($counter = 1; $counter <= $totalPages; $counter++) {
-        if ($counter == $pageNum) {
-          echo "<li class='page-item active'><a data-pagecount='$counter' class='page-link active'>$counter</a></li>";
+    <ul class="pagination">
+      <?php if ($pageNum > 1) {
+        if (!$search) {
+          echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>First Page</a></li>";
         } else {
-          if (!$search) {
-            echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
-          } else {
-            echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
-          }
+          echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>First Page</a></li>";
         }
-      }
-    } elseif ($totalPages > 10) {
-      if ($pageNum <= 4) {
-        for ($counter = 1; $counter < 8; $counter++) {
+      } ?>
+
+      <li <?php if ($pageNum <= 1) {
+            echo "class='page-link disabled'";
+          } ?>>
+        <a <?php if ($pageNum > 1) {
+              if (!$search) {
+                echo "class='page-link' data-pagecount='$previousPage' href='?page=$previousPage'";
+              } else {
+                echo "class='page-link' data-pagecount='$previousPage' href='?page=$previousPage&search=$search'";
+              }
+            } ?>>Previous</a>
+      </li>
+
+      <?php
+      if ($totalPages <= 10) {
+        for ($counter = 1; $counter <= $totalPages; $counter++) {
           if ($counter == $pageNum) {
-            echo "<li class='page-item active'><a data-pagecount='$counter' class='page-link'>$counter</a></li>";
+            echo "<li class='page-item active'><a data-pagecount='$counter' class='page-link active'>$counter</a></li>";
           } else {
             if (!$search) {
               echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
@@ -419,24 +410,63 @@ try {
             }
           }
         }
-        echo "<li class='page-item'><a class='page-link'>...</a></li>";
-        if (!$search) {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='$secondLast' href='?page=$secondLast'>$secondLast</a></li>";
-          echo "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages'>$totalPages</a></li>";
-        } else {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='$secondLast' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
-          echo "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
-        }
-      } elseif ($pageNum > 4 && $pageNum < $totalPages - 4) {
-        if (!$search) {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>1</a></li>";
-          echo "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2'>2</a></li>";
-        } else {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>1</a></li>";
-          echo "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2&search=$search'>2</a></li>";
-        }
+      } elseif ($totalPages > 10) {
+        if ($pageNum <= 4) {
+          for ($counter = 1; $counter < 8; $counter++) {
+            if ($counter == $pageNum) {
+              echo "<li class='page-item active'><a data-pagecount='$counter' class='page-link active'>$counter</a></li>";
+            } else {
+              if (!$search) {
+                echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
+              } else {
+                echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
+              }
+            }
+          }
+          echo "<li class='page-item'><a class='page-link'>...</a></li>";
+          if (!$search) {
+            echo "<li class='page-item'><a class='page-link' data-pagecount='$secondLast' href='?page=$secondLast'>$secondLast</a></li>";
+            echo "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages'>$totalPages</a></li>";
+          } else {
+            echo "<li class='page-item'><a class='page-link' data-pagecount='$secondLast' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
+            echo "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
+          }
+        } elseif ($pageNum > 4 && $pageNum < $totalPages - 4) {
+          if (!$search) {
+            echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>1</a></li>";
+            echo "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2'>2</a></li>";
+          } else {
+            echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>1</a></li>";
+            echo "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2&search=$search'>2</a></li>";
+          }
 
 
+<<<<<<< HEAD
+          echo "<li class='page-item'><a class='page-link'>...</a></li>";
+          for (
+            $counter = $pageNum - $adjacents;
+            $counter <= $pageNum + $adjacents;
+            $counter++
+          ) {
+            if ($counter == $pageNum) {
+              echo "<li class='page-item active'><a class='page-link active' data-pagecount='" . $counter . "'>$counter</a></li>";
+            } else {
+              if (!$search) {
+                echo "<li class='page-item'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter'>$counter</a></li>";
+              } else {
+                echo "<li class='page-item'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter&search=$search'>$counter</a></li>";
+              }
+            }
+          }
+          echo "<li class='page-item'><a class='page-link'>...</a></li>";
+          if (!$search) {
+            echo "<li class='page-item'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast'>$secondLast</a></li>";
+            echo "<li class='page-item'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages'>$totalPages</a></li>";
+          } else {
+            echo "<li class='page-item'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
+            echo "<li class='page-item'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
+          }
+=======
         echo "<li class='page-item'><a class='page-link'>...</a></li>";
         for (
           $counter = $pageNum - $adjacents;
@@ -444,71 +474,77 @@ try {
           $counter++
         ) {
           if ($counter == $pageNum) {
-            echo "<li class='page-item active'><a class='page-link' data-pagecount='". $counter ."'>$counter</a></li>";
+            echo "<li class='page-item active'><a class='page-link' data-pagecount='" . $counter . "'>$counter</a></li>";
           } else {
             if (!$search) {
-              echo "<li class='page-item'><a class='page-link' data-pagecount='". $counter ."' href='?page=$counter'>$counter</a></li>";
+              echo "<li class='page-item'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter'>$counter</a></li>";
             } else {
-              echo "<li class='page-item'><a class='page-link' data-pagecount='". $counter ."' href='?page=$counter&search=$search'>$counter</a></li>";
+              echo "<li class='page-item'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter&search=$search'>$counter</a></li>";
             }
           }
         }
         echo "<li class='page-item'><a class='page-link'>...</a></li>";
         if (!$search) {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='". $secondLast ."' href='?page=$secondLast'>$secondLast</a></li>";
-          echo "<li class='page-item'><a class='page-link' data-pagecount='". $totalPages ."' href='?page=$totalPages'>$totalPages</a></li>";
+          echo "<li class='page-item'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast'>$secondLast</a></li>";
+          echo "<li class='page-item'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages'>$totalPages</a></li>";
         } else {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='". $secondLast ."' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
-          echo "<li class='page-item'><a class='page-link' data-pagecount='". $totalPages ."' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
+          echo "<li class='page-item'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
+          echo "<li class='page-item'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
         }
       } else {
         if (!$search) {
           echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>1</a></li>";
           echo "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2'>2</a></li>";
+>>>>>>> LJ-Branch
         } else {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>1</a></li>";
-          echo "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2&search=$search'>2</a></li>";
-        }
-        echo "<li class='page-item'><a class='page-link'>...</a></li>";
-        for (
-          $counter = $totalPages - 6;
-          $counter <= $totalPages;
-          $counter++
-        ) {
-          if ($counter == $pageNum) {
-            echo "<li class='page-item active'><a class='page-link'>$counter</a></li>";
+          if (!$search) {
+            echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>1</a></li>";
+            echo "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2'>2</a></li>";
           } else {
-            if (!$search) {
-              echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
+            echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>1</a></li>";
+            echo "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2&search=$search'>2</a></li>";
+          }
+          echo "<li class='page-item'><a class='page-link'>...</a></li>";
+          for (
+            $counter = $totalPages - 6;
+            $counter <= $totalPages;
+            $counter++
+          ) {
+            if ($counter == $pageNum) {
+              echo "<li class='page-item active'><a class='page-link active'>$counter</a></li>";
             } else {
-              echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
+              if (!$search) {
+                echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
+              } else {
+                echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
+              }
             }
           }
         }
       }
-    }
-    ?>
+      ?>
 
-    <li <?php if ($pageNum >= $totalPages) {
-          echo "class='page-link disabled'";
-        } ?>>
-      <a <?php if ($pageNum < $totalPages) {
-            if (!$search) {
-              echo "class='page-link' data-pagecount='$nextPage' href='?page=$nextPage'";
-            } else {
-              echo "class='page-link' data-pagecount='$nextPage href='?page=$nextPage&search=$search'";
-            }
-          } ?>>Next</a>
-    </li>
+      <li <?php if ($pageNum >= $totalPages) {
+            echo "class='page-link disabled'";
+          } ?>>
+        <a <?php if ($pageNum < $totalPages) {
+              if (!$search) {
+                echo "class='page-link' data-pagecount='$nextPage' href='?page=$nextPage'";
+              } else {
+                echo "class='page-link' data-pagecount='$nextPage href='?page=$nextPage&search=$search'";
+              }
+            } ?>>Next</a>
+      </li>
 
-    <?php if ($pageNum < $totalPages) {
-      if (!$search) {
-        echo "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages'>Last &rsaquo;&rsaquo;</a></li>";
-      } else {
-        echo "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'>Last &rsaquo;&rsaquo;</a></li>";
-      }
-    } ?>
-  </ul>
+      <?php if ($pageNum < $totalPages) {
+        if (!$search) {
+          echo "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages'>Last &rsaquo;&rsaquo;</a></li>";
+        } else {
+          echo "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'>Last &rsaquo;&rsaquo;</a></li>";
+        }
+      } ?>
+    </ul>
+  </div>
 
   <!-- END - PAGE NAVIGATION -->
 

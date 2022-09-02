@@ -115,7 +115,7 @@ function searchTable(ajaxAction) {
 
     let searchValue = $(this).find(".search-input").val();
 
-    refreshTable(ajaxAction, searchValue, false);
+    refreshTable(ajaxAction, searchValue, 1);
   });
 }
 
@@ -139,7 +139,7 @@ function refreshTable(actionFIle, search = false, page = false) {
   }
 
   let table = $(".jai-table.table-container"),
-    pagination = $("ul.pagination");
+    pagination = $(".pagination-container");
 
   $.ajax({
     url: "../ajax-calls/" + actionFIle,
@@ -338,23 +338,25 @@ function fillInputs(id) {
     },
     dataType: "json",
     success: function (borrowerDetails, status, success) {
-      $("#loanamount").val(borrowerDetails[0]["amount"]);
-      $("#payable").val(borrowerDetails[0]["payable"]);
-      $("#remainingbalance").val(borrowerDetails[0]["balance"]);
-      $("#amortization").val(borrowerDetails[0]["amortization"]);
-      $("#mode").val(borrowerDetails[0]["mode"]);
-      $("#term").val(borrowerDetails[0]["term"]);
-      $("#collectorid").val(borrowerDetails[0]["c_id"]);
-      $("#collectorname").val(borrowerDetails[0]["c_id"]);
-      $("#loanid").val(borrowerDetails[0]["l_id"]);
-      $("#name").val(
-        borrowerDetails[0]["cfname"] + " " + borrowerDetails[0]["clname"]
-      );
-      $("#type").val("");
-      $("#payment").val("");
-      $("#payment").placeholder = parseFloat(
-        borrowerDetails[0]["amortization"]
-      ).toFixed(2);
+      if ($(".payment-form").length) {
+        $("#loanamount").val(borrowerDetails[0]["amount"]);
+        $("#payable").val(borrowerDetails[0]["payable"]);
+        $("#remainingbalance").val(borrowerDetails[0]["balance"]);
+        $("#amortization").val(borrowerDetails[0]["amortization"]);
+        $("#mode").val(borrowerDetails[0]["mode"]);
+        $("#term").val(borrowerDetails[0]["term"]);
+        $("#collectorid").val(borrowerDetails[0]["c_id"]);
+        $("#collectorname").val(borrowerDetails[0]["c_id"]);
+        $("#loanid").val(borrowerDetails[0]["l_id"]);
+        $("#name").val(
+          borrowerDetails[0]["cfname"] + " " + borrowerDetails[0]["clname"]
+        );
+        $("#type").val("");
+        $("#payment").val("");
+        $("#payment").placeholder = parseFloat(
+          borrowerDetails[0]["amortization"]
+        ).toFixed(2);
+      }
     },
     error: function (xghr, status, error) {
       console.log(xghr);

@@ -72,7 +72,7 @@ $sat = date_create('saturday this week');
 
     /*                                                */
     /*                                                */
-    /*                GET PROFIT QUERY                */
+    /*            GET PROFIT QUERY (UNUSED)           */
     /*                                                */
     /*                                                */
 
@@ -137,7 +137,7 @@ $sat = date_create('saturday this week');
 
     /*                                                */
     /*                                                */
-    /*            END - GET PROFIT QUERY              */
+    /*        END - GET PROFIT QUERY (UNUSED)         */
     /*                                                */
     /*                                                */
 
@@ -460,6 +460,29 @@ $sat = date_create('saturday this week');
 
     $totalCollectionLastMonth = ($totalCashCollectionLastMonthKing['sum'] + $totalGCashCollectionLastMonthKing['sum']) + ($totalCashCollectionLastMonthCarl['sum'] + $totalGCashCollectionLastMonthCarl['sum']);
 
+    $queryPaymentsLastMonth = $conn->prepare("SELECT p.amount, l.amount as loanamount, l.payable, l.amortization
+                                      FROM jai_db.payments as p
+                                      INNER JOIN jai_db.loans as l
+                                      ON p.l_id = l.l_id
+                                      WHERE (p.date BETWEEN :firstoflastmonth AND :lastoflastmonth)");
+    $queryPaymentsLastMonth->bindValue(':firstoflastmonth', $firstOfLastMonth);
+    $queryPaymentsLastMonth->bindValue(':lastoflastmonth', $lastOfLastMonth);
+    $queryPaymentsLastMonth->execute();
+    $paymentsLastMonth = $queryPaymentsLastMonth->fetchAll(PDO::FETCH_ASSOC);
+
+    $profitOrLossLastMonth = (float)0;
+
+    foreach ($paymentsLastMonth as $i => $paymentLastMonth) {
+
+      $profit = $paymentLastMonth['payable'] - $paymentLastMonth['loanamount'];
+      $paymentsToCloseLoan = $paymentLastMonth['payable'] / $paymentLastMonth['amortization'];
+      $profitPerPaymentLastMonth = $profit / $paymentsToCloseLoan;
+
+      $profitOrLossLastMonth += ($profitPerPaymentLastMonth / $paymentLastMonth['amortization']) * $paymentLastMonth['amount'];
+    }
+
+
+
     /*                                                                   */
     /*                                                                   */
     /*       END - QUERIES TOTAL COLLECTION LAST MONTH PER COLLECTOR     */
@@ -510,6 +533,40 @@ $sat = date_create('saturday this week');
 
     $totalCollectionThisMonth = ($totalCashCollectionThisMonthKing['sum'] + $totalGCashCollectionThisMonthKing['sum']) + ($totalCashCollectionThisMonthCarl['sum'] + $totalGCashCollectionThisMonthCarl['sum']);
 
+    $queryPaymentsThisMonth = $conn->prepare("SELECT p.amount, l.amount as loanamount, l.payable, l.amortization
+                                      FROM jai_db.payments as p
+                                      INNER JOIN jai_db.loans as l
+                                      ON p.l_id = l.l_id
+                                      WHERE (p.date BETWEEN :firstofthismonth AND :lastofthismonth)");
+    $queryPaymentsThisMonth->bindValue(':firstofthismonth', $firstOfThisMonth);
+    $queryPaymentsThisMonth->bindValue(':lastofthismonth', $lastOfThisMonth);
+    $queryPaymentsThisMonth->execute();
+    $paymentsThisMonth = $queryPaymentsThisMonth->fetchAll(PDO::FETCH_ASSOC);
+
+    $profitOrLossThisMonth = (float)0;
+
+    foreach ($paymentsThisMonth as $i => $paymentThisMonth) {
+
+      $profit = $paymentThisMonth['payable'] - $paymentThisMonth['loanamount'];
+      $paymentsToCloseLoan = $paymentThisMonth['payable'] / $paymentThisMonth['amortization'];
+      $profitPerPaymentThisMonth = $profit / $paymentsToCloseLoan;
+
+      $profitOrLossThisMonth += ($profitPerPaymentThisMonth / $paymentThisMonth['amortization']) * $paymentThisMonth['amount'];
+    }
+
+
+    if ($totalCollectionLastMonth != 0) {
+      $collectionDifference = ((($totalCollectionThisMonth - $totalCollectionLastMonth) / $totalCollectionLastMonth) * 100);
+    } elseif ($totalCollectionLastMonth == 0) {
+      $collectionDifference = 0;
+    }
+
+    if ($profitOrLossLastMonth != 0) {
+      $profitDifference = (($profitOrLossThisMonth - $profitOrLossLastMonth) / $profitOrLossLastMonth) * 100;
+    } elseif ($profitOrLossLastMonth == 0) {
+      $profitDifference = 0;
+    }
+
     /*                                                                   */
     /*                                                                   */
     /*       END - QUERIES TOTAL COLLECTION THIS MONTH PER COLLECTOR     */
@@ -556,6 +613,27 @@ $sat = date_create('saturday this week');
 
     /* TOTAL (ALL) */
     $totalCollectionToday = ($totalCashCollectionTodayKing['sum'] + $totalGCashCollectionTodayKing['sum']) + ($totalCashCollectionTodayCarl['sum'] + $totalGCashCollectionTodayCarl['sum']);
+
+    /* GET PROFIT TODAY */
+    $queryPaymentsToday = $conn->prepare("SELECT p.amount, l.amount as loanamount, l.payable, l.amortization
+                                      FROM jai_db.payments as p
+                                      INNER JOIN jai_db.loans as l
+                                      ON p.l_id = l.l_id
+                                      WHERE (p.date = :datetoday)");
+    $queryPaymentsToday->bindValue(':datetoday', $dateToday);
+    $queryPaymentsToday->execute();
+    $paymentsToday = $queryPaymentsToday->fetchAll(PDO::FETCH_ASSOC);
+
+    $profitOrLossToday = (float)0;
+
+    foreach ($paymentsToday as $i => $paymentToday) {
+
+      $profit = $paymentToday['payable'] - $paymentToday['loanamount'];
+      $paymentsToCloseLoan = $paymentToday['payable'] / $paymentToday['amortization'];
+      $profitPerPaymentToday = $profit / $paymentsToCloseLoan;
+
+      $profitOrLossToday += ($profitPerPaymentToday / $paymentToday['amortization']) * $paymentToday['amount'];
+    }
 
     /*                                                                   */
     /*                                                                   */
@@ -605,6 +683,7 @@ $sat = date_create('saturday this week');
     $satProfit = (float)0;
 
     $totalCollectionThisWeek = (float)0;
+    $totalProfitThisWeek = (float)0;
 
     foreach ($collectionThisWeek as $i => $collection) {
 
@@ -657,6 +736,8 @@ $sat = date_create('saturday this week');
       } elseif (date_format(date_create($collection['date']), 'D') == 'Sat') {
         $satProfit += $profitOrLossThisWeek;
       }
+
+      $totalProfitThisWeek += $profitOrLossThisWeek;
     }
 
 
@@ -736,12 +817,17 @@ $sat = date_create('saturday this week');
     <div class="card-chart-div d-flex jai-card">
       <div class="chart-div">
         <canvas id="chartTotalCollectionLastMonth"></canvas>
+        <center>Profit last month: ₱ <?= number_format($profitOrLossLastMonth, 2) ?> </center>
       </div>
       <div class="chart-div">
         <canvas id="chartTotalCollectionThisMonth"></canvas>
+        <center>Profit this month: ₱ <?= number_format($profitOrLossThisMonth, 2) ?></center>
+        <center><?= ($profitDifference >= 0 ? '+' : '') . number_format($profitDifference, 4) . "% vs last month's profit (test)" ?></center>
+        <center><?= ($collectionDifference >= 0 ? '+' : '') . number_format($collectionDifference, 4) . "% vs last month's collection (test)" ?></center>
       </div>
       <div class="chart-div">
         <canvas id="chartTotalCollectionToday"></canvas>
+        <center>Profit today: ₱ <?= number_format($profitOrLossToday, 2) ?></center>
         <div class="no-collections">
           <?= $totalCollectionToday == 0 ? '<span>No collections today</span>' : '' ?>
         </div>
@@ -751,6 +837,7 @@ $sat = date_create('saturday this week');
     <div class="card-bar-chart-div jai-card">
       <div class="bar-chart-div">
         <canvas id="chartCollectionThisWeek"></canvas>
+        <center>Profit this week: ₱ <?= number_format($totalProfitThisWeek, 2) ?></center>
       </div>
     </div>
 
@@ -784,17 +871,6 @@ $sat = date_create('saturday this week');
       <!-- <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $payment['l_id'] ?>" <?= ($payment['paymentsmade'] || $payment['passes']) == 0 ? 'disabled' : '' ?>></input> -->
     </form>
     <br>
-    <?php
-
-    echo 'Expected profits today: ' . number_format($totalProfitPerPayment, 4);
-    echo "<br>";
-    echo 'Expected total collection today: ' . number_format($expectedTotalCollection, 2);
-
-    // echo '<pre>';
-    // var_dump($totalCashCollectionTodayKing);
-    // exit;
-
-    ?>
 
     <script>
       var fullDate = {
@@ -1128,12 +1204,22 @@ $sat = date_create('saturday this week');
       //SETUP BLOCK
       const dataBar = {
         labels: [
-          [mon, '₱ ' + (monCollectionKing + monCollectionCarl).toLocaleString('en-US', numberFormat),'(Profit: ' + (isNaN((monProfit / ((monCollectionKing + monCollectionCarl) - monProfit)) * 100) ? 0 : ((monProfit / ((monCollectionKing + monCollectionCarl) - monProfit)) * 100)).toFixed(2) + '%)'],
-          [tue, '₱ ' + (tueCollectionKing + tueCollectionCarl).toLocaleString('en-US', numberFormat),'(Profit: ' + (isNaN((tueProfit / ((tueCollectionKing + tueCollectionCarl) - tueProfit)) * 100) ? 0 : ((tueProfit / ((tueCollectionKing + tueCollectionCarl) - tueProfit)) * 100)).toFixed(2) + '%)'],
-          [wed, '₱ ' + (wedCollectionKing + wedCollectionCarl).toLocaleString('en-US', numberFormat),'(Profit: ' + (isNaN((wedProfit / ((wedCollectionKing + wedCollectionCarl) - wedProfit)) * 100) ? 0 : ((wedProfit / ((wedCollectionKing + wedCollectionCarl) - wedProfit)) * 100)).toFixed(2) + '%)'],
-          [thu, '₱ ' + (thuCollectionKing + thuCollectionCarl).toLocaleString('en-US', numberFormat),'(Profit: ' + (isNaN((thuProfit / ((thuCollectionKing + thuCollectionCarl) - thuProfit)) * 100) ? 0 : ((thuProfit / ((thuCollectionKing + thuCollectionCarl) - thuProfit)) * 100)).toFixed(2) + '%)'],
-          [fri, '₱ ' + (friCollectionKing + friCollectionCarl).toLocaleString('en-US', numberFormat),'(Profit: ' + (isNaN((friProfit / ((friCollectionKing + friCollectionCarl) - friProfit)) * 100) ? 0 : ((friProfit / ((friCollectionKing + friCollectionCarl) - friProfit)) * 100)).toFixed(2) + '%)'],
-          [sat, '₱ ' + (satCollectionKing + satCollectionCarl).toLocaleString('en-US', numberFormat),'(Profit: ' + (isNaN((satProfit / ((satCollectionKing + satCollectionCarl) - satProfit)) * 100) ? 0 : ((satProfit / ((satCollectionKing + satCollectionCarl) - satProfit)) * 100)).toFixed(2) + '%)']
+          // Calculates % of interest of LOAN AMOUNT
+          // [mon, '₱ ' + (monCollectionKing + monCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((monProfit / ((monCollectionKing + monCollectionCarl) - monProfit)) * 100) ? 0 : ((monProfit / ((monCollectionKing + monCollectionCarl) - monProfit)) * 100)).toFixed(4) + '%)'],
+          // [tue, '₱ ' + (tueCollectionKing + tueCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((tueProfit / ((tueCollectionKing + tueCollectionCarl) - tueProfit)) * 100) ? 0 : ((tueProfit / ((tueCollectionKing + tueCollectionCarl) - tueProfit)) * 100)).toFixed(4) + '%)'],
+          // [wed, '₱ ' + (wedCollectionKing + wedCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((wedProfit / ((wedCollectionKing + wedCollectionCarl) - wedProfit)) * 100) ? 0 : ((wedProfit / ((wedCollectionKing + wedCollectionCarl) - wedProfit)) * 100)).toFixed(4) + '%)'],
+          // [thu, '₱ ' + (thuCollectionKing + thuCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((thuProfit / ((thuCollectionKing + thuCollectionCarl) - thuProfit)) * 100) ? 0 : ((thuProfit / ((thuCollectionKing + thuCollectionCarl) - thuProfit)) * 100)).toFixed(4) + '%)'],
+          // [fri, '₱ ' + (friCollectionKing + friCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((friProfit / ((friCollectionKing + friCollectionCarl) - friProfit)) * 100) ? 0 : ((friProfit / ((friCollectionKing + friCollectionCarl) - friProfit)) * 100)).toFixed(4) + '%)'],
+          // [sat, '₱ ' + (satCollectionKing + satCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((satProfit / ((satCollectionKing + satCollectionCarl) - satProfit)) * 100) ? 0 : ((satProfit / ((satCollectionKing + satCollectionCarl) - satProfit)) * 100)).toFixed(4) + '%)']
+
+          // Calculates % of profit from collection
+          [mon, '₱ ' + (monCollectionKing + monCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((monProfit / (monCollectionKing + monCollectionCarl)) * 100) ? 0 : (((monProfit / (monCollectionKing + monCollectionCarl)) * 100)).toFixed(2)) + '%)'],
+          [tue, '₱ ' + (tueCollectionKing + tueCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((tueProfit / (tueCollectionKing + tueCollectionCarl)) * 100) ? 0 : (((tueProfit / (tueCollectionKing + tueCollectionCarl)) * 100)).toFixed(2)) + '%)'],
+          [wed, '₱ ' + (wedCollectionKing + wedCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((wedProfit / (wedCollectionKing + wedCollectionCarl)) * 100) ? 0 : (((wedProfit / (wedCollectionKing + wedCollectionCarl)) * 100)).toFixed(2)) + '%)'],
+          [thu, '₱ ' + (thuCollectionKing + thuCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((thuProfit / (thuCollectionKing + thuCollectionCarl)) * 100) ? 0 : (((thuProfit / (thuCollectionKing + thuCollectionCarl)) * 100)).toFixed(2)) + '%)'],
+          [fri, '₱ ' + (friCollectionKing + friCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((friProfit / (friCollectionKing + friCollectionCarl)) * 100) ? 0 : (((friProfit / (friCollectionKing + friCollectionCarl)) * 100)).toFixed(2)) + '%)'],
+          [sat, '₱ ' + (satCollectionKing + satCollectionCarl).toLocaleString('en-US', numberFormat), '(Profit: ' + (isNaN((satProfit / (satCollectionKing + satCollectionCarl)) * 100) ? 0 : (((satProfit / (satCollectionKing + satCollectionCarl)) * 100)).toFixed(2)) + '%)']
+
         ],
         datasets: [{
           type: 'line',
@@ -1347,6 +1433,7 @@ $sat = date_create('saturday this week');
       const novPassAmount = <?= json_encode($novPassAmount) ?>;
       const decPassAmount = <?= json_encode($decPassAmount) ?>;
 
+      // Calculates % of interest of LOAN AMOUNT
       const janPercent = isNaN((janProfitOrLoss / (janCollection - janProfitOrLoss)) * 100) ? 0 : (janProfitOrLoss / (janCollection - janProfitOrLoss)) * 100;
       const febPercent = isNaN((febProfitOrLoss / (febCollection - febProfitOrLoss)) * 100) ? 0 : (febProfitOrLoss / (febCollection - febProfitOrLoss)) * 100;
       const marPercent = isNaN((marProfitOrLoss / (marCollection - marProfitOrLoss)) * 100) ? 0 : (marProfitOrLoss / (marCollection - marProfitOrLoss)) * 100;
@@ -1364,22 +1451,37 @@ $sat = date_create('saturday this week');
       const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
       const dataOverview = {
         labels: [
-          ['January', '(Profit: ' + janPercent.toFixed(2) + '%)'],
-          ['February', '(Profit: ' + febPercent.toFixed(2) + '%)'],
-          ['March', '(Profit: ' + marPercent.toFixed(2) + '%)'],
-          ['April', '(Profit: ' + aprPercent.toFixed(2) + '%)'],
-          ['May', '(Profit: ' + mayPercent.toFixed(2) + '%)'],
-          ['June', '(Profit: ' + junPercent.toFixed(2) + '%)'],
-          ['July', '(Profit: ' + julPercent.toFixed(2) + '%)'],
-          ['August', '(Profit: ' + augPercent.toFixed(2) + '%)'],
-          ['September', '(Profit: ' + sepPercent.toFixed(2) + '%)'],
-          ['October', '(Profit: ' + octPercent.toFixed(2) + '%)'],
-          ['November', '(Profit: ' + novPercent.toFixed(2) + '%)'],
-          ['December', '(Profit: ' + decPercent.toFixed(2) + '%)']
+          // Calculates % of interest of LOAN AMOUNT
+          // ['January', '(Profit: ' + janPercent.toFixed(4) + '%)'],
+          // ['February', '(Profit: ' + febPercent.toFixed(4) + '%)'],
+          // ['March', '(Profit: ' + marPercent.toFixed(4) + '%)'],
+          // ['April', '(Profit: ' + aprPercent.toFixed(4) + '%)'],
+          // ['May', '(Profit: ' + mayPercent.toFixed(4) + '%)'],
+          // ['June', '(Profit: ' + junPercent.toFixed(4) + '%)'],
+          // ['July', '(Profit: ' + julPercent.toFixed(4) + '%)'],
+          // ['August', '(Profit: ' + augPercent.toFixed(4) + '%)'],
+          // ['September', '(Profit: ' + sepPercent.toFixed(4) + '%)'],
+          // ['October', '(Profit: ' + octPercent.toFixed(4) + '%)'],
+          // ['November', '(Profit: ' + novPercent.toFixed(4) + '%)'],
+          // ['December', '(Profit: ' + decPercent.toFixed(4) + '%)']
+
+          // Calculates % of profit from collection
+          ['January', '(Profit: ' + (isNaN(((janProfitOrLoss / janCollection) * 100).toFixed(2)) ? 0 : ((janProfitOrLoss / janCollection) * 100).toFixed(2)) + '%)'],
+          ['February', '(Profit: ' + (isNaN(((febProfitOrLoss / febCollection) * 100).toFixed(2)) ? 0 : ((febProfitOrLoss / febCollection) * 100).toFixed(2)) + '%)'],
+          ['March', '(Profit: ' + (isNaN(((marProfitOrLoss / marCollection) * 100).toFixed(2)) ? 0 : ((marProfitOrLoss / marCollection) * 100).toFixed(2)) + '%)'],
+          ['April', '(Profit: ' + (isNaN(((aprProfitOrLoss / aprCollection) * 100).toFixed(2)) ? 0 : ((aprProfitOrLoss / aprCollection) * 100).toFixed(2)) + '%)'],
+          ['May', '(Profit: ' + (isNaN(((mayProfitOrLoss / mayCollection) * 100).toFixed(2)) ? 0 : ((mayProfitOrLoss / mayCollection) * 100).toFixed(2)) + '%)'],
+          ['June', '(Profit: ' + (isNaN(((junProfitOrLoss / junCollection) * 100).toFixed(2)) ? 0 : ((junProfitOrLoss / junCollection) * 100).toFixed(2)) + '%)'],
+          ['July', '(Profit: ' + (isNaN(((julProfitOrLoss / julCollection) * 100).toFixed(2)) ? 0 : ((julProfitOrLoss / julCollection) * 100).toFixed(2)) + '%)'],
+          ['August', '(Profit: ' + (isNaN(((augProfitOrLoss / augCollection) * 100).toFixed(2)) ? 0 : ((augProfitOrLoss / augCollection) * 100).toFixed(2)) + '%)'],
+          ['September', '(Profit: ' + (isNaN(((sepProfitOrLoss / sepCollection) * 100).toFixed(2)) ? 0 : ((sepProfitOrLoss / sepCollection) * 100).toFixed(2)) + '%)'],
+          ['October', '(Profit: ' + (isNaN(((octProfitOrLoss / octCollection) * 100).toFixed(2)) ? 0 : ((octProfitOrLoss / octCollection) * 100).toFixed(2)) + '%)'],
+          ['November', '(Profit: ' + (isNaN(((novProfitOrLoss / novCollection) * 100).toFixed(2)) ? 0 : ((novProfitOrLoss / novCollection) * 100).toFixed(2)) + '%)'],
+          ['December', '(Profit: ' + (isNaN(((decProfitOrLoss / decCollection) * 100).toFixed(2)) ? 0 : ((decProfitOrLoss / decCollection) * 100).toFixed(2)) + '%)']
         ],
         datasets: [{
           label: 'Profit',
-          data: [janProfitOrLoss.toFixed(2), febProfitOrLoss.toFixed(2), marProfitOrLoss.toFixed(2), aprProfitOrLoss.toFixed(2), mayProfitOrLoss.toFixed(2), junProfitOrLoss.toFixed(2), julProfitOrLoss.toFixed(2), augProfitOrLoss.toFixed(2), sepProfitOrLoss.toFixed(2), octProfitOrLoss.toFixed(2), novProfitOrLoss.toFixed(2), decProfitOrLoss.toFixed(2)],
+          data: [janProfitOrLoss.toFixed(4), febProfitOrLoss.toFixed(4), marProfitOrLoss.toFixed(4), aprProfitOrLoss.toFixed(4), mayProfitOrLoss.toFixed(4), junProfitOrLoss.toFixed(4), julProfitOrLoss.toFixed(4), augProfitOrLoss.toFixed(4), sepProfitOrLoss.toFixed(4), octProfitOrLoss.toFixed(4), novProfitOrLoss.toFixed(4), decProfitOrLoss.toFixed(4)],
           backgroundColor: [
             'rgba(243, 225, 107, 1)'
           ],
@@ -1390,11 +1492,12 @@ $sat = date_create('saturday this week');
           type: 'line',
           pointStyle: 'rectRot',
           pointRadius: 7.5,
-          hoverRadius: 10,
+          hoverRadius: 12,
           tension: 0.15
         }, {
           barPercentage: 0.85,
           label: 'Released',
+          hidden: true,
           data: [janRelease, febRelease, marRelease, aprRelease, mayRelease, junRelease, julRelease, augRelease, sepRelease, octRelease, novRelease, decRelease],
           backgroundColor: [
             'rgba(3, 201, 169, 1)'
@@ -1406,6 +1509,7 @@ $sat = date_create('saturday this week');
         }, {
           barPercentage: 0.85,
           label: 'Payable',
+          hidden: true,
           data: [janPayable, febPayable, marPayable, aprPayable, mayPayable, junPayable, julPayable, augPayable, sepPayable, octPayable, novPayable, decPayable],
           backgroundColor: [
             'rgba(230, 126, 34, 1)'
@@ -1427,10 +1531,11 @@ $sat = date_create('saturday this week');
           borderWidth: 1
         }, {
           barPercentage: 0.85,
-          label: 'Passes',
-          data: [janPasses, febPasses, marPasses, aprPasses, mayPasses, junPasses, julPasses, augPasses, sepPasses, octPasses, novPasses, decPasses],
+          label: 'Pass Amount',
+          hidden: true,
+          data: [janPassAmount, febPassAmount, marPassAmount, aprPassAmount, mayPassAmount, junPassAmount, julPassAmount, augPassAmount, sepPassAmount, octPassAmount, novPassAmount, decPassAmount],
           backgroundColor: [
-            'rgba(150, 40, 27, 1)'
+            'rgba(140, 20, 252, 1)'
           ],
           borderColor: [
             'rgb(0, 0, 0)'
@@ -1438,10 +1543,11 @@ $sat = date_create('saturday this week');
           borderWidth: 1
         }, {
           barPercentage: 0.85,
-          label: 'Pass Amount',
-          data: [janPassAmount, febPassAmount, marPassAmount, aprPassAmount, mayPassAmount, junPassAmount, julPassAmount, augPassAmount, sepPassAmount, octPassAmount, novPassAmount, decPassAmount],
+          label: 'Passes',
+          hidden: true,
+          data: [janPasses, febPasses, marPasses, aprPasses, mayPasses, junPasses, julPasses, augPasses, sepPasses, octPasses, novPasses, decPasses],
           backgroundColor: [
-            'rgba(140, 20, 252, 1)'
+            'rgba(150, 40, 27, 1)'
           ],
           borderColor: [
             'rgb(0, 0, 0)'

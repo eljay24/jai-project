@@ -36,8 +36,10 @@ try {
                                                  OR c.firstname LIKE :search OR c.middlename LIKE :search OR c.lastname LIKE :search OR p.type LIKE :search
                                                  OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                                  OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
-                                                 OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search) ORDER BY p.date ASC
-                                          ");
+                                                 OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
+                                                 OR CONCAT('l', p.l_id) LIKE :search
+                                                 OR CONCAT('b', b.b_id) LIKE :search)
+                                          ORDER BY p.date ASC");
     $statementTotalRows->bindValue(':search', "%$search%");
   } else {
     $statementTotalRows = $conn->prepare("SELECT COUNT(*) as count FROM jai_db.payments");
@@ -74,6 +76,8 @@ try {
                                        OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                        OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
                                        OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
+                                       OR CONCAT('l', l.l_id) LIKE :search
+                                       OR CONCAT('b', b.b_id) LIKE :search
                                  ORDER BY p.date DESC, p.p_id DESC
                                  LIMIT :offset, :numOfRowsPerPage");
     $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
@@ -197,8 +201,7 @@ try {
               </div>
             </div> -->
             <div class="col">
-              <p class="jai-table-name primary-font <?= $payment['borrowerfname'] == 'Angelo' ? 'red' : ''; ?>
-                                                <?= $payment['borrowerfname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label"></span> <?= '#' . $payment['b_id'] . ' ' . ucwords(strtolower($payment['borrowerfname'])) . ' ' . ucwords(strtolower($payment['borrowermname'])) . ' ' . ucwords(strtolower($payment['borrowerlname'])) ?></p>
+              <p class="jai-table-name primary-font"><span class="jai-table-label"></span> <?= '#' . $payment['b_id'] . ' ' . ucwords(strtolower($payment['borrowerfname'])) . ' ' . ucwords(strtolower(substr($payment['borrowermname'], 0, 1))) . '. ' . ucwords(strtolower($payment['borrowerlname'])) ?></p>
             </div>
             <div class="col-4">
               <p class="primary-font">Loan Ref #<?= $payment['l_id'] ?></p>
@@ -211,8 +214,7 @@ try {
         <div class="col">
           <div class="row">
             <div class="col">
-              <p class="jai-table-comaker primary-font <?= $payment['borrowerfname'] == 'Angelo' ? 'red' : ''; ?>
-                                                <?= $payment['borrowerfname'] == 'Lee' ? 'green' : '' ?>"><span class="jai-table-label">Amount:</span> <?= "₱ " .  number_format($payment['amount'], 2) ?></p>
+              <p class="jai-table-comaker primary-font"><span class="jai-table-label">Amount:</span> <?= "₱ " .  number_format($payment['amount'], 2) ?></p>
               <p class="jai-table-contact sub-font"> <span class="jai-table-label">Type: </span><?php echo $payment['type'] ?></p>
             </div>
             <div class="col">
@@ -242,7 +244,7 @@ try {
           <div class="row">
             <div class="col">
               <p class="jai-table-address primary-font"> <span class="jai-table-label">Collector: </span><?php echo ucwords(strtolower($payment['collectorfname'])) . ' ' . ucwords(strtolower($payment['collectormname'])) . ' ' . ucwords(strtolower($payment['collectorlname'])) ?></p>
-              <p class="sub-font"><?= ($profitOrLoss > 0) ? '(test)Profit: +'.number_format($profitOrLoss, 2) : '(test)Loss: '.number_format($profitOrLoss, 2) ?></p>
+              <p class="sub-font"><?= ($profitOrLoss > 0) ? '(test)Profit: +' . number_format($profitOrLoss, 2) : '(test)Loss: ' . number_format($profitOrLoss, 2) ?></p>
               <!-- <textarea class="jai-table-input" type="text"></textarea> -->
             </div>
             <div class="col-4">
@@ -298,7 +300,7 @@ try {
           <h5 class="modal-title">Create Payment</h5>
         </div>
         <div class="modal-body">
-          <form class="action-form" autocomplete="off" action="payment-loan" method="post" enctype="multipart/form-data">
+          <form class="action-form payment-form" autocomplete="off" action="payment-loan" method="post" enctype="multipart/form-data">
             <input type="hidden" class="d-none" name="b_id" value="">
             <input name="data-row" type="hidden" class="d-none" value=''>
             <div class="container">
@@ -411,47 +413,35 @@ try {
   </div>
 
   <!-- PAGE NAVIGATION -->
-  <div style='padding: 10px 20px 0px; border-top: dotted 1px #CCC;'>
-    <strong>Page <?= $pageNum . " of " . $totalPages; ?></strong>
-  </div>
+  <div class="pagination-container">
+    <div style='padding: 10px 20px 0px; border-top: dotted 1px #CCC;'>
+      <strong>Page <?= $pageNum . " of " . $totalPages; ?></strong>
+    </div>
 
-  <ul class="pagination">
-    <?php if ($pageNum > 1) {
-      if (!$search) {
-        echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>First Page</a></li>";
-      } else {
-        echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>First Page</a></li>";
-      }
-    } ?>
-
-    <li <?php if ($pageNum <= 1) {
-          echo "class='page-link disabled'";
-        } ?>>
-      <a <?php if ($pageNum > 1) {
-            if (!$search) {
-              echo "class='page-link' data-pagecount='$previousPage' href='?page=$previousPage'";
-            } else {
-              echo "class='page-link' data-pagecount='$previousPage' href='?page=$previousPage&search=$search'";
-            }
-          } ?>>Previous</a>
-    </li>
-
-    <?php
-    if ($totalPages <= 10) {
-      for ($counter = 1; $counter <= $totalPages; $counter++) {
-        if ($counter == $pageNum) {
-          echo "<li class='page-item active'><a data-pagecount='$counter' class='page-link active'>$counter</a></li>";
+    <ul class="pagination">
+      <?php if ($pageNum > 1) {
+        if (!$search) {
+          echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>First Page</a></li>";
         } else {
-          if (!$search) {
-            echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
-          } else {
-            echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
-          }
+          echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>First Page</a></li>";
         }
-      }
-    } elseif ($totalPages > 10) {
-      if ($pageNum <= 4) {
-        for ($counter = 1; $counter < 8; $counter++) {
+      } ?>
+
+      <li <?php if ($pageNum <= 1) {
+            echo "class='page-link disabled'";
+          } ?>>
+        <a <?php if ($pageNum > 1) {
+              if (!$search) {
+                echo "class='page-link' data-pagecount='$previousPage' href='?page=$previousPage'";
+              } else {
+                echo "class='page-link' data-pagecount='$previousPage' href='?page=$previousPage&search=$search'";
+              }
+            } ?>>Previous</a>
+      </li>
+
+      <?php
+      if ($totalPages <= 10) {
+        for ($counter = 1; $counter <= $totalPages; $counter++) {
           if ($counter == $pageNum) {
             echo "<li class='page-item active'><a data-pagecount='$counter' class='page-link active'>$counter</a></li>";
           } else {
@@ -462,96 +452,110 @@ try {
             }
           }
         }
-        echo "<li class='page-item'><a class='page-link'>...</a></li>";
-        if (!$search) {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='$secondLast' href='?page=$secondLast'>$secondLast</a></li>";
-          echo "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages'>$totalPages</a></li>";
-        } else {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='$secondLast' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
-          echo "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
-        }
-      } elseif ($pageNum > 4 && $pageNum < $totalPages - 4) {
-        if (!$search) {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>1</a></li>";
-          echo "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2'>2</a></li>";
-        } else {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>1</a></li>";
-          echo "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2&search=$search'>2</a></li>";
-        }
-
-
-        echo "<li class='page-item'><a class='page-link'>...</a></li>";
-        for (
-          $counter = $pageNum - $adjacents;
-          $counter <= $pageNum + $adjacents;
-          $counter++
-        ) {
-          if ($counter == $pageNum) {
-            echo "<li class='page-item active'><a class='page-link active' data-pagecount='" . $counter . "'>$counter</a></li>";
-          } else {
-            if (!$search) {
-              echo "<li class='page-item'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter'>$counter</a></li>";
+      } elseif ($totalPages > 10) {
+        if ($pageNum <= 4) {
+          for ($counter = 1; $counter < 8; $counter++) {
+            if ($counter == $pageNum) {
+              echo "<li class='page-item active'><a data-pagecount='$counter' class='page-link active'>$counter</a></li>";
             } else {
-              echo "<li class='page-item'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter&search=$search'>$counter</a></li>";
+              if (!$search) {
+                echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
+              } else {
+                echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
+              }
             }
           }
-        }
-        echo "<li class='page-item'><a class='page-link'>...</a></li>";
-        if (!$search) {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast'>$secondLast</a></li>";
-          echo "<li class='page-item'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages'>$totalPages</a></li>";
-        } else {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
-          echo "<li class='page-item'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
-        }
-      } else {
-        if (!$search) {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>1</a></li>";
-          echo "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2'>2</a></li>";
-        } else {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>1</a></li>";
-          echo "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2&search=$search'>2</a></li>";
-        }
-        echo "<li class='page-item'><a class='page-link'>...</a></li>";
-        for (
-          $counter = $totalPages - 6;
-          $counter <= $totalPages;
-          $counter++
-        ) {
-          if ($counter == $pageNum) {
-            echo "<li class='page-item active'><a class='page-link active'>$counter</a></li>";
+          echo "<li class='page-item'><a class='page-link'>...</a></li>";
+          if (!$search) {
+            echo "<li class='page-item'><a class='page-link' data-pagecount='$secondLast' href='?page=$secondLast'>$secondLast</a></li>";
+            echo "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages'>$totalPages</a></li>";
           } else {
-            if (!$search) {
-              echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
+            echo "<li class='page-item'><a class='page-link' data-pagecount='$secondLast' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
+            echo "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
+          }
+        } elseif ($pageNum > 4 && $pageNum < $totalPages - 4) {
+          if (!$search) {
+            echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>1</a></li>";
+            echo "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2'>2</a></li>";
+          } else {
+            echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>1</a></li>";
+            echo "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2&search=$search'>2</a></li>";
+          }
+
+
+          echo "<li class='page-item'><a class='page-link'>...</a></li>";
+          for (
+            $counter = $pageNum - $adjacents;
+            $counter <= $pageNum + $adjacents;
+            $counter++
+          ) {
+            if ($counter == $pageNum) {
+              echo "<li class='page-item active'><a class='page-link active' data-pagecount='" . $counter . "'>$counter</a></li>";
             } else {
-              echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
+              if (!$search) {
+                echo "<li class='page-item'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter'>$counter</a></li>";
+              } else {
+                echo "<li class='page-item'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter&search=$search'>$counter</a></li>";
+              }
+            }
+          }
+          echo "<li class='page-item'><a class='page-link'>...</a></li>";
+          if (!$search) {
+            echo "<li class='page-item'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast'>$secondLast</a></li>";
+            echo "<li class='page-item'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages'>$totalPages</a></li>";
+          } else {
+            echo "<li class='page-item'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
+            echo "<li class='page-item'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
+          }
+        } else {
+          if (!$search) {
+            echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>1</a></li>";
+            echo "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2'>2</a></li>";
+          } else {
+            echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>1</a></li>";
+            echo "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2&search=$search'>2</a></li>";
+          }
+          echo "<li class='page-item'><a class='page-link'>...</a></li>";
+          for (
+            $counter = $totalPages - 6;
+            $counter <= $totalPages;
+            $counter++
+          ) {
+            if ($counter == $pageNum) {
+              echo "<li class='page-item active'><a class='page-link active'>$counter</a></li>";
+            } else {
+              if (!$search) {
+                echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
+              } else {
+                echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
+              }
             }
           }
         }
       }
-    }
-    ?>
+      ?>
 
-    <li <?php if ($pageNum >= $totalPages) {
-          echo "class='page-link disabled'";
-        } ?>>
-      <a <?php if ($pageNum < $totalPages) {
-            if (!$search) {
-              echo "class='page-link' data-pagecount='$nextPage' href='?page=$nextPage'";
-            } else {
-              echo "class='page-link' data-pagecount='$nextPage href='?page=$nextPage&search=$search'";
-            }
-          } ?>>Next</a>
-    </li>
+      <li <?php if ($pageNum >= $totalPages) {
+            echo "class='page-link disabled'";
+          } ?>>
+        <a <?php if ($pageNum < $totalPages) {
+              if (!$search) {
+                echo "class='page-link' data-pagecount='$nextPage' href='?page=$nextPage'";
+              } else {
+                echo "class='page-link' data-pagecount='$nextPage href='?page=$nextPage&search=$search'";
+              }
+            } ?>>Next</a>
+      </li>
 
-    <?php if ($pageNum < $totalPages) {
-      if (!$search) {
-        echo "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages'>Last &rsaquo;&rsaquo;</a></li>";
-      } else {
-        echo "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'>Last &rsaquo;&rsaquo;</a></li>";
-      }
-    } ?>
-  </ul>
+      <?php if ($pageNum < $totalPages) {
+        if (!$search) {
+          echo "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages'>Last &rsaquo;&rsaquo;</a></li>";
+        } else {
+          echo "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'>Last &rsaquo;&rsaquo;</a></li>";
+        }
+      } ?>
+    </ul>
+  </div>
 
   <!-- END - PAGE NAVIGATION -->
 

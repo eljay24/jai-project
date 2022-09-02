@@ -24,8 +24,17 @@ if (isset($_POST['action'])) {
 
   if ($search) {
     $statementTotalRows = $conn->prepare("SELECT COUNT(*) as count FROM jai_db.borrowers as b
-                                            WHERE (isdeleted = 0) AND (firstname LIKE :search OR middlename LIKE :search OR lastname LIKE :search OR comaker LIKE :search OR b.b_id LIKE :search) ORDER BY b.b_id ASC
-                                            ");
+                                          LEFT JOIN jai_db.loans as l
+                                          ON l.l_id = (SELECT MAX(l_id)
+                                                       FROM jai_db.loans as l2
+                                                       WHERE l2.b_id = b.b_id LIMIT 1) 
+                                          WHERE (isdeleted = 0) AND (firstname LIKE :search OR middlename LIKE :search OR lastname LIKE :search OR comaker LIKE :search OR b.b_id LIKE :search
+                                          OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
+                                          OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
+                                          OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
+                                          OR CONCAT('l', l.l_id) LIKE :search
+                                          OR CONCAT('b', b.b_id) LIKE :search)
+                                          ORDER BY b.b_id ASC");
     $statementTotalRows->bindValue(':search', "%$search%");
   } else {
     $statementTotalRows = $conn->prepare("SELECT COUNT(*) as count FROM jai_db.borrowers
@@ -50,7 +59,9 @@ if (isset($_POST['action'])) {
                                    WHERE (isdeleted = 0) AND (firstname LIKE :search OR middlename LIKE :search OR lastname LIKE :search OR comaker LIKE :search OR b.b_id LIKE :search
                                           OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                           OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
-                                          OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search)
+                                          OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
+                                          OR CONCAT('l', l.l_id) LIKE :search
+                                          OR CONCAT('b', b.b_id) LIKE :search)
                                    ORDER BY b.b_id ASC
                                    LIMIT :offset, :numOfRowsPerPage");
     $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
@@ -176,6 +187,11 @@ if (isset($_POST['action'])) {
   }
 
 
+  $pagination .= '<div style="padding: 10px 20px 0px; border-top: dotted 1px #CCC;">';
+  $pagination .= '<strong>Page' . $pageNum . " of " . $totalPages . '</strong>';
+  $pagination .= '</div>';
+
+  $pagination .= '<ul class="pagination">';
   if ($pageNum > 1) {
     if (!$search) {
       $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>First Page</a></li>";
@@ -296,11 +312,11 @@ if (isset($_POST['action'])) {
 
 
   if ($pageNum < $totalPages) {
-    $pagination .= "<li " . ($pageNum >= $totalPages ? "class='page-link disabled'" : '') . "><a ";
+    $pagination .= "<li " . ($pageNum >= $totalPages ? "class='page-link'" : '') . "><a ";
     if (!$search) {
       $pagination .= "class='page-link' data-pagecount='$nextPage' href='?page=$nextPage'";
     } else {
-      $pagination .= "class='page-link' data-pagecount='$nextPage href='?page=$nextPage&search=$search'";
+      $pagination .= "class='page-link' data-pagecount='$nextPage' href='?page=$nextPage&search=$search'";
     }
     $pagination .= ">Next</a></li>";
   }
@@ -314,6 +330,7 @@ if (isset($_POST['action'])) {
     }
   }
 
+  $pagination .= '</ul>';
   $data['table'] = $table;
   $data['pagination'] = $pagination;
 

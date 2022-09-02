@@ -30,8 +30,10 @@ if (isset($_POST['action'])) {
                                                  OR c.firstname LIKE :search OR c.middlename LIKE :search OR c.lastname LIKE :search OR p.type LIKE :search
                                                  OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                                  OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
-                                                 OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search) ORDER BY p.date ASC
-                                          ");
+                                                 OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
+                                                 OR CONCAT('l', l.l_id) LIKE :search
+                                                 OR CONCAT('b', b.b_id) LIKE :search)
+                                          ORDER BY p.date ASC");
     $statementTotalRows->bindValue(':search', "%$search%");
   } else {
     $statementTotalRows = $conn->prepare("SELECT COUNT(*) as count FROM jai_db.payments");
@@ -58,6 +60,8 @@ if (isset($_POST['action'])) {
                                        OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                        OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
                                        OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
+                                       OR CONCAT('l', l.l_id) LIKE :search
+                                       OR CONCAT('b', b.b_id) LIKE :search
                                  ORDER BY p.date DESC, p.p_id DESC
                                  LIMIT :offset, :numOfRowsPerPage");
     $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
@@ -208,6 +212,11 @@ if (isset($_POST['action'])) {
     $count++;
   }
 
+  $pagination .= '<div style="padding: 10px 20px 0px; border-top: dotted 1px #CCC;">';
+  $pagination .= '<strong>Page' . $pageNum . " of " . $totalPages . '</strong>';
+  $pagination .= '</div>';
+
+  $pagination .= '<ul class="pagination">';
   if ($pageNum > 1) {
     if (!$search) {
       $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>First Page</a></li>";
@@ -345,6 +354,9 @@ if (isset($_POST['action'])) {
       $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'>Last &rsaquo;&rsaquo;</a></li>";
     }
   }
+
+  $pagination .= '</ul>';
+
 
   $data['table'] = $table;
   $data['pagination'] = $pagination;
