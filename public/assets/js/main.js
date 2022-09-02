@@ -115,7 +115,7 @@ function searchTable(ajaxAction) {
 
     let searchValue = $(this).find(".search-input").val();
 
-    refreshTable(ajaxAction, searchValue, false);
+    refreshTable(ajaxAction, searchValue, 1);
   });
 }
 
@@ -139,7 +139,7 @@ function refreshTable(actionFIle, search = false, page = false) {
   }
 
   let table = $(".jai-table.table-container"),
-    pagination = $("ul.pagination");
+    pagination = $(".pagination-container");
 
   $.ajax({
     url: "../ajax-calls/" + actionFIle,
@@ -288,7 +288,7 @@ function autoFillAction(input, actionFile) {
         thisInput.siblings(".suggestions-container").html(data);
         // console.log(data);
         // console.log(xhr);
-        console.log(success);
+        // console.log(success);
       },
       error: function (response, xhr, data) {
         console.log(xhr);
@@ -309,17 +309,21 @@ function autofillChoiceActions() {
   });
 
   $(document).on("click", ".suggestion-container", function () {
-    let datePickerSelector = $(this)
-        .parents(".action-form")
-        .find(".set-min-date"),
-      setMinDate = $(this).data("releasedate");
+    let datePickerSelector, setMinDate;
 
+    console.log($(this).text());
     $(this).parent().siblings(".autocomplete-input").val($(this).text());
     $(this).parent().siblings(".borrower-id").val($(this).data("borrower"));
     fillInputs($(this).data("borrower"));
     clearErrors($(this).parent().siblings(".autocomplete-input"));
     checkEmptyInput($(this).parent().siblings(".autocomplete-input"));
-    datePickerSelector.datepicker("option", "minDate", new Date(setMinDate));
+    if ($(this).parents(".action-form").find(".set-min-date").length) {
+      datePickerSelector = $(this)
+        .parents(".action-form")
+        .find(".set-min-date");
+      setMinDate = $(this).data("releasedate");
+      datePickerSelector.datepicker("option", "minDate", new Date(setMinDate));
+    }
     $("#payment").focus();
   });
 }
@@ -334,23 +338,25 @@ function fillInputs(id) {
     },
     dataType: "json",
     success: function (borrowerDetails, status, success) {
-      $("#loanamount").val(borrowerDetails[0]["amount"]);
-      $("#payable").val(borrowerDetails[0]["payable"]);
-      $("#remainingbalance").val(borrowerDetails[0]["balance"]);
-      $("#amortization").val(borrowerDetails[0]["amortization"]);
-      $("#mode").val(borrowerDetails[0]["mode"]);
-      $("#term").val(borrowerDetails[0]["term"]);
-      $("#collectorid").val(borrowerDetails[0]["c_id"]);
-      $("#collectorname").val(borrowerDetails[0]["c_id"]);
-      $("#loanid").val(borrowerDetails[0]["l_id"]);
-      $("#name").val(
-        borrowerDetails[0]["cfname"] + " " + borrowerDetails[0]["clname"]
-      );
-      $("#type").val("");
-      $("#payment").val("");
-      payment.placeholder = parseFloat(
-        borrowerDetails[0]["amortization"]
-      ).toFixed(2);
+      if ($(".payment-form").length) {
+        $("#loanamount").val(borrowerDetails[0]["amount"]);
+        $("#payable").val(borrowerDetails[0]["payable"]);
+        $("#remainingbalance").val(borrowerDetails[0]["balance"]);
+        $("#amortization").val(borrowerDetails[0]["amortization"]);
+        $("#mode").val(borrowerDetails[0]["mode"]);
+        $("#term").val(borrowerDetails[0]["term"]);
+        $("#collectorid").val(borrowerDetails[0]["c_id"]);
+        $("#collectorname").val(borrowerDetails[0]["c_id"]);
+        $("#loanid").val(borrowerDetails[0]["l_id"]);
+        $("#name").val(
+          borrowerDetails[0]["cfname"] + " " + borrowerDetails[0]["clname"]
+        );
+        $("#type").val("");
+        $("#payment").val("");
+        $("#payment").placeholder = parseFloat(
+          borrowerDetails[0]["amortization"]
+        ).toFixed(2);
+      }
     },
     error: function (xghr, status, error) {
       console.log(xghr);

@@ -187,6 +187,11 @@ if (isset($_POST['action'])) {
   }
 
 
+  $pagination .= '<div style="padding: 10px 20px 0px; border-top: dotted 1px #CCC;">';
+  $pagination .= '<strong>Page' . $pageNum . " of " . $totalPages . '</strong>';
+  $pagination .= '</div>';
+
+  $pagination .= '<ul class="pagination">';
   if ($pageNum > 1) {
     if (!$search) {
       $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>First Page</a></li>";
@@ -307,11 +312,11 @@ if (isset($_POST['action'])) {
 
 
   if ($pageNum < $totalPages) {
-    $pagination .= "<li " . ($pageNum >= $totalPages ? "class='page-link disabled'" : '') . "><a ";
+    $pagination .= "<li " . ($pageNum >= $totalPages ? "class='page-link'" : '') . "><a ";
     if (!$search) {
       $pagination .= "class='page-link' data-pagecount='$nextPage' href='?page=$nextPage'";
     } else {
-      $pagination .= "class='page-link' data-pagecount='$nextPage href='?page=$nextPage&search=$search'";
+      $pagination .= "class='page-link' data-pagecount='$nextPage' href='?page=$nextPage&search=$search'";
     }
     $pagination .= ">Next</a></li>";
   }
@@ -325,6 +330,7 @@ if (isset($_POST['action'])) {
     }
   }
 
+  $pagination .= '</ul>';
   $data['table'] = $table;
   $data['pagination'] = $pagination;
 
