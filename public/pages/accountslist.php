@@ -47,6 +47,9 @@ $statement->bindValue(':c_id', $c_id);
 $statement->execute();
 $accounts = $statement->fetchAll(PDO::FETCH_ASSOC); //13 columns
 
+$SCB = 0;
+$arrears = 0;
+
 /* ----- ASSIGN ACCOUNTS TO DIFFERENT STATUS ----- */
 $updatedAccs = [];
 $inArrearsAccs = [];
@@ -160,7 +163,7 @@ if ($accounts) {
             $pdf->Cell(20.86, 4.5, number_format($updatedAcc['amount'], 2), 'B', 0, 'R');
             $pdf->Cell(23.86, 4.5, number_format($updatedAcc['payable'], 2), 'B', 0, 'R');
             $pdf->Cell(23.86, 4.5, number_format($updatedAcc['amortization'], 2), 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, $updatedAcc['term'], 'B', 0, 'R');
+            $pdf->Cell(23.86, 4.5, strtolower(substr($updatedAcc['term'], 0, 4)) . '.', 'B', 0, 'R');
             $pdf->Cell(23.86, 4.5, $updatedAcc['mode'], 'B', 0, 'R');
             $pdf->Cell(23.86, 4.5, number_format($updatedAcc['outstandingbalance'], 2), 'B', 0, 'R');
             $pdf->Cell(23.86, 4.5, number_format($updatedAcc['SCB'], 2), 'B', 0, 'R');
@@ -208,23 +211,50 @@ if ($accounts) {
         $inArrearsAccsTotalArrears = (float)0;
         $pdf->SetFont('Arial', '', 8);
         foreach ($inArrearsAccs as $i => $inArrearsAcc) {
-            $pdf->Cell(10.86, 4.5, $inArrearsAcc['b_id'], 'LB', 0);
-            $pdf->Cell(42.86, 4.5, ucwords(strtolower($inArrearsAcc['name'])), 'B', 0);
-            $pdf->Cell(23.86, 4.5, $inArrearsAcc['releasedate'], 'B', 0);
-            $pdf->Cell(20.86, 4.5, $inArrearsAcc['duedate'], 'B', 0);
-            $pdf->Cell(20.86, 4.5, number_format($inArrearsAcc['amount'], 2), 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, number_format($inArrearsAcc['payable'], 2), 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, number_format($inArrearsAcc['amortization'], 2), 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, $inArrearsAcc['term'], 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, $inArrearsAcc['mode'], 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, number_format($inArrearsAcc['outstandingbalance'], 2), 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, number_format($inArrearsAcc['SCB'], 2), 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, number_format($inArrearsAcc['arrears'], 2), 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, $inArrearsAcc['lasttransaction'], 'RB', 1, 'R');
 
-            $inArrearsAccsTotalOutBal += $inArrearsAcc['outstandingbalance'];
-            $inArrearsAccsTotalSCB += $inArrearsAcc['SCB'];
-            $inArrearsAccsTotalArrears += $inArrearsAcc['arrears'];
+            $SCB = $inArrearsAcc['SCB'];
+            $arrears = $inArrearsAcc['arrears'];
+
+            if ($inArrearsAcc['SCB'] < 0) {
+                $SCB = 0;
+                $arrears = $inArrearsAcc['outstandingbalance'];
+
+                $pdf->Cell(10.86, 4.5, $inArrearsAcc['b_id'], 'LB', 0);
+                $pdf->Cell(42.86, 4.5, ucwords(strtolower($inArrearsAcc['name'])), 'B', 0);
+                $pdf->Cell(23.86, 4.5, $inArrearsAcc['releasedate'], 'B', 0);
+                $pdf->Cell(20.86, 4.5, $inArrearsAcc['duedate'], 'B', 0);
+                $pdf->Cell(20.86, 4.5, number_format($inArrearsAcc['amount'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($inArrearsAcc['payable'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($inArrearsAcc['amortization'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, strtolower(substr($inArrearsAcc['term'], 0, 4)) . '.', 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, $inArrearsAcc['mode'], 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($inArrearsAcc['outstandingbalance'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($SCB, 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($arrears, 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, $inArrearsAcc['lasttransaction'], 'RB', 1, 'R');
+
+                $inArrearsAccsTotalOutBal += $inArrearsAcc['outstandingbalance'];
+                $inArrearsAccsTotalSCB += $SCB;
+                $inArrearsAccsTotalArrears += $arrears;
+            } else {
+                $pdf->Cell(10.86, 4.5, $inArrearsAcc['b_id'], 'LB', 0);
+                $pdf->Cell(42.86, 4.5, ucwords(strtolower($inArrearsAcc['name'])), 'B', 0);
+                $pdf->Cell(23.86, 4.5, $inArrearsAcc['releasedate'], 'B', 0);
+                $pdf->Cell(20.86, 4.5, $inArrearsAcc['duedate'], 'B', 0);
+                $pdf->Cell(20.86, 4.5, number_format($inArrearsAcc['amount'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($inArrearsAcc['payable'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($inArrearsAcc['amortization'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, strtolower(substr($inArrearsAcc['term'], 0, 4)) . '.', 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, $inArrearsAcc['mode'], 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($inArrearsAcc['outstandingbalance'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($inArrearsAcc['SCB'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($inArrearsAcc['arrears'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, $inArrearsAcc['lasttransaction'], 'RB', 1, 'R');
+
+                $inArrearsAccsTotalOutBal += $inArrearsAcc['outstandingbalance'];
+                $inArrearsAccsTotalSCB += $inArrearsAcc['SCB'];
+                $inArrearsAccsTotalArrears += $inArrearsAcc['arrears'];
+            }
         }
 
         /* ----- IN ARREARS ACCOUNTS SUMMARY ----- */
@@ -263,23 +293,47 @@ if ($accounts) {
         $pastDueAccsTotalArrears = (float)0;
         $pdf->SetFont('Arial', '', 8);
         foreach ($pastDueAccs as $i => $pastDueAcc) {
-            $pdf->Cell(10.86, 4.5, $pastDueAcc['b_id'], 'LB', 0);
-            $pdf->Cell(42.86, 4.5, ucwords(strtolower($pastDueAcc['name'])), 'B', 0);
-            $pdf->Cell(23.86, 4.5, $pastDueAcc['releasedate'], 'B', 0);
-            $pdf->Cell(20.86, 4.5, $pastDueAcc['duedate'], 'B', 0);
-            $pdf->Cell(20.86, 4.5, number_format($pastDueAcc['amount'], 2), 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, number_format($pastDueAcc['payable'], 2), 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, number_format($pastDueAcc['amortization'], 2), 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, $pastDueAcc['term'], 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, $pastDueAcc['mode'], 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, number_format($pastDueAcc['outstandingbalance'], 2), 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, number_format($pastDueAcc['SCB'], 2), 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, number_format($pastDueAcc['arrears'], 2), 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, $pastDueAcc['lasttransaction'], 'RB', 1, 'R');
 
-            $pastDueAccsTotalOutBal += $pastDueAcc['outstandingbalance'];
-            $pastDueAccsTotalSCB += $pastDueAcc['SCB'];
-            $pastDueAccsTotalArrears += $pastDueAcc['arrears'];
+            if (date('Y-m-d') > date_format(date_create($pastDueAcc['duedate']), 'Y-m-d')) {
+                $SCB = 0;
+                $arrears = $pastDueAcc['outstandingbalance'];
+
+                $pdf->Cell(10.86, 4.5, $pastDueAcc['b_id'], 'LB', 0);
+                $pdf->Cell(42.86, 4.5, ucwords(strtolower($pastDueAcc['name'])), 'B', 0);
+                $pdf->Cell(23.86, 4.5, $pastDueAcc['releasedate'], 'B', 0);
+                $pdf->Cell(20.86, 4.5, $pastDueAcc['duedate'], 'B', 0);
+                $pdf->Cell(20.86, 4.5, number_format($pastDueAcc['amount'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($pastDueAcc['payable'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($pastDueAcc['amortization'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, strtolower(substr($pastDueAcc['term'], 0, 4)) . '.', 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, $pastDueAcc['mode'], 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($pastDueAcc['outstandingbalance'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($SCB, 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($arrears, 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, $pastDueAcc['lasttransaction'], 'RB', 1, 'R');
+
+                $pastDueAccsTotalOutBal += $pastDueAcc['outstandingbalance'];
+                $pastDueAccsTotalSCB += $SCB;
+                $pastDueAccsTotalArrears += $arrears;
+            } else {
+                $pdf->Cell(10.86, 4.5, $pastDueAcc['b_id'], 'LB', 0);
+                $pdf->Cell(42.86, 4.5, ucwords(strtolower($pastDueAcc['name'])), 'B', 0);
+                $pdf->Cell(23.86, 4.5, $pastDueAcc['releasedate'], 'B', 0);
+                $pdf->Cell(20.86, 4.5, $pastDueAcc['duedate'], 'B', 0);
+                $pdf->Cell(20.86, 4.5, number_format($pastDueAcc['amount'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($pastDueAcc['payable'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($pastDueAcc['amortization'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, strtolower(substr($pastDueAcc['term'], 0, 4)) . '.', 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, $pastDueAcc['mode'], 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($pastDueAcc['outstandingbalance'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($pastDueAcc['SCB'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($pastDueAcc['arrears'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, $pastDueAcc['lasttransaction'], 'RB', 1, 'R');
+
+                $pastDueAccsTotalOutBal += $pastDueAcc['outstandingbalance'];
+                $pastDueAccsTotalSCB += $pastDueAcc['SCB'];
+                $pastDueAccsTotalArrears += $pastDueAcc['arrears'];
+            }
         }
 
         /* ----- PAST DUE ACCOUNTS SUMMARY ----- */
@@ -318,23 +372,47 @@ if ($accounts) {
         $forLitigationAccsTotalArrears = (float)0;
         $pdf->SetFont('Arial', '', 8);
         foreach ($forLitigationAccs as $i => $forLitigationAcc) {
-            $pdf->Cell(10.86, 4.5, $forLitigationAcc['b_id'], 'LB', 0);
-            $pdf->Cell(42.86, 4.5, ucwords(strtolower($forLitigationAcc['name'])), 'B', 0);
-            $pdf->Cell(23.86, 4.5, $forLitigationAcc['releasedate'], 'B', 0);
-            $pdf->Cell(20.86, 4.5, $forLitigationAcc['duedate'], 'B', 0);
-            $pdf->Cell(20.86, 4.5, number_format($forLitigationAcc['amount'], 2), 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, number_format($forLitigationAcc['payable'], 2), 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, number_format($forLitigationAcc['amortization'], 2), 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, $forLitigationAcc['term'], 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, $forLitigationAcc['mode'], 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, number_format($forLitigationAcc['outstandingbalance'], 2), 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, number_format($forLitigationAcc['SCB'], 2), 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, number_format($forLitigationAcc['arrears'], 2), 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, $forLitigationAcc['lasttransaction'], 'RB', 1, 'R');
 
-            $forLitigationAccsTotalOutBal += $forLitigationAcc['outstandingbalance'];
-            $forLitigationAccsTotalSCB += $forLitigationAcc['SCB'];
-            $forLitigationAccsTotalArrears += $forLitigationAcc['arrears'];
+            if (date('Y-m-d') > date_format(date_create($forLitigationAcc['duedate']), 'Y-m-d')) {
+                $SCB = 0;
+                $arrears = $forLitigationAcc['outstandingbalance'];
+
+                $pdf->Cell(10.86, 4.5, $forLitigationAcc['b_id'], 'LB', 0);
+                $pdf->Cell(42.86, 4.5, ucwords(strtolower($forLitigationAcc['name'])), 'B', 0);
+                $pdf->Cell(23.86, 4.5, $forLitigationAcc['releasedate'], 'B', 0);
+                $pdf->Cell(20.86, 4.5, $forLitigationAcc['duedate'], 'B', 0);
+                $pdf->Cell(20.86, 4.5, number_format($forLitigationAcc['amount'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($forLitigationAcc['payable'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($forLitigationAcc['amortization'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, strtolower(substr($forLitigationAcc['term'], 0, 4)) . '.', 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, $forLitigationAcc['mode'], 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($forLitigationAcc['outstandingbalance'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($SCB, 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($arrears, 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, $forLitigationAcc['lasttransaction'], 'RB', 1, 'R');
+
+                $forLitigationAccsTotalOutBal += $forLitigationAcc['outstandingbalance'];
+                $forLitigationAccsTotalSCB += $SCB;
+                $forLitigationAccsTotalArrears += $arrears;
+            } else {
+                $pdf->Cell(10.86, 4.5, $forLitigationAcc['b_id'], 'LB', 0);
+                $pdf->Cell(42.86, 4.5, ucwords(strtolower($forLitigationAcc['name'])), 'B', 0);
+                $pdf->Cell(23.86, 4.5, $forLitigationAcc['releasedate'], 'B', 0);
+                $pdf->Cell(20.86, 4.5, $forLitigationAcc['duedate'], 'B', 0);
+                $pdf->Cell(20.86, 4.5, number_format($forLitigationAcc['amount'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($forLitigationAcc['payable'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($forLitigationAcc['amortization'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, strtolower(substr($forLitigationAcc['term'], 0, 4)) . '.', 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, $forLitigationAcc['mode'], 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($forLitigationAcc['outstandingbalance'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($forLitigationAcc['SCB'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, number_format($forLitigationAcc['arrears'], 2), 'B', 0, 'R');
+                $pdf->Cell(23.86, 4.5, $forLitigationAcc['lasttransaction'], 'RB', 1, 'R');
+
+                $forLitigationAccsTotalOutBal += $forLitigationAcc['outstandingbalance'];
+                $forLitigationAccsTotalSCB += $forLitigationAcc['SCB'];
+                $forLitigationAccsTotalArrears += $forLitigationAcc['arrears'];
+            }
         }
 
         /* ----- FOR LITIGATION ACCOUNTS SUMMARY ----- */
