@@ -32,7 +32,8 @@ if (isset($_POST['action'])) {
                                                  OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
                                                  OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
                                                  OR CONCAT('l', l.l_id) LIKE :search
-                                                 OR CONCAT('b', b.b_id) LIKE :search)
+                                                 OR CONCAT('b', b.b_id) LIKE :search
+                                                 OR CONCAT('p', p.p_id) LIKE :search)
                                           ORDER BY p.date ASC");
     $statementTotalRows->bindValue(':search', "%$search%");
   } else {
@@ -62,6 +63,7 @@ if (isset($_POST['action'])) {
                                        OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
                                        OR CONCAT('l', l.l_id) LIKE :search
                                        OR CONCAT('b', b.b_id) LIKE :search
+                                       OR CONCAT('p', p.p_id) LIKE :search
                                  ORDER BY p.date DESC, p.p_id DESC
                                  LIMIT :offset, :numOfRowsPerPage");
     $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
