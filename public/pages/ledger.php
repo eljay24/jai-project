@@ -34,7 +34,7 @@ $sumOfPayments = $statementSumOfPayments->fetch(PDO::FETCH_ASSOC);
 
 if ($payments) {
     /* ----- CALCULATE Supposed Current Balance & Arrears ----- */
-    
+
     if ($payments[0]['payable'] - $sumOfPayments['sumofpayments'] <= 0) {
         $SCB = 0;
         $arrears = 0;
@@ -85,7 +85,7 @@ class PDF extends FPDF
             $this->SetFont('Courier', '', 14);
             $this->Cell(65.3, 6, 'Ledger', 0, 0, 'C');
             $this->SetFont('Courier', '', 10);
-            $this->Cell(65.3, 6, 'Time: '.date('g:i:s A'), 0, 1, 'R');
+            $this->Cell(65.3, 6, 'Time: ' . date('g:i:s A'), 0, 1, 'R');
 
             $this->SetFont('Courier', '', 10);
             // $this->Cell(195.9, 6, 'Borrower No.: ' . $payments[0]['b_id'], 0, 1);
@@ -118,7 +118,18 @@ class PDF extends FPDF
             $this->Cell(65.3, 6, 'Due Date: ' . $payments[0]['duedate'], 0, 1, 'R');
             $this->Cell(65.3, 6, 'SCB: ' . number_format($SCB, 2), 0, 0, 'L');
             $this->Cell(65.3, 6, '      Arrears: ' . number_format($arrears, 2), 0, 0, 'L');
-            $this->Cell(65.3, 6, 'Loan Status: ' . $payments[0]['status'], 0, 1, 'R');
+
+            // IF LOAN IS PAST DUE
+            if (date('Y-m-d') > date_format(date_create($payments[0]['duedate']), 'Y-m-d') && $payments[0]['activeloan'] == 1) {
+                $this->Cell(46.65, 6, 'Loan Status:', 0, 0, 'R');
+                $this->SetFont('Courier', 'B', 10);
+                $this->SetTextColor(204, 0, 0); //RED
+                $this->Cell(18.65, 6, 'PAST DUE', 0, 1, 'R');
+                $this->SetFont('Courier', '', 10);
+                $this->SetTextColor(0, 0, 0); //BLACK
+            } else {
+                $this->Cell(65.3, 6, 'Loan Status: ' . $payments[0]['status'], 0, 1, 'R');
+            }
 
             $this->Cell(195.9, 5, '', 0, 1);
 
