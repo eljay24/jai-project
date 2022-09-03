@@ -867,9 +867,11 @@ $sat = date_create('saturday this week');
         }
         ?>
       </select>
-      <button title="View accounts list" class="btn-primary" type="submit">View accounts list</button>
+      <button title="View accounts" class="btn-primary" type="submit">View accounts</button>
     </form>
     <br>
+    <br>
+    <?= 'Active loans: ' . count($activeLoans) ?>
 
     <script>
       var fullDate = {
