@@ -1562,18 +1562,18 @@ $sat = date_create('saturday this week');
         type: 'bar',
         data: dataOverview,
         options: {
-          // animation: {
-          //   onComplete: () => {
-          //     delayed = true;
-          //   },
-          //   delay: (context) => {
-          //     let delay = 0;
-          //     if (context.type === 'data' && context.mode === 'default' && !delayed) {
-          //       delay = context.dataIndex * 300 + context.datasetIndex * 100;
-          //     }
-          //     return delay;
-          //   }
-          // },
+          animation: {
+            onComplete: () => {
+              delayed = true;
+            },
+            delay: (context) => {
+              let delay = 0;
+              if (context.type === 'data' && context.mode === 'default' && !delayed) {
+                delay = context.dataIndex * 50 + context.datasetIndex * 1;
+              }
+              return delay;
+            }
+          },
           scales: {
             y: {
               beginAtZero: true
