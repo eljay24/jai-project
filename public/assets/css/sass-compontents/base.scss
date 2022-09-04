@@ -53,7 +53,8 @@ body {
       padding: 10px 15px;
       cursor: pointer;
       transition: all 150ms;
-      &:hover {
+      &:hover,
+      &.focused {
         background-color: $primary-color;
         color: white;
       }
