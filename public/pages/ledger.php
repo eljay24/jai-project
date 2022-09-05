@@ -190,10 +190,10 @@ if ($payments) {
 
     $pdf->SetFont('Courier', '', 10);
 
-    $pdf->Cell(48.975, 7, $payments[0]['releasedate'], 'LR', 0);
-    $pdf->Cell(48.975, 7, 'LOAN RELEASE', 'LR', 0);
-    $pdf->Cell(48.975, 7, '--->', 'LR', 0, 'R');
-    $pdf->Cell(48.975, 7, number_format($payments[0]['payable'], 2), 'LR', 1, 'R');
+    $pdf->Cell(48.975, 5.5, $payments[0]['releasedate'], 'LR', 0);
+    $pdf->Cell(48.975, 5.5, 'LOAN RELEASE', 'LR', 0);
+    $pdf->Cell(48.975, 5.5, '--->', 'LR', 0, 'R');
+    $pdf->Cell(48.975, 5.5, number_format($payments[0]['payable'], 2), 'LR', 1, 'R');
 
     $payable = $payments[0]['payable'];
     foreach ($payments as $i => $payment) {
