@@ -27,6 +27,7 @@ if (isset($_POST['suggestion'])) {
 
     $name = $_POST['suggestion'];
     $output = '';
+    $count = 1;
 
     foreach ($existingNames as $i => $existingName) {
 
@@ -34,8 +35,9 @@ if (isset($_POST['suggestion'])) {
 
         if (stripos($existingName['b_id'], $name) !== false or stripos($existingName['firstname'], $name) !== false or stripos($existingName['middlename'], $name) !== false or stripos($existingName['lastname'], $name) !== false) {
 
-            $output .= "<div class='suggestion-container' data-borrower='" . $existingName["b_id"] . "'>#" . $existingName["b_id"] . " - " . $existingName["firstname"] . " " . $middleName . $existingName["lastname"] . "</div>";
+            $output .= "<div class='suggestion-container " . ($count == 1 ? 'focused' : '') . "' data-borrower='" . $existingName["b_id"] . "'>#" . $existingName["b_id"] . " - " . $existingName["firstname"] . " " . $middleName . $existingName["lastname"] . "</div>";
         }
+        $count++;
     }
     echo json_encode($output);
 }

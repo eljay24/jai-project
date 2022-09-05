@@ -1,3 +1,67 @@
+.bar-chart-div {
+  width: 700px;
+}
+
+.card-bar-chart-div {
+  position: relative;
+  top: 60px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+  transition: 0.3s;
+  width: 95%;
+  border-radius: 10px;
+  padding: 20px;
+  &:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.4);
+  }
+}
+
 .chart-div {
+  width: 30%;
+  canvas {
+    width: 100% !important;
+  }
+}
+
+.card-chart-div {
+  position: relative;
+  top: 30px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+  transition: 0.3s;
+  width: 95%;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.card-chart-div:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.4);
+}
+
+.overview-chart-div {
+  width: 100%;
+}
+
+.card-overview-chart {
+  /* background-image: linear-gradient(195deg,#80c1f0,#c5eff7); */
+  width: 95%;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+  transition: 0.3s;
+  border-radius: 10px;
+  padding: 30px;
+  &:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.4);
+  }
+}
+
+.no-collections {
   width: 400px;
+  position: relative;
+  right: 230px;
+  top: 150px;
+}
+
+.jai-card {
+  margin: 0 auto;
+  &.card-chart-div {
+    justify-content: space-around;
+  }
 }

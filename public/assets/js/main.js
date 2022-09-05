@@ -15,6 +15,7 @@ $(document).ready(function () {
   validateInputs();
   setToZero();
   imgInput();
+  fakeSelectEvents();
 
   // Autofill Functions
   autofillChoiceActions();
@@ -22,17 +23,30 @@ $(document).ready(function () {
   autoFillAction("#newloansearch", "suggestions-new-loan.php");
 
   // Toggle Modal Functions START
-  openModal(".create-borrower", ".form-modal", "submit-create", openCreate);
+  openModal(
+    ".create-borrower",
+    ".form-modal",
+    "submit-create",
+    resetForm,
+    "input[name='firstname']"
+  );
   openModal(".edit-btn", ".form-modal", "submit-edit", openEdit);
   openModal(".delete-borrower", "#deleteBorrower", "", openDelete);
 
-  openModal(".btn-new-loan", ".form-modal", "submit-loan", openCreate);
+  openModal(
+    ".btn-new-loan",
+    ".form-modal",
+    "submit-loan",
+    resetForm,
+    ".autocomplete-input"
+  );
 
   openModal(
     ".open-payment-modal",
     "#paymentModal",
     "submit-payment",
-    openCreate
+    resetForm,
+    ".autocomplete-input"
   );
 
   closeModal();
@@ -63,6 +77,14 @@ $(document).ready(function () {
     "add-payment.php",
     messages.successMessages.Payment.create,
     "refresh-payments.php"
+  );
+
+  submitForm(
+    ".add-new",
+    "add-payment.php",
+    messages.successMessages.Payment.create,
+    "refresh-payments.php",
+    true
   );
   // Modal Submit Functions END
 });
@@ -175,7 +197,8 @@ function openModal(
   buttonName,
   modalName,
   submitBtnClass,
-  modalFunction = false
+  modalFunction = false,
+  focusOn
 ) {
   $(document).on("click", buttonName, function (event) {
     event.preventDefault();
@@ -187,6 +210,9 @@ function openModal(
       modalFunction(buttonName, modalName, $(this));
     }
     $(modalName).modal("toggle");
+    $(modalName).on("shown.bs.modal", function () {
+      $(focusOn).focus();
+    });
   });
 }
 
@@ -285,6 +311,7 @@ function autoFillAction(input, actionFile) {
       dataType: "json",
       beforeSend: function () {},
       success: function (data, xhr, success) {
+        thisInput.siblings(".suggestions-container").empty();
         thisInput.siblings(".suggestions-container").html(data);
         // console.log(data);
         // console.log(xhr);
@@ -309,23 +336,26 @@ function autofillChoiceActions() {
   });
 
   $(document).on("click", ".suggestion-container", function () {
-    let datePickerSelector, setMinDate;
-
-    console.log($(this).text());
-    $(this).parent().siblings(".autocomplete-input").val($(this).text());
-    $(this).parent().siblings(".borrower-id").val($(this).data("borrower"));
-    fillInputs($(this).data("borrower"));
-    clearErrors($(this).parent().siblings(".autocomplete-input"));
-    checkEmptyInput($(this).parent().siblings(".autocomplete-input"));
-    if ($(this).parents(".action-form").find(".set-min-date").length) {
-      datePickerSelector = $(this)
-        .parents(".action-form")
-        .find(".set-min-date");
-      setMinDate = $(this).data("releasedate");
-      datePickerSelector.datepicker("option", "minDate", new Date(setMinDate));
-    }
-    $("#payment").focus();
+    suggestionContainerAction($(this));
   });
+}
+
+function suggestionContainerAction(thisValue) {
+  let datePickerSelector, setMinDate;
+
+  thisValue.parent().siblings(".autocomplete-input").val(thisValue.text());
+  thisValue.parent().siblings(".borrower-id").val(thisValue.data("borrower"));
+  fillInputs(thisValue.data("borrower"));
+  clearErrors(thisValue.parent().siblings(".autocomplete-input"));
+  checkEmptyInput(thisValue.parent().siblings(".autocomplete-input"));
+  if (thisValue.parents(".action-form").find(".set-min-date").length) {
+    datePickerSelector = thisValue
+      .parents(".action-form")
+      .find(".set-min-date");
+    setMinDate = thisValue.data("releasedate");
+    datePickerSelector.datepicker("option", "minDate", new Date(setMinDate));
+  }
+  $("#payment").focus();
 }
 
 function fillInputs(id) {
@@ -366,7 +396,7 @@ function fillInputs(id) {
   });
 }
 
-function openCreate(buttonName, modalName) {
+function resetForm() {
   if ($(".action-form").length) {
     let noResetArr = [],
       count = 0;
@@ -381,16 +411,17 @@ function openCreate(buttonName, modalName) {
   }
 }
 
-function submitForm(submitBtn, ajaxFile, successMessage, tableAction = false) {
+function submitForm(
+  submitBtn,
+  ajaxFile,
+  successMessage,
+  tableAction = false,
+  addNew = false
+) {
   $(document).on("click", submitBtn, function (event) {
     event.preventDefault();
     let form = $(".action-form"),
-      formValues = form.serialize(),
-      newValues = form.serializeArray(),
-      rowId = $(this)
-        .parents(".modal-content")
-        .find('input[name="data-row"]')
-        .val();
+      formValues = form.serialize();
 
     if (validateForm(form))
       $.ajax({
@@ -409,15 +440,22 @@ function submitForm(submitBtn, ajaxFile, successMessage, tableAction = false) {
             refreshTable(tableAction);
           }
           $(".success-message .success-content").text(successMessage);
-          $(".form-modal .modal-content").fadeOut(150, function (param) {
-            $(".success-message").fadeIn(150, function () {
-              $(submitBtn).removeClass("disabled");
-              setTimeout(function () {
-                if ($("body").hasClass("modal-open"))
-                  $(".form-modal").modal("hide");
-              }, 2000);
+
+          if (addNew) {
+            resetForm();
+            clearErrors(form);
+            $(submitBtn).removeClass("disabled");
+          } else {
+            $(".form-modal .modal-content").fadeOut(150, function () {
+              $(".success-message").fadeIn(150, function () {
+                $(submitBtn).removeClass("disabled");
+                setTimeout(function () {
+                  if ($("body").hasClass("modal-open"))
+                    $(".form-modal").modal("hide");
+                }, 2000);
+              });
             });
-          });
+          }
         },
         error: function (response, xhr, data) {
           console.log("error");
@@ -787,6 +825,77 @@ function createCustomSelect() {
   });
 }
 
+function fakeSelectEvents() {
+  $(document).on("keydown", ".autocomplete-input", function (event) {
+    console.log(event.key);
+    if (event.key == "ArrowDown" || event.key == "ArrowUp") {
+      if ($(".suggestion-container.focused").length) {
+        goToNextInput(event.key);
+      } else if (event.key == "ArrowDown") {
+        $(".suggestion-container:first-child").addClass("focused");
+      } else if (event.key == "ArrowUp") {
+        $(".suggestion-container:last-child").addClass("focused");
+        $(".suggestions-container.show-results").scrollTop(
+          $(".suggestions-container.show-results")[0].scrollHeight
+        );
+      }
+    } else if (event.key == "NumpadEnter" || event.key == "Enter") {
+      event.preventDefault();
+      if ($(".suggestion-container.focused").length) {
+        suggestionContainerAction($(".suggestion-container.focused"));
+        $(".suggestions-container").empty();
+      }
+    } else if (event.key == "Tab") {
+      if ($(".suggestion-container.focused").length) {
+        event.preventDefault();
+        suggestionContainerAction($(".suggestion-container.focused"));
+      }
+      $(".suggestions-container").empty();
+    }
+  });
+}
+
+function goToNextInput(event) {
+  let current = $(".suggestion-container.focused"),
+    currentIndex = current.index(),
+    nextIndex = event == "ArrowDown" ? currentIndex + 1 : currentIndex - 1,
+    container = $(".suggestions-container.show-results"),
+    containerIndex = $(".suggestions-container.show-results")[0],
+    action = event == "ArrowDown" ? "next" : "prev";
+
+  $(".suggestion-container").eq(currentIndex).removeClass("focused");
+  if (event == "ArrowDown" && current.is(":last-child")) {
+    console.log("go to top");
+    $(".suggestion-container:first-child").addClass("focused");
+    container.scrollTop(0);
+  } else if (event == "ArrowUp" && current.is(":first-child")) {
+    console.log("go to bottom");
+    $(".suggestion-container:last-child").addClass("focused");
+    container.scrollTop(containerIndex.scrollHeight);
+  } else {
+    $(".suggestion-container").eq(nextIndex).addClass("focused");
+    checkPosition(current, containerIndex, container, action);
+  }
+}
+
+function checkPosition(current, container, scrollElement, action) {
+  let index = action == "next" ? current.index() + 2 : current.index(),
+    indexHeight = current.outerHeight() * index,
+    containerHeight = container.clientHeight,
+    containerOffsetTop = Math.abs(container.scrollTop),
+    scrollHeight = containerHeight + containerOffsetTop;
+
+  if (indexHeight > scrollHeight && action == "next") {
+    scrollElement.scrollTop(indexHeight - current.outerHeight());
+  } else if (
+    container.scrollHeight - containerOffsetTop <=
+      container.scrollHeight - indexHeight &&
+    action == "prev"
+  ) {
+    console.log("scroll up");
+    scrollElement.scrollTop(indexHeight - containerHeight);
+  }
+}
 /*                              */
 /*      END Modify Forms        */
 /*                              */

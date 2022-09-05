@@ -326,29 +326,29 @@ try {
                   <div class="row">
                     <div class="col">
                       <div class="jai-mb-2">
-                        <input id="loanamount" tabindex="-1" name="loan-amount" placeholder="Loan Amount" type="text" class="form-control" readonly required>
+                        <input id="loanamount" tabindex="-1" name="loan-amount" placeholder="Loan Amount" type="text" class="form-control" readonly>
                       </div>
                     </div>
                     <div class="col">
                       <div class="jai-mb-2">
-                        <input id="remainingbalance" tabindex="-1" name="remaining-balance" placeholder="Remaining Balance" type="text" class="form-control" readonly required>
+                        <input id="remainingbalance" tabindex="-1" name="remaining-balance" placeholder="Remaining Balance" type="text" class="form-control" readonly>
                       </div>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col">
                       <div class="jai-mb-2">
-                        <input id="mode" tabindex="-1" name="mode" placeholder="Mode" type="text" class="form-control" readonly required>
+                        <input id="mode" tabindex="-1" name="mode" placeholder="Mode" type="text" class="form-control" readonly>
                       </div>
                     </div>
                     <div class="col">
                       <div class="jai-mb-2">
-                        <input id="term" tabindex="-1" name="term" placeholder="Term" type="text" class="form-control" readonly required>
+                        <input id="term" tabindex="-1" name="term" placeholder="Term" type="text" class="form-control" readonly>
                       </div>
                     </div>
                     <div class="col">
                       <div class="jai-mb-2">
-                        <input id="amortization" tabindex="-1" name="amortization" placeholder="Amortization" type="text" class="form-control" readonly required>
+                        <input id="amortization" tabindex="-1" name="amortization" placeholder="Amortization" type="text" class="form-control" readonly>
                       </div>
                     </div>
                   </div>
@@ -402,6 +402,7 @@ try {
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary btn-sm close-modal" data-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-primary btn-sm submit-payment">Submit</button>
+          <button type="button" class="btn btn-primary btn-sm add-new">Submit & Add New</button>
         </div>
       </div>
       <div class="success-message" style="display: none;">
