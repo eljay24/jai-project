@@ -119,7 +119,7 @@ class PDF extends FPDF
             $this->Cell(65.3, 6, 'SCB: ' . number_format($SCB, 2), 0, 0, 'L');
             $this->Cell(65.3, 6, '      Arrears: ' . number_format($arrears, 2), 0, 0, 'L');
 
-            // IF LOAN IS PAST DUE
+            // IF LOAN IS PAST DUE (LOAN STATUS)
             if (date('Y-m-d') > date_format(date_create($payments[0]['duedate']), 'Y-m-d') && $payments[0]['activeloan'] == 1) {
                 $this->Cell(46.65, 6, 'Loan Status:', 0, 0, 'R');
                 $this->SetFont('Courier', 'B', 10);
