@@ -255,7 +255,7 @@ if (isset($_POST['action'])) {
     if ($pageNum <= 4) {
       for ($counter = 1; $counter < 8; $counter++) {
         if ($counter == $pageNum) {
-          $pagination .= "<li class='page-item active'><a data-pagecount='$counter' class='page-link'>$counter</a></li>";
+          $pagination .= "<li class='page-item active'><a data-pagecount='$counter' class='page-link active'>$counter</a></li>";
         } else {
           if (!$search) {
             $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
@@ -289,7 +289,7 @@ if (isset($_POST['action'])) {
         $counter++
       ) {
         if ($counter == $pageNum) {
-          $pagination .= "<li class='page-item active'><a class='page-link' data-pagecount='" . $counter . "'>$counter</a></li>";
+          $pagination .= "<li class='page-item active'><a class='page-link active' data-pagecount='" . $counter . "'>$counter</a></li>";
         } else {
           if (!$search) {
             $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter'>$counter</a></li>";
@@ -321,7 +321,7 @@ if (isset($_POST['action'])) {
         $counter++
       ) {
         if ($counter == $pageNum) {
-          $pagination .= "<li class='page-item active'><a class='page-link'>$counter</a></li>";
+          $pagination .= "<li class='page-item active'><a class='page-link active'>$counter</a></li>";
         } else {
           if (!$search) {
             $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
@@ -334,7 +334,7 @@ if (isset($_POST['action'])) {
   }
 
   if ($totalPages == 0) {
-    $pagination .= "<li class='page-item'><a class='page-link active' data-pagecount='1' href='?page=1'>1</a></li>";
+    $pagination .= "<li class='page-item active'><a class='page-link active' data-pagecount='1' href='?page=1'>1</a></li>";
   }
 
 
