@@ -47,8 +47,8 @@ $statement->bindValue(':c_id', $c_id);
 $statement->execute();
 $accounts = $statement->fetchAll(PDO::FETCH_ASSOC); //13 columns
 
-$SCB = 0;
-$arrears = 0;
+$SCB = (float)0;
+$arrears = (float)0;
 
 /* ----- ASSIGN ACCOUNTS TO DIFFERENT STATUS ----- */
 $updatedAccs = [];
@@ -86,6 +86,7 @@ class PDF extends FPDF
 
         if ($accounts) {
             $this->SetFont('Courier', '', 10);
+            $this->SetTextColor(0, 0, 0); //BLACK
             $this->Cell(103.4, 4, 'Page ' . $this->PageNo() . " of {pages}", 0, 0, 'L');
             $this->SetFont('Courier', 'B', 14);
             $this->Cell(103.4, 4, 'JAI FAIR LOAN', 0, 0, 'C');
@@ -199,6 +200,7 @@ if ($accounts) {
         $pdf->SetTextColor(76, 153, 0); //GREEN
         $pdf->Cell(42.2, 6, number_format($updatedAccsTotalArrears, 2), 'B', 1);
         $pdf->Cell(310.2, 5, '', 0, 1);
+        $pdf->SetTextColor(0, 0, 0); //BLACK
     }
 
     /* ----- IN ARREARS ACCOUNTS ----- */
@@ -281,6 +283,7 @@ if ($accounts) {
         $pdf->SetTextColor(204, 0, 0); //RED
         $pdf->Cell(42.2, 6, number_format($inArrearsAccsTotalArrears, 2), 'B', 1);
         $pdf->Cell(310.2, 5, '', 0, 1);
+        $pdf->SetTextColor(0, 0, 0); //BLACK
     }
 
     /* ----- PAST DUE ACCOUNTS ----- */
@@ -360,6 +363,7 @@ if ($accounts) {
         $pdf->SetTextColor(204, 0, 0); //RED
         $pdf->Cell(42.2, 6, number_format($pastDueAccsTotalArrears, 2), 'B', 1);
         $pdf->Cell(310.2, 5, '', 0, 1);
+        $pdf->SetTextColor(0, 0, 0); //BLACK
     }
 
     /* ----- FOR LITIGATION ACCOUNTS ----- */
@@ -439,6 +443,7 @@ if ($accounts) {
         $pdf->SetTextColor(204, 0, 0); //RED
         $pdf->Cell(42.2, 6, number_format($forLitigationAccsTotalArrears, 2), 'B', 1);
         $pdf->Cell(310.2, 5, '', 0, 1);
+        $pdf->SetTextColor(0, 0, 0); //BLACK
     }
 } else {
     $pdf->SetFont('Courier', 'B', 22);
