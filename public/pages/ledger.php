@@ -216,13 +216,13 @@ $totalPages = $pdf->PageNo();
 $pdf->SetCreator('JAI Fair Loan');
 $pdf->SetAuthor('JAI Fair Loan');
 if ($payments) {
-    $pdf->SetSubject('JAI Ledger_#' . $payments[0]['b_id'] . '_' . $payments[0]['name'] . '_' . date('Y-m-d'));
+    $pdf->SetSubject('JAI Ledger_#' . $payments[0]['b_id'] . '_' . $payments[0]['name'] . '_' . date('Y-m-d_giA'));
 } else {
     $pdf->SetSubject('JAI Invalid Ledger');
 }
 
 if ($payments) {
-    $pdf->Output('I', 'JAI Ledger_#' . $payments[0]['b_id'] . '_' . $payments[0]['name'] . '_' . date('Y-m-d') . '.pdf');
+    $pdf->Output('I', 'JAI Ledger_#' . $payments[0]['b_id'] . '_' . $payments[0]['name'] . '_' . date('Y-m-d_giA') . '.pdf');
 } else {
     $pdf->Output('I', 'JAI Invalid Ledger.pdf');
 }
