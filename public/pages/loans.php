@@ -289,7 +289,6 @@ try {
               <p class="jai-table-contact sub-font"> <span class="jai-table-label">Amount: </span><?= "₱ " . number_format($loan['amount'], 2) ?></p>
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Payable: </span><?= "₱ " . number_format($loan['payable'], 2) ?></p>
               <!-- <p class="jai-table-address sub-font"> <span class="jai-table-label">Balance: </span><?= "₱ " . number_format($loan['balance'], 2) ?></p> Hard coded balance (From loans table) -->
-              <p class="jai-table-address sub-font"> <span class="jai-table-label">Balance: </span><?= "₱ " . number_format($loan['payable'] - $amount, 2) ?></p> <!-- Computed balance (Payable - Total payments) -->
               <p class="jai-table-address sub-font"> <span class="jai-table-label">Amortization: </span><?= "₱ " . number_format($loan['amortization'], 2) ?></p>
             </div>
             <div class="col">
@@ -328,6 +327,9 @@ try {
           </div>
         </div>
         <div class="col position-relative">
+          <div class="row">
+            <p class="primary-font"> <span class="jai-table-label">Balance: </span><?= "₱ " . number_format($loan['payable'] - $amount, 2) ?></p> <!-- Computed balance (Payable - Total payments) -->
+          </div>
           <div class="row">
             <div class="col">
               <!-- <p class="jai-table-amount primary-font"><span class="jai-table-label">Payments made:</span> <?php echo $loan['paymentsmade'] ?></p> hard coded payments made from loans table -->
@@ -377,8 +379,8 @@ try {
     <?php } ?>
   </div>
 
-   <!-- PAGE NAVIGATION -->
-   <div class="pagination-container">
+  <!-- PAGE NAVIGATION -->
+  <div class="pagination-container">
     <div style='padding: 10px 20px 0px; border-top: dotted 1px #CCC;'>
       <strong>Page <?= $pageNum . " of " . $totalPages; ?></strong>
     </div>
