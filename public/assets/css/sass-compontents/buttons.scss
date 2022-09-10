@@ -1,6 +1,9 @@
 .btn {
   border-radius: 35px;
   padding: 10px 20px;
+  line-height: 20px;
+  font-size: 14px;
+  color: white;
   &.edit-btn,
   &.delete-btn,
   &.ledger-btn {
@@ -11,11 +14,28 @@
     height: 42px;
     width: 42px;
   }
+  &:hover {
+    color: white;
+  }
+  &:focus {
+    box-shadow: none;
+  }
+  &.create-btn {
+    background-color: #25316d;
+    border: #25316d;
+    img {
+      margin-right: 5px;
+      position: relative;
+      bottom: 1px;
+    }
+  }
   &.edit-btn {
-    background-image: url(../icons/edit-icon.png);
+    background-image: url(../icons/edit.svg);
+    background-size: 17px;
   }
   &.delete-btn {
-    background-image: url(../icons/delete-icon.png);
+    background-image: url(../icons/trash-2.svg);
+    background-size: 17px;
   }
   &.ledger-btn {
     background-image: url(../icons/ledger.png);
