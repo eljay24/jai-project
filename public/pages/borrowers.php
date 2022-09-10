@@ -182,6 +182,9 @@ try {
             </h4>
           <?php } else { ?>
             <div class="row">
+            <p class="primary-font"> <span class="jai-table-label"><strong>Loan Ref #: </span> <?= $borrower['l_id'] ?> </strong></p>
+            </div>
+            <div class="row">
               <div class="col">
                 <p class="jai-table-amount primary-font"><span class="jai-table-label">Amount:</span> <span class="value"><?= "₱ " . number_format($borrower['amount'], 2); ?></span></p>
               </div>
@@ -200,7 +203,6 @@ try {
               <div class="col">
                 <p class="jai-table-release sub-font"> <span class="jai-table-label">Release Date: </span> <?= date_format(date_create($borrower['releasedate']), 'M-d-Y') ?></p>
                 <p class="jai-table-due sub-font"> <span class="jai-table-label">Due Date: </span> <?= date_format(date_create($borrower['duedate']), 'M-d-Y') ?></p>
-                <p class="sub-font"> <span class="jai-table-label"><strong>(TEST) LOAN ID: </span> <?= $borrower['l_id'] ?> </strong></p>
               </div>
             </div>
           <?php
