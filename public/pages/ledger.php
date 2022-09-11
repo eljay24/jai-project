@@ -151,8 +151,8 @@ class PDF extends FPDF
             $this->Cell(195.9, 30, '', 0, 1, 'C');
 
             $this->SetFont('Courier', 'B', 22);
-            $this->Cell(195.9, 20, 'INVALID LOAN ID / NO PAYMENTS ON RECORD.', 0, 1, 'C');
-            $this->Cell(195.9, 20, 'LEDGER UNAVAILABLE.', 0, 1, 'C');
+            $this->Cell(195.9, 20, 'INVALID LOAN ID OR NO PAYMENTS ON RECORD', 0, 1, 'C');
+            $this->Cell(195.9, 20, 'LEDGER UNAVAILABLE', 0, 1, 'C');
         }
     }
 
@@ -197,7 +197,15 @@ if ($payments) {
 
     $payable = $payments[0]['payable'];
     foreach ($payments as $i => $payment) {
-        $pdf->Cell(48.975, 5.5, $payment['date'], 'L', 0);
+        if ($payment['date'] == $payment['duedate']) {
+            $pdf->SetFont('Courier', 'B', 10);
+            $pdf->SetTextColor(204, 0, 0); //RED
+            $pdf->Cell(48.975, 5.5, $payment['date'] . ' (DUE DATE)', 'L', 0);
+            $pdf->SetFont('Courier', '', 10);
+            $pdf->SetTextColor(0, 0, 0); //BLACK
+        } else {
+            $pdf->Cell(48.975, 5.5, $payment['date'], 'L', 0);
+        }
         $pdf->Cell(48.975, 5.5, $payment['type'] == 'Pass' ? $payment['type'] : ($payment['type'] == 'GCash' ? $payment['type'] . ' Payment' : 'Payment'), 'L', 0);
         $pdf->Cell(48.975, 5.5, number_format($payment['paymentamount'], 2), 'L', 0, 'R');
         $pdf->Cell(48.975, 5.5, number_format($payable -= $payment['paymentamount'], 2), 'LR', 1, 'R');
