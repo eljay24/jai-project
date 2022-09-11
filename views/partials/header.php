@@ -32,10 +32,10 @@
           <h2>JAI Fair Loan</h2>
         </div>
 
-        <div class="nav-link-container"><a href="../../public/pages/dashboard" class="nav-link">Dashboard</a></div>
-        <div class="nav-link-container"><a href="../../public/pages/borrowers" class="nav-link">Borrowers</a></div>
-        <div class="nav-link-container"><a href="../../public/pages/loans" class="nav-link">Loans</a></div>
-        <div class="nav-link-container"><a href="../../public/pages/payments" class="nav-link">Payments</a></div>
+        <div class="nav-link-container d-flex"><img src="../assets/icons/monitor.svg"><a href="../../public/pages/dashboard" class="nav-link">Dashboard</a></div>
+        <div class="nav-link-container d-flex"><img src="../assets/icons/users.svg"><a href="../../public/pages/borrowers" class="nav-link">Borrowers</a></div>
+        <div class="nav-link-container d-flex"><img src="../assets/icons/book.svg"><a href="../../public/pages/loans" class="nav-link">Loans</a></div>
+        <div class="nav-link-container d-flex"><img src="../assets/icons/dollar-sign.svg"><a href="../../public/pages/payments" class="nav-link">Payments</a></div>
       </nav>
     </div>
   </header>

@@ -134,6 +134,9 @@ body span {
   line-height: 20px;
   font-size: 14px;
   color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .btn.edit-btn, .btn.delete-btn, .btn.ledger-btn {
   text-indent: -9999999px;
@@ -149,9 +152,34 @@ body span {
 .btn:focus {
   box-shadow: none;
 }
+.btn:active:focus {
+  box-shadow: none;
+}
+.btn.search-btn {
+  border: none;
+  background-color: #25316d;
+}
+.btn.btn-action {
+  border: none;
+  background-color: #25316d;
+  min-width: 140px;
+}
+.btn.close-modal {
+  border: 1px solid #d32121;
+  color: #d32121;
+  background-color: transparent;
+  transition: all 0ms;
+  height: 40px;
+}
+.btn.close-modal:active {
+  background-color: #d32121;
+  color: white;
+}
 .btn.create-btn {
   background-color: #25316d;
   border: #25316d;
+  height: 40px;
+  box-shadow: 4px 4px 9px #c1c1c1, -4px -4px 9px #ffffff;
 }
 .btn.create-btn img {
   margin-right: 5px;
@@ -168,6 +196,11 @@ body span {
 }
 .btn.ledger-btn {
   background-image: url(../icons/ledger.png);
+}
+
+.input-group {
+  box-shadow: 4px 4px 9px #c1c1c1, -4px -4px 9px #ffffff;
+  border-radius: 50px;
 }
 
 input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active,
@@ -192,7 +225,8 @@ select.form-control {
   transition: all 300ms;
   padding-left: 20px;
   border-radius: 25px;
-  min-height: 42px;
+  min-height: 40px;
+  font-size: 14px;
 }
 input.form-control[readonly],
 textarea.form-control[readonly],
@@ -215,6 +249,11 @@ input.error:focus,
 textarea.error:focus,
 select.error:focus {
   border-color: #d32121;
+}
+input.search-input,
+textarea.search-input,
+select.search-input {
+  border: none;
 }
 
 .form-image-container {
@@ -241,7 +280,7 @@ select.error:focus {
 .error-message {
   position: absolute;
   color: #d32121;
-  font-size: 13px;
+  font-size: 12px;
   margin-left: 22px;
 }
 
@@ -332,7 +371,7 @@ textarea.form-control {
   overflow: hidden;
 }
 .ui-datepicker .ui-datepicker-header {
-  background-color: #ced4da;
+  background-color: #393E46;
   border: none;
   display: flex;
   justify-content: center;
@@ -361,8 +400,8 @@ textarea.form-control {
 }
 .ui-datepicker .ui-datepicker-header .ui-corner-all span {
   background-image: none;
-  border-top: 1px solid #333;
-  border-left: 1px solid #333;
+  border-top: 2px solid white;
+  border-left: 2px solid white;
   height: 9px;
   width: 9px;
   margin: 0;
@@ -379,8 +418,10 @@ textarea.form-control {
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title .select-selected {
   margin: 0 20px;
+  color: #fff;
   cursor: pointer;
   user-select: none;
+  font-weight: 400;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title .select-items {
   opacity: 1;
@@ -397,6 +438,7 @@ textarea.form-control {
   max-height: 160px;
   overflow-y: overlay;
   min-width: 100px;
+  z-index: 1;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title .select-items:last-child {
   left: 40%;
@@ -424,6 +466,15 @@ textarea.form-control {
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title .select-items.select-hide {
   opacity: 0;
   pointer-events: none;
+}
+.ui-datepicker .ui-datepicker-calendar tbody tr td.ui-state-disabled > span {
+  height: 37px;
+  width: 37px;
+  display: flex;
+  justify-content: center;
+  padding-top: 7px;
+  border: none;
+  border-radius: 50px;
 }
 .ui-datepicker .ui-datepicker-calendar tbody tr td a {
   background: transparent;
@@ -457,9 +508,9 @@ textarea.form-control {
   position: absolute;
   top: 20px;
   left: -220px;
-  height: calc(100vh - 40px);
   min-width: 238px;
   background-color: #222831;
+  padding-bottom: 30px;
   z-index: 100;
   transition: all 300ms ease;
   color: white;
@@ -475,6 +526,9 @@ textarea.form-control {
 }
 .sticky-header .nav-container .company-name h2 {
   font-size: 24px;
+}
+.sticky-header .nav-container .nav-link-container {
+  margin-left: 20px;
 }
 .sticky-header .nav-container .nav-link-container + .nav-link-container {
   margin-top: 10px;
@@ -512,8 +566,7 @@ textarea.form-control {
   margin-bottom: 3px;
 }
 .table-wrapper .jai-table p.sub-font {
-  font-size: 14px;
-  line-height: 17px;
+  font-size: 12px;
 }
 .table-wrapper .jai-table p.red {
   color: #ec1e1e;
@@ -563,6 +616,12 @@ textarea.form-control {
 }
 .table-wrapper .jai-table .jai-image-col {
   flex: 0 0 120px;
+}
+
+.table-padding {
+  width: 100%;
+  height: 20px;
+  border-top: 2px solid #eeeeee;
 }
 
 .pagination-container {
@@ -622,6 +681,9 @@ textarea.form-control {
   padding: 0;
   border: none;
 }
+.pagination-container .pagination .page-item.active .page-link {
+  background-color: #25316d;
+}
 .pagination-container .pagination .page-item .page-link {
   border: none;
   height: 100%;
@@ -647,6 +709,15 @@ textarea.form-control {
 }
 .modal .modal-dialog .modal-content .modal-body-label {
   padding-left: 15px;
+}
+.modal .modal-dialog .modal-content .modal-footer {
+  padding: 15px;
+}
+.modal .modal-dialog .modal-content .modal-footer .btn {
+  margin: 0;
+}
+.modal .modal-dialog .modal-content .modal-footer .btn + .btn {
+  margin-left: 15px;
 }
 .modal .modal-dialog .success-message {
   position: relative;

@@ -134,103 +134,102 @@ try {
 
 <div class="content-container">
   <div class="page-name">
-
     <h1>Payments</h1>
-  </div>
-
-  <div class="d-flex justify-content-between">
-    <a href="addpayment.php" type="button" class="btn btn-outline-success open-payment-modal">Add new payment</a>
-
-    <form class="table-search">
-      <div class="input-group">
-        <input type="text" class="form-control search-input" placeholder="Search..." name="search" value="<?php echo $search; ?>" autofocus onfocus="this.select()">
-        <button class="btn btn-outline-secondary" type="submit">Search</button>
-      </div>
-    </form>
-  </div>
-
-  <div class="jai-table table-container payments-table">
-    <div class="row">
-      <div class="jai-col-ID">Ref#</div>
-      <div class="col">Borrower</div>
-      <div class="col">Payment Details</div>
-      <div class="col">Collector</div>
-      <div class="col-1">Action</div>
+    <div class="actions-container">
+      <a href="#" type="button" class="btn open-payment-modal create-btn">Add Payment</a>
+      <form class="table-search">
+        <div class="input-group search-group">
+          <input type="text" class="form-control search-input" placeholder="Search..." name="search" value="<?php echo $search; ?>" autofocus onfocus="this.select()">
+          <button class="btn search-btn" type="submit">Search</button>
+        </div>
+      </form>
     </div>
-    <?php
-    $count = 1;
-    foreach ($payments as $i => $payment) {
+  </div>
 
-      $profit = $payment['payable'] - $payment['loanamount'];
-      $paymentsToCloseLoan = $payment['payable'] / $payment['amortization'];
-      $profitPerPayment = $profit / $paymentsToCloseLoan;
+  <div class="neumorph-container">
+    <div class="table-wrapper">
+      <div class="jai-table table-container payments-table">
+        <div class="row">
+          <div class="jai-col-ID">Ref#</div>
+          <div class="col">Borrower</div>
+          <div class="col">Payment Details</div>
+          <div class="col">Collector</div>
+          <div class="col-1">Action</div>
+        </div>
+        <?php
+        $count = 1;
+        foreach ($payments as $i => $payment) {
 
-      // $profitOrLoss = (($payment['amount'] - $payment['amortization']) + $profitPerPayment);
-      $profitOrLoss = ($profitPerPayment / $payment['amortization']) * $payment['amount'];
+          $profit = $payment['payable'] - $payment['loanamount'];
+          $paymentsToCloseLoan = $payment['payable'] / $payment['amortization'];
+          $profitPerPayment = $profit / $paymentsToCloseLoan;
 
-      $date = date_create($payment['date']);
-      $loanID = $payment['l_id'];
+          // $profitOrLoss = (($payment['amount'] - $payment['amortization']) + $profitPerPayment);
+          $profitOrLoss = ($profitPerPayment / $payment['amortization']) * $payment['amount'];
 
-      /* ----- GET TOTAL PAYMENTS MADE ----- */
-      $statementTotalPayments = $conn->prepare("SELECT COUNT(amount) as totalpayments
+          $date = date_create($payment['date']);
+          $loanID = $payment['l_id'];
+
+          /* ----- GET TOTAL PAYMENTS MADE ----- */
+          $statementTotalPayments = $conn->prepare("SELECT COUNT(amount) as totalpayments
                                                 FROM jai_db.payments as p
                                                 WHERE l_id = :l_id AND (p.type = 'Cash' OR p.type = 'GCash')");
-      $statementTotalPayments->bindValue(':l_id', $loanID);
-      $statementTotalPayments->execute();
-      $totalPayments = $statementTotalPayments->fetch(PDO::FETCH_ASSOC);
-      $totalPayment = $totalPayments['totalpayments'];
-      /* ----- END - GET TOTAL PAYMENTS MADE ----- */
+          $statementTotalPayments->bindValue(':l_id', $loanID);
+          $statementTotalPayments->execute();
+          $totalPayments = $statementTotalPayments->fetch(PDO::FETCH_ASSOC);
+          $totalPayment = $totalPayments['totalpayments'];
+          /* ----- END - GET TOTAL PAYMENTS MADE ----- */
 
-      /* ----- GET TOTAL PASSES ----- */
-      $statementTotalPasses = $conn->prepare("SELECT COUNT(amount) as totalpasses
+          /* ----- GET TOTAL PASSES ----- */
+          $statementTotalPasses = $conn->prepare("SELECT COUNT(amount) as totalpasses
                                                 FROM jai_db.payments as p
                                                 WHERE l_id = :l_id AND (p.type = 'Pass')");
-      $statementTotalPasses->bindValue(':l_id', $loanID);
-      $statementTotalPasses->execute();
-      $totalPasses = $statementTotalPasses->fetch(PDO::FETCH_ASSOC);
-      $totalPass = $totalPasses['totalpasses'];
-      /* ----- END - GET TOTAL PASSES ----- */
+          $statementTotalPasses->bindValue(':l_id', $loanID);
+          $statementTotalPasses->execute();
+          $totalPasses = $statementTotalPasses->fetch(PDO::FETCH_ASSOC);
+          $totalPass = $totalPasses['totalpasses'];
+          /* ----- END - GET TOTAL PASSES ----- */
 
-    ?>
+        ?>
 
-      <div data-row-id="<?php echo $payment['p_id'] ?>" class="row jai-data-row">
-        <div class="jai-col-ID"><?php echo $payment['p_id'] ?></div>
-        <div class="col">
-          <div class="row">
-            <!-- <div class="jai-image-col">
+          <div data-row-id="<?php echo $payment['p_id'] ?>" class="row jai-data-row">
+            <div class="jai-col-ID"><?php echo $payment['p_id'] ?></div>
+            <div class="col">
+              <div class="row">
+                <!-- <div class="jai-image-col">
               <div class="jai-picture">
                 <img src="/<?= 'JAI/public/' . $payment['picture']; ?>" class="thumb-image2">
               </div>
             </div> -->
-            <div class="col">
-              <p class="jai-table-name primary-font"><span class="jai-table-label"></span> <?= '#' . $payment['b_id'] . ' ' . ucwords(strtolower($payment['borrowerfname'])) . ' ' . ucwords(strtolower(substr($payment['borrowermname'], 0, 1))) . '. ' . ucwords(strtolower($payment['borrowerlname'])) ?></p>
-            </div>
-            <div class="col-4">
-              <p class="primary-font">Loan Ref #<?= $payment['l_id'] ?></p>
-            </div>
-          </div>
-          <div class="row">
-            <p class="sub-font">Contact: <?= $payment['contactno'] ?></p>
-          </div>
-        </div>
-        <div class="col">
-          <div class="row">
-            <div class="col">
-              <p class="jai-table-comaker primary-font"><span class="jai-table-label">Amount:</span> <?= "₱ " .  number_format($payment['amount'], 2) ?></p>
-              <p class="jai-table-contact sub-font"> <span class="jai-table-label">Type: </span><?php echo $payment['type'] ?></p>
+                <div class="col">
+                  <p class="jai-table-name primary-font"><span class="jai-table-label"></span> <?= '#' . $payment['b_id'] . ' ' . ucwords(strtolower($payment['borrowerfname'])) . ' ' . ucwords(strtolower(substr($payment['borrowermname'], 0, 1))) . '. ' . ucwords(strtolower($payment['borrowerlname'])) ?></p>
+                </div>
+                <div class="col-4">
+                  <p class="primary-font">Loan Ref #<?= $payment['l_id'] ?></p>
+                </div>
+              </div>
+              <div class="row">
+                <p class="sub-font">Contact: <?= $payment['contactno'] ?></p>
+              </div>
             </div>
             <div class="col">
-              <p class="primary-font">Date: <?= date_format($date, "M-d-Y") ?></p>
-              <p class="sub-font">Mode: <?= ucwords(strtolower($payment['mode'])) ?></p>
-            </div>
-            <!-- <div class="col">
+              <div class="row">
+                <div class="col">
+                  <p class="jai-table-comaker primary-font"><span class="jai-table-label">Amount:</span> <?= "₱ " .  number_format($payment['amount'], 2) ?></p>
+                  <p class="jai-table-contact sub-font"> <span class="jai-table-label">Type: </span><?php echo $payment['type'] ?></p>
+                </div>
+                <div class="col">
+                  <p class="primary-font">Date: <?= date_format($date, "M-d-Y") ?></p>
+                  <p class="sub-font">Mode: <?= ucwords(strtolower($payment['mode'])) ?></p>
+                </div>
+                <!-- <div class="col">
               <p class="jai-table-amount primary-font"><span class="jai-table-label">Collector: </span><?php echo ucwords(strtolower($payment['collectorfname'])) . ' ' . ucwords(strtolower($payment['collectormname'])) . ' ' . ucwords(strtolower($payment['collectorlname'])) ?></p>
             </div>
             <div class="col">
               <p class="jai-table-payable primary-font"> <span class="jai-table-label">Remaining Bal.: </span> <?php  ?></p>
             </div> -->
-          </div>
-          <!-- <div class="row">
+              </div>
+              <!-- <div class="row">
             <div class="col">
               <p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Payable??: </span> <?php  ?></p>
               <p class="jai-table-mode sub-font"> <span class="jai-table-label">Mode & Term??: </span> <?php ?></p>
@@ -241,43 +240,200 @@ try {
               <p class="jai-table-due sub-font"> <span class="jai-table-label">Due Date???: </span> 01/01/22</p>
             </div>
           </div> -->
-        </div>
-        <div class="col position-relative">
-          <div class="row">
-            <div class="col">
-              <p class="jai-table-address primary-font"> <span class="jai-table-label">Collector: </span><?php echo ucwords(strtolower($payment['collectorfname'])) . ' ' . ucwords(strtolower($payment['collectormname'])) . ' ' . ucwords(strtolower($payment['collectorlname'])) ?></p>
-              <p class="sub-font"><?= ($profitOrLoss > 0) ? '(test)Profit: +' . number_format($profitOrLoss, 2) : '(test)Loss: ' . number_format($profitOrLoss, 2) ?></p>
-              <!-- <textarea class="jai-table-input" type="text"></textarea> -->
             </div>
-            <div class="col-4">
-              <p class="primary-font"><?= $payment['status'] ?></p>
-              <p class="sub-font">Amort.: <?= $payment['amortization'] ?></p>
+            <div class="col position-relative">
+              <div class="row">
+                <div class="col">
+                  <p class="jai-table-address primary-font"> <span class="jai-table-label">Collector: </span><?php echo ucwords(strtolower($payment['collectorfname'])) . ' ' . ucwords(strtolower($payment['collectormname'])) . ' ' . ucwords(strtolower($payment['collectorlname'])) ?></p>
+                  <p class="sub-font"><?= ($profitOrLoss > 0) ? '(test)Profit: +' . number_format($profitOrLoss, 2) : '(test)Loss: ' . number_format($profitOrLoss, 2) ?></p>
+                  <!-- <textarea class="jai-table-input" type="text"></textarea> -->
+                </div>
+                <div class="col-4">
+                  <p class="primary-font"><?= $payment['status'] ?></p>
+                  <p class="sub-font">Amort.: <?= $payment['amortization'] ?></p>
+                </div>
+              </div>
+            </div>
+            <div class="col-1 d-flex align-items-center justify-content-around">
+              <!-- <a href="update.php?id=<?php //echo $borrower['b_id'] 
+                                          ?>" class="btn btn-primary btn-sm edit-btn">Edit</a> -->
+              <!-- <a title="Edit" href="#" class="btn btn-primary btn-sm edit-btn">Edit</a> -->
+              <form method="get" action="ledger" target="_blank">
+                <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $loanID ?>" <?= ($totalPayment || $totalPass) == 0 ? 'disabled' : '' ?>></input>
+              </form>
+              <button title="Delete" type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower" disabled>Delete</button>
+
+            </div>
+            <div class="d-none hidden-field">
+              <form id="hidden-form-<?= $count; ?>" class="hidden-form" action="">
+                <input type="hidden" name="data-row" value='row-<?= $loanID ?>'>
+                <input type="hidden" name="b_id" value="<?= ucwords(strtolower($loanID)) ?>">
+                <input type="hidden" name="borrower-id" value="<?= $loanID ?>">
+                <input type="hidden" name="borrower-name" value="<?= '#' . $payment['b_id'] . ' ' . ucwords(strtolower($payment['borrowerfname'])) . ' ' . ucwords(strtolower($payment['borrowermname'])) . ' ' . ucwords(strtolower($payment['borrowerlname'])) ?>">
+                <input type="hidden" name="loan-amount" value="<?= number_format($payment['amount'], 2) ?>">
+              </form>
             </div>
           </div>
-        </div>
-        <div class="col-1 d-flex align-items-center justify-content-around">
-          <!-- <a href="update.php?id=<?php //echo $borrower['b_id'] 
-                                      ?>" class="btn btn-primary btn-sm edit-btn">Edit</a> -->
-          <!-- <a title="Edit" href="#" class="btn btn-primary btn-sm edit-btn">Edit</a> -->
-          <form method="get" action="ledger" target="_blank">
-            <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $loanID ?>" <?= ($totalPayment || $totalPass) == 0 ? 'disabled' : '' ?>></input>
-          </form>
-          <button title="Delete" type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower" disabled>Delete</button>
-
-        </div>
-        <div class="d-none hidden-field">
-          <form id="hidden-form-<?= $count; ?>" class="hidden-form" action="">
-            <input type="hidden" name="data-row" value='row-<?= $loanID ?>'>
-            <input type="hidden" name="b_id" value="<?= ucwords(strtolower($loanID)) ?>">
-            <input type="hidden" name="borrower-id" value="<?= $loanID ?>">
-            <input type="hidden" name="borrower-name" value="<?= '#' . $payment['b_id'] . ' ' . ucwords(strtolower($payment['borrowerfname'])) . ' ' . ucwords(strtolower($payment['borrowermname'])) . ' ' . ucwords(strtolower($payment['borrowerlname'])) ?>">
-            <input type="hidden" name="loan-amount" value="<?= number_format($payment['amount'], 2) ?>">
-          </form>
-        </div>
+        <?php $count++;
+        } ?>
       </div>
-    <?php $count++;
-    } ?>
+    </div>
+    <div class="table-padding">
+    </div>
   </div>
+
+  <!-- PAGE NAVIGATION -->
+  <div class="pagination-container ">
+
+    <ul class="pagination justify-content-center">
+      <?php if ($pageNum > 1) {
+        if (!$search) {
+          echo "<li class='page-item first-page'><a class='page-link' data-pagecount='1' href='?page=1'><img src='../assets/icons/chevrons-left.svg'></a></li>";
+        } else {
+          echo "<li class='page-item first-page'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'><img src='../assets/icons/chevrons-left.svg'></a></li>";
+        }
+      } ?>
+
+      <li <?php if ($pageNum <= 1) {
+            echo "class='page-item disabled prev-page'";
+          } else {
+            echo "class='page-item prev-page'";
+          } ?>>
+        <a <?php if ($pageNum > 1) {
+              if (!$search) {
+                echo "class='page-link' data-pagecount='$previousPage' href='?page=$previousPage'";
+              } else {
+                echo "class='page-link' data-pagecount='$previousPage' href='?page=$previousPage&search=$search'";
+              }
+            } else {
+              echo "class='page-link' data-pagecount='$previousPage' href='?page=$previousPage'";
+            } ?>><img src='../assets/icons/chevron-left.svg'></a>
+      </li>
+      <div class="numbers-container">
+
+        <?php
+        if ($totalPages <= 10) {
+          for ($counter = 1; $counter <= $totalPages; $counter++) {
+            if ($counter == $pageNum) {
+              echo "<li class='page-item is-number active'><a data-pagecount='$counter' class='page-link active'>$counter</a></li>";
+            } else {
+              if (!$search) {
+                echo "<li class='page-item is-number'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
+              } else {
+                echo "<li class='page-item is-number'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
+              }
+            }
+          }
+        } elseif ($totalPages > 10) {
+          if ($pageNum <= 4) {
+            for ($counter = 1; $counter < 8; $counter++) {
+              if ($counter == $pageNum) {
+                echo "<li class='page-item is-number active'><a data-pagecount='$counter' class='page-link active'>$counter</a></li>";
+              } else {
+                if (!$search) {
+                  echo "<li class='page-item is-number'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
+                } else {
+                  echo "<li class='page-item is-number'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
+                }
+              }
+            }
+            echo "<li class='page-item is-number'><a class='page-link'>...</a></li>";
+            if (!$search) {
+              echo "<li class='page-item is-number'><a class='page-link' data-pagecount='$secondLast' href='?page=$secondLast'>$secondLast</a></li>";
+              echo "<li class='page-item is-number'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages'>$totalPages</a></li>";
+            } else {
+              echo "<li class='page-item is-number'><a class='page-link' data-pagecount='$secondLast' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
+              echo "<li class='page-item is-number'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
+            }
+          } elseif ($pageNum > 4 && $pageNum < $totalPages - 4) {
+            if (!$search) {
+              echo "<li class='page-item is-number'><a class='page-link' data-pagecount='1' href='?page=1'>1</a></li>";
+              echo "<li class='page-item is-number'><a class='page-link' data-pagecount='2' href='?page=2'>2</a></li>";
+            } else {
+              echo "<li class='page-item is-number'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>1</a></li>";
+              echo "<li class='page-item is-number'><a class='page-link' data-pagecount='2' href='?page=2&search=$search'>2</a></li>";
+            }
+
+
+            echo "<li class='page-item is-number'><a class='page-link'>...</a></li>";
+            for (
+              $counter = $pageNum - $adjacents;
+              $counter <= $pageNum + $adjacents;
+              $counter++
+            ) {
+              if ($counter == $pageNum) {
+                echo "<li class='page-item is-number active'><a class='page-link active' data-pagecount='" . $counter . "'>$counter</a></li>";
+              } else {
+                if (!$search) {
+                  echo "<li class='page-item is-number'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter'>$counter</a></li>";
+                } else {
+                  echo "<li class='page-item is-number'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter&search=$search'>$counter</a></li>";
+                }
+              }
+            }
+            echo "<li class='page-item is-number'><a class='page-link'>...</a></li>";
+            if (!$search) {
+              echo "<li class='page-item is-number'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast'>$secondLast</a></li>";
+              echo "<li class='page-item is-number'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages'>$totalPages</a></li>";
+            } else {
+              echo "<li class='page-item is-number'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
+              echo "<li class='page-item is-number'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
+            }
+          } else {
+            if (!$search) {
+              echo "<li class='page-item is-number'><a class='page-link' data-pagecount='1' href='?page=1'>1</a></li>";
+              echo "<li class='page-item is-number'><a class='page-link' data-pagecount='2' href='?page=2'>2</a></li>";
+            } else {
+              echo "<li class='page-item is-number'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>1</a></li>";
+              echo "<li class='page-item is-number'><a class='page-link' data-pagecount='2' href='?page=2&search=$search'>2</a></li>";
+            }
+            echo "<li class='page-item is-number'><a class='page-link'>...</a></li>";
+            for (
+              $counter = $totalPages - 6;
+              $counter <= $totalPages;
+              $counter++
+            ) {
+              if ($counter == $pageNum) {
+                echo "<li class='page-item is-number active'><a class='page-link active'>$counter</a></li>";
+              } else {
+                if (!$search) {
+                  echo "<li class='page-item is-number'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
+                } else {
+                  echo "<li class='page-item is-number'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
+                }
+              }
+            }
+          }
+        }
+        ?>
+      </div>
+
+
+      <li <?php if ($pageNum >= $totalPages) {
+            echo "class='page-item next-page disabled'";
+          } else {
+            echo "class='page-item next-page'";
+          } ?>>
+        <a <?php if ($pageNum < $totalPages) {
+              if (!$search) {
+                echo "class='page-link' data-pagecount='$nextPage' href='?page=$nextPage'";
+              } else {
+                echo "class='page-link' data-pagecount='$nextPage href='?page=$nextPage&search=$search'";
+              }
+            } ?>><img src='../assets/icons/chevron-right.svg'></a>
+      </li>
+
+      <?php if ($pageNum < $totalPages) {
+        if (!$search) {
+          echo "<li class='page-item last-page'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages'><img src='../assets/icons/chevrons-right.svg'></a></li>";
+        } else {
+          echo "<li class='page-item last-page'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'><img src='../assets/icons/chevrons-right.svg'></a></li>";
+        }
+      } ?>
+    </ul>
+  </div>
+
+  <!-- END - PAGE NAVIGATION -->
 
   <div class="modal fade" data-borrower="1" id="deleteBorrower" tabindex="-1" role="dialog" aria-labelledby="deleteBorrowerLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -414,153 +570,6 @@ try {
       </div>
     </div>
   </div>
-
-  <!-- PAGE NAVIGATION -->
-  <div class="pagination-container">
-    <div style='padding: 10px 20px 0px; border-top: dotted 1px #CCC;'>
-      <strong>Page <?= $pageNum . " of " . $totalPages; ?></strong>
-    </div>
-
-    <ul class="pagination">
-      <?php if ($pageNum > 1) {
-        if (!$search) {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>First Page</a></li>";
-        } else {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>First Page</a></li>";
-        }
-      } ?>
-
-      <li <?php if ($pageNum <= 1) {
-            echo "class='page-link disabled'";
-          } ?>>
-        <a <?php if ($pageNum > 1) {
-              if (!$search) {
-                echo "class='page-link' data-pagecount='$previousPage' href='?page=$previousPage'";
-              } else {
-                echo "class='page-link' data-pagecount='$previousPage' href='?page=$previousPage&search=$search'";
-              }
-            } ?>>Previous</a>
-      </li>
-
-      <?php
-      if ($totalPages <= 10) {
-        for ($counter = 1; $counter <= $totalPages; $counter++) {
-          if ($counter == $pageNum) {
-            echo "<li class='page-item active'><a data-pagecount='$counter' class='page-link active'>$counter</a></li>";
-          } else {
-            if (!$search) {
-              echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
-            } else {
-              echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
-            }
-          }
-        }
-      } elseif ($totalPages > 10) {
-        if ($pageNum <= 4) {
-          for ($counter = 1; $counter < 8; $counter++) {
-            if ($counter == $pageNum) {
-              echo "<li class='page-item active'><a data-pagecount='$counter' class='page-link active'>$counter</a></li>";
-            } else {
-              if (!$search) {
-                echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
-              } else {
-                echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
-              }
-            }
-          }
-          echo "<li class='page-item'><a class='page-link'>...</a></li>";
-          if (!$search) {
-            echo "<li class='page-item'><a class='page-link' data-pagecount='$secondLast' href='?page=$secondLast'>$secondLast</a></li>";
-            echo "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages'>$totalPages</a></li>";
-          } else {
-            echo "<li class='page-item'><a class='page-link' data-pagecount='$secondLast' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
-            echo "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
-          }
-        } elseif ($pageNum > 4 && $pageNum < $totalPages - 4) {
-          if (!$search) {
-            echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>1</a></li>";
-            echo "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2'>2</a></li>";
-          } else {
-            echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>1</a></li>";
-            echo "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2&search=$search'>2</a></li>";
-          }
-
-
-          echo "<li class='page-item'><a class='page-link'>...</a></li>";
-          for (
-            $counter = $pageNum - $adjacents;
-            $counter <= $pageNum + $adjacents;
-            $counter++
-          ) {
-            if ($counter == $pageNum) {
-              echo "<li class='page-item active'><a class='page-link active' data-pagecount='" . $counter . "'>$counter</a></li>";
-            } else {
-              if (!$search) {
-                echo "<li class='page-item'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter'>$counter</a></li>";
-              } else {
-                echo "<li class='page-item'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter&search=$search'>$counter</a></li>";
-              }
-            }
-          }
-          echo "<li class='page-item'><a class='page-link'>...</a></li>";
-          if (!$search) {
-            echo "<li class='page-item'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast'>$secondLast</a></li>";
-            echo "<li class='page-item'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages'>$totalPages</a></li>";
-          } else {
-            echo "<li class='page-item'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
-            echo "<li class='page-item'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
-          }
-        } else {
-          if (!$search) {
-            echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>1</a></li>";
-            echo "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2'>2</a></li>";
-          } else {
-            echo "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>1</a></li>";
-            echo "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2&search=$search'>2</a></li>";
-          }
-          echo "<li class='page-item'><a class='page-link'>...</a></li>";
-          for (
-            $counter = $totalPages - 6;
-            $counter <= $totalPages;
-            $counter++
-          ) {
-            if ($counter == $pageNum) {
-              echo "<li class='page-item active'><a class='page-link active'>$counter</a></li>";
-            } else {
-              if (!$search) {
-                echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
-              } else {
-                echo "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
-              }
-            }
-          }
-        }
-      }
-      ?>
-
-      <li <?php if ($pageNum >= $totalPages) {
-            echo "class='page-link disabled'";
-          } ?>>
-        <a <?php if ($pageNum < $totalPages) {
-              if (!$search) {
-                echo "class='page-link' data-pagecount='$nextPage' href='?page=$nextPage'";
-              } else {
-                echo "class='page-link' data-pagecount='$nextPage href='?page=$nextPage&search=$search'";
-              }
-            } ?>>Next</a>
-      </li>
-
-      <?php if ($pageNum < $totalPages) {
-        if (!$search) {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages'>Last &rsaquo;&rsaquo;</a></li>";
-        } else {
-          echo "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'>Last &rsaquo;&rsaquo;</a></li>";
-        }
-      } ?>
-    </ul>
-  </div>
-
-  <!-- END - PAGE NAVIGATION -->
 
   <div class="modal fade" data-borrower="1" id="editBorrower" tabindex="-1" role="dialog" aria-labelledby="editBorrowerLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">

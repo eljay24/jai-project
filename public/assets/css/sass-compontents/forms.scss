@@ -14,7 +14,8 @@ select {
     transition: all 300ms;
     padding-left: 20px;
     border-radius: 25px;
-    min-height: 42px;
+    min-height: 40px;
+    font-size: 14px;
     &[readonly] {
       background-color: transparent;
     }
@@ -29,6 +30,9 @@ select {
     &:focus {
       border-color: $jai-error;
     }
+  }
+  &.search-input {
+    border: none;
   }
 }
 
@@ -56,7 +60,7 @@ select {
 .error-message {
   position: absolute;
   color: $jai-error;
-  font-size: 13px;
+  font-size: 12px;
   margin-left: 22px;
 }
 

@@ -122,9 +122,9 @@ try {
       <a href="#" type="button" class="btn create-borrower create-btn"><img src="../assets/icons/plus.svg"> Create Borrower</a>
 
       <form class="table-search">
-        <div class="input-group">
+        <div class="input-group search-group">
           <input type="text" class="form-control search-input" placeholder="Search..." name="search" value="<?= $search; ?>" autofocus onfocus="this.select()">
-          <button class="btn btn-outline-secondary" type="submit">Search</button>
+          <button class="btn search-btn" type="submit">Search</button>
         </div>
       </form>
     </div>
@@ -133,7 +133,7 @@ try {
 
   <div class="neumorph-container">
     <div class="table-wrapper">
-      <div class="jai-table table-container borrower-table" name="">
+      <div class="jai-table table-container borrower-table">
         <div class="row table-header">
           <div class="jai-col-ID">ID</div>
           <div class="col">Borrower Details</div>
@@ -236,6 +236,8 @@ try {
           $count++;
         } ?>
       </div>
+    </div>
+    <div class="table-padding">
     </div>
   </div>
 
