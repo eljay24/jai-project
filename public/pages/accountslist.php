@@ -37,7 +37,7 @@ $statement = $conn->prepare("SELECT DISTINCT l.l_id, l.b_id, CONCAT(b.lastname, 
                              FROM jai_db.loans as l
                              INNER JOIN jai_db.borrowers as b
                              ON b.b_id = l.b_id
-                             INNER JOIN jai_db.payments as p
+                             LEFT JOIN jai_db.payments as p
                              ON l.l_id = p.l_id
                              INNER JOIN jai_db.collectors as c
                              ON l.c_id = c.c_id
@@ -166,10 +166,23 @@ if ($accounts) {
             $pdf->Cell(23.86, 4.5, number_format($updatedAcc['amortization'], 2), 'B', 0, 'R');
             $pdf->Cell(16.86, 4.5, strtolower(substr($updatedAcc['term'], 0, 4)) . '.', 'B', 0, 'R');
             $pdf->Cell(23.86, 4.5, $updatedAcc['mode'], 'B', 0, 'R');
-            $pdf->Cell(30.86, 4.5, number_format($updatedAcc['outstandingbalance'], 2), 'B', 0, 'R');
+
+            //IF NEW LOAN AND NO PAYMENTS YET
+            if (!$updatedAcc['outstandingbalance']) {
+                $pdf->Cell(30.86, 4.5, number_format($updatedAcc['payable'], 2), 'B', 0, 'R');
+            } else {
+                $pdf->Cell(30.86, 4.5, number_format($updatedAcc['outstandingbalance'], 2), 'B', 0, 'R');
+            }
+
             $pdf->Cell(23.86, 4.5, number_format($updatedAcc['SCB'], 2), 'B', 0, 'R');
             $pdf->Cell(23.86, 4.5, number_format($updatedAcc['arrears'], 2), 'B', 0, 'R');
-            $pdf->Cell(23.86, 4.5, $updatedAcc['lasttransaction'], 'RB', 1, 'R');
+
+            //IF NEW LOAN AND NO PAYMENTS YET
+            if (!$updatedAcc['outstandingbalance']) {
+                $pdf->Cell(23.86, 4.5, 'NEW', 'RB', 1, 'R');
+            } else {
+                $pdf->Cell(23.86, 4.5, $updatedAcc['lasttransaction'], 'RB', 1, 'R');
+            }
 
             $updatedAccsTotalOutBal += $updatedAcc['outstandingbalance'];
             $updatedAccsTotalSCB += $updatedAcc['SCB'];
