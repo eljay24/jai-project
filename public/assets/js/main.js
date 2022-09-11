@@ -462,8 +462,10 @@ function submitForm(
           $(".success-message .success-content").text(successMessage);
 
           if (addNew) {
+            $("input, textarea, select").blur();
             resetForm();
             clearErrors(form);
+            $(".to-focus").focus();
             $(submitBtn).removeClass("disabled");
           } else {
             $(".form-modal .modal-content").fadeOut(150, function () {
@@ -908,7 +910,7 @@ function checkPosition(current, container, scrollElement, action) {
   if (indexHeight > scrollHeight && action == "next") {
     scrollElement.scrollTop(indexHeight - current.outerHeight());
   } else if (
-    container.scrollHeight - containerOffsetTop <=
+    container.scrollHeight - containerOffsetTop - 2 <=
       container.scrollHeight - indexHeight &&
     action == "prev"
   ) {
