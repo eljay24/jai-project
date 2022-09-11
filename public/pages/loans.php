@@ -34,7 +34,7 @@ try {
                                                  OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
                                                  OR CONCAT('l', l.l_id) LIKE :search
                                                  OR CONCAT('b', b.b_id) LIKE :search)
-                                          ORDER BY l.activeloan DESC, l.l_id DESC
+                                          ORDER BY l.activeloan DESC, l.releasedate DESC
                                           ");
     $statementTotalRows->bindValue(':search', "%$search%");
   } else {
@@ -73,7 +73,7 @@ try {
                                         OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
                                         OR CONCAT('l', l.l_id) LIKE :search
                                         OR CONCAT('b', b.b_id) LIKE :search)
-                                 ORDER BY l.activeloan DESC, l.l_id DESC
+                                 ORDER BY l.activeloan DESC, l.releasedate DESC
                                  LIMIT :offset, :numOfRowsPerPage");
     $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
     $statement->bindValue(':numOfRowsPerPage', $numOfRowsPerPage, PDO::PARAM_INT); // "PDO::PARAM_INT" removes quotes from SQL
@@ -88,7 +88,7 @@ try {
                                   ON b.b_id = l.b_id
                                   INNER JOIN jai_db.collectors as c
                                   ON l.c_id = c.c_id
-                                  ORDER BY l.activeloan DESC, l.l_id DESC
+                                  ORDER BY l.activeloan DESC, l.releasedate DESC
                                   LIMIT :offset, :numOfRowsPerPage");
   }
 
