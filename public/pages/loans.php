@@ -135,7 +135,7 @@ try {
           <div class="col">Borrower</div>
           <div class="col">Loan Details</div>
           <div class="col">Payment Details</div>
-          <div class="col-1">Action</div>
+          <div class="col-1 text-center">Action</div>
         </div>
         <?php
         $count = 1;

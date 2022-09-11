@@ -157,7 +157,7 @@ try {
           <div class="col">Borrower</div>
           <div class="col">Payment Details</div>
           <div class="col">Collector</div>
-          <div class="col-1">Action</div>
+          <div class="col-1 text-center">Action</div>
         </div>
         <?php
         $count = 1;
@@ -199,11 +199,6 @@ try {
             <div class="jai-col-ID"><?php echo $payment['p_id'] ?></div>
             <div class="col">
               <div class="row">
-                <!-- <div class="jai-image-col">
-              <div class="jai-picture">
-                <img src="/<?= 'JAI/public/' . $payment['picture']; ?>" class="thumb-image2">
-              </div>
-            </div> -->
                 <div class="col">
                   <p class="jai-table-name primary-font"><span class="jai-table-label"></span> <?= '#' . $payment['b_id'] . ' ' . ucwords(strtolower($payment['borrowerfname'])) . ' ' . ucwords(strtolower(substr($payment['borrowermname'], 0, 1))) . '. ' . ucwords(strtolower($payment['borrowerlname'])) ?></p>
                 </div>

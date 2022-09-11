@@ -246,9 +246,11 @@ select.form-control {
   min-height: 40px;
   font-size: 14px;
 }
-input.form-control[readonly],
+input.form-control[readonly], input.form-control[disabled],
 textarea.form-control[readonly],
-select.form-control[readonly] {
+textarea.form-control[disabled],
+select.form-control[readonly],
+select.form-control[disabled] {
   background-color: transparent;
 }
 input.form-control:focus,
@@ -572,6 +574,8 @@ textarea.form-control {
   height: calc(100vh - 220px);
   overflow: scroll;
   overflow-x: hidden;
+  border-top-left-radius: 40px;
+  border-top-right-radius: 40px;
 }
 .table-wrapper .jai-table {
   margin: 0 15px;

@@ -175,17 +175,17 @@ function refreshTable(actionFIle, search = false, page = false) {
     dataType: "json",
     beforeSend: function () {},
     success: function (data, xhr, success) {
-      // console.log(data);
-      // console.log(xhr);
-      // console.log(success);
+      console.log(data);
+      console.log(xhr);
+      console.log(success);
 
       table.html(data.table);
       pagination.html(data.pagination);
     },
     error: function (response, xhr, data) {
-      // console.log(response);
-      // console.log(xhr);
-      // console.log(data);
+      console.log(response);
+      console.log(xhr);
+      console.log(data);
     },
   });
 }

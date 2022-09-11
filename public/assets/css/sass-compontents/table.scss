@@ -11,6 +11,8 @@
   height: calc(100vh - 220px);
   overflow: scroll;
   overflow-x: hidden;
+  border-top-left-radius: 40px;
+  border-top-right-radius: 40px;
   .jai-table {
     margin: 0 15px;
     p {
