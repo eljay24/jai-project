@@ -99,7 +99,6 @@ if (isset($_POST['action'])) {
 
   $data = [];
 
-  $table .= '<div class="jai-table table-container payments-table">';
   $table .= '<div class="row table-header">';
   $table .= '<div class="jai-col-ID">Ref#</div>';
   $table .= '<div class="col">Borrower</div>';
@@ -167,7 +166,7 @@ if (isset($_POST['action'])) {
     $table .= '<div class="row">';
     $table .= '<div class="col">';
     $table .= '<p class="jai-table-address primary-font"> <span class="jai-table-label">Collector: </span>' . ucwords(strtolower($payment['collectorfname'])) . ' ' . ucwords(strtolower($payment['collectormname'])) . ' ' . ucwords(strtolower($payment['collectorlname'])) . '</p>';
-    $table .= '<p class="sub-font">' . ($profitOrLoss > 0) ? '(test)Profit: +' . number_format($profitOrLoss, 2) : '(test)Loss: ' . number_format($profitOrLoss, 2) . '</p>';
+    $table .= '<p class="sub-font">' . (($profitOrLoss > 0) ? '(test)Profit: +' . number_format($profitOrLoss, 2) : '(test)Loss: ' . number_format($profitOrLoss, 2)) . '</p>';
     $table .= '</div>';
     $table .= '<div class="col-4">';
     $table .= '<p class="primary-font">' . $payment['status'] . '</p>';
@@ -177,7 +176,7 @@ if (isset($_POST['action'])) {
     $table .= '</div>';
     $table .= '<div class="col-1 d-flex align-items-start justify-content-around">';
     $table .= '<form method="get" action="ledger" target="_blank">';
-    $table .= '<input title="View ledger" type="submit" name="loanID" class="btn ledger-btn" value="' . $loanID . '" ' . ($totalPayment || $totalPass) == 0 ? 'disabled' : '' . '></input>';
+    $table .= '<input title="View ledger" type="submit" name="loanID" class="btn ledger-btn" value="' . $loanID . '" ' . (($totalPayment || $totalPass) == 0 ? 'disabled' : '') . '></input>';
     $table .= '</form>';
     $table .= '<button title="Delete" type="button" class="btn delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower" disabled>Delete</button>';
     $table .= '</div>';
