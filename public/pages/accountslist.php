@@ -148,7 +148,7 @@ if ($accounts) {
 
     /* ----- UPDATED ACCOUNTS ----- */
     if ($updatedAccs) {
-        $pdf->SetFont('Arial', 'I', 8);
+        $pdf->SetFont('Arial', 'BI', 8);
         $pdf->Cell(310.2, 6, 'STATUS: UPDATED', 'LR', 1);
         $updatedAccsTotalOutBal = (float)0;
         $updatedAccsTotalSCB = (float)0;
@@ -179,7 +179,7 @@ if ($accounts) {
 
             //IF NEW LOAN AND NO PAYMENTS YET
             if (!$updatedAcc['outstandingbalance']) {
-                $pdf->Cell(23.86, 4.5, 'NEW', 'RB', 1, 'R');
+                $pdf->Cell(23.86, 4.5, 'N/A', 'RB', 1, 'R');
             } else {
                 $pdf->Cell(23.86, 4.5, $updatedAcc['lasttransaction'], 'RB', 1, 'R');
             }
@@ -218,7 +218,7 @@ if ($accounts) {
 
     /* ----- IN ARREARS ACCOUNTS ----- */
     if ($inArrearsAccs) {
-        $pdf->SetFont('Arial', 'I', 8);
+        $pdf->SetFont('Arial', 'BI', 8);
         $pdf->SetTextColor(0, 0, 0); //BLACK
         $pdf->Cell(310.2, 6, 'STATUS: IN ARREARS', 'TLR', 1);
         $inArrearsAccsTotalOutBal = (float)0;
@@ -301,7 +301,7 @@ if ($accounts) {
 
     /* ----- PAST DUE ACCOUNTS ----- */
     if ($pastDueAccs) {
-        $pdf->SetFont('Arial', 'I', 8);
+        $pdf->SetFont('Arial', 'BI', 8);
         $pdf->SetTextColor(0, 0, 0); //BLACK
         $pdf->Cell(310.2, 6, 'STATUS: PAST DUE', 'TLR', 1);
         $pastDueAccsTotalOutBal = (float)0;
@@ -381,7 +381,7 @@ if ($accounts) {
 
     /* ----- FOR LITIGATION ACCOUNTS ----- */
     if ($forLitigationAccs) {
-        $pdf->SetFont('Arial', 'I', 8);
+        $pdf->SetFont('Arial', 'BI', 8);
         $pdf->SetTextColor(0, 0, 0); //BLACK
         $pdf->Cell(310.2, 6, 'STATUS: FOR LITIGATION', 'TLR', 1);
         $forLitigationAccsTotalOutBal = (float)0;
