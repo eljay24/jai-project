@@ -435,6 +435,8 @@ try {
 
   <!-- END - PAGE NAVIGATION -->
 
+  <!-- DELETE BORROWER START -->
+
   <div class="modal fade" data-borrower="1" id="deleteBorrower" tabindex="-1" role="dialog" aria-labelledby="deleteBorrowerLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -450,6 +452,10 @@ try {
       </div>
     </div>
   </div>
+
+  <!-- DELETE BORROWER END -->
+
+  <!-- CREATE/EDIT BORROWER START -->
 
   <div class="modal fade form-modal payment-modal" data-loan="1" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -513,7 +519,7 @@ try {
                   <div class="row">
                     <div class="col">
                       <div class="jai-mb-2">
-                        <input id="payment" name="payment" placeholder="Payment amount" type="text" class="form-control" required>
+                        <input id="payment" name="payment" placeholder="Payment amount" type="text" class="form-control remove-readonly" required>
                       </div>
                     </div>
                     <div class="col">
@@ -556,9 +562,9 @@ try {
 
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary btn-sm close-modal" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary btn-sm submit-payment">Submit</button>
-          <button type="button" class="btn btn-primary btn-sm add-new">Submit & Add New</button>
+          <button type="button" class="btn close-modal" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-action submit-payment">Submit</button>
+          <button type="button" class="btn add-new">Submit & Add New</button>
         </div>
       </div>
       <div class="success-message" style="display: none;">

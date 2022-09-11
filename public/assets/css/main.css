@@ -159,7 +159,7 @@ body span {
   border: none;
   background-color: #25316d;
 }
-.btn.btn-action {
+.btn.btn-action, .btn.add-new {
   border: none;
   background-color: #25316d;
   min-width: 140px;

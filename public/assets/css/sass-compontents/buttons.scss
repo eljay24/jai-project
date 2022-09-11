@@ -32,7 +32,8 @@
     border: none;
     background-color: $active-color;
   }
-  &.btn-action {
+  &.btn-action,
+  &.add-new {
     border: none;
     background-color: $active-color;
     min-width: 140px;
