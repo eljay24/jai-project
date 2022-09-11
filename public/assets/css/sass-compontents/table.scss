@@ -45,6 +45,9 @@
         top: 0;
         left: 0;
         z-index: 1;
+        box-shadow: 0 4px 8px -8px grey;
+        border-top-right-radius: 10px;
+        border-top-left-radius: 10px;
       }
       &.jai-data-row {
         transition: all 150ms;
@@ -63,6 +66,7 @@
         display: flex;
         justify-content: center;
         flex: 0 0 5%;
+        font-size: 12px;
       }
       .jai-table-input {
         padding: 10px;

@@ -116,8 +116,10 @@ try {
 
 <div class="content-container">
   <div class="page-name">
-
-    <h1>Borrowers</h1>
+    <div class="title-container d-flex">
+      <img src="../assets/icons/users_dark.svg">
+      <h1>Borrowers</h1>
+    </div>
     <div class="actions-container">
       <a href="#" type="button" class="btn create-borrower create-btn"><img src="../assets/icons/plus.svg"> Create Borrower</a>
 

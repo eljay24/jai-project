@@ -4,6 +4,10 @@ body {
   * {
     box-sizing: border-box;
     font-family: "Poppins Regular", Times, serif;
+    &[disabled],
+    &.disabled {
+      cursor: not-allowed;
+    }
   }
   ::-webkit-scrollbar {
     width: 5px;
@@ -56,6 +60,13 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    .title-container {
+      margin-left: 28px;
+      img {
+        width: 35px;
+        margin-right: 15px;
+      }
+    }
     h1 {
       font-weight: 600;
       font-size: 30px;
@@ -83,9 +94,10 @@ body {
     background-color: white;
     border: 1px solid #333;
     border-radius: 15px;
-    max-height: 222px;
+    max-height: 208px;
     overflow: hidden;
     overflow-y: overlay;
+    min-width: 400px;
     @include custom-scrollbar();
     &.show-results {
       display: block;

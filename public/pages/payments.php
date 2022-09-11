@@ -134,9 +134,12 @@ try {
 
 <div class="content-container">
   <div class="page-name">
-    <h1>Payments</h1>
+    <div class="title-container d-flex">
+      <img src="../assets/icons/dollar-sign_dark.svg">
+      <h1>Payments</h1>
+    </div>
     <div class="actions-container">
-      <a href="#" type="button" class="btn open-payment-modal create-btn">Add Payment</a>
+      <a href="#" type="button" class="btn open-payment-modal create-btn"><img src="../assets/icons/plus.svg"> Add Payment</a>
       <form class="table-search">
         <div class="input-group search-group">
           <input type="text" class="form-control search-input" placeholder="Search..." name="search" value="<?php echo $search; ?>" autofocus onfocus="this.select()">
@@ -149,7 +152,7 @@ try {
   <div class="neumorph-container">
     <div class="table-wrapper">
       <div class="jai-table table-container payments-table">
-        <div class="row">
+        <div class="row table-header">
           <div class="jai-col-ID">Ref#</div>
           <div class="col">Borrower</div>
           <div class="col">Payment Details</div>
@@ -254,14 +257,14 @@ try {
                 </div>
               </div>
             </div>
-            <div class="col-1 d-flex align-items-center justify-content-around">
+            <div class="col-1 d-flex align-items-start justify-content-around">
               <!-- <a href="update.php?id=<?php //echo $borrower['b_id'] 
                                           ?>" class="btn btn-primary btn-sm edit-btn">Edit</a> -->
               <!-- <a title="Edit" href="#" class="btn btn-primary btn-sm edit-btn">Edit</a> -->
               <form method="get" action="ledger" target="_blank">
-                <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $loanID ?>" <?= ($totalPayment || $totalPass) == 0 ? 'disabled' : '' ?>></input>
+                <input title="View ledger" type="submit" name="loanID" class="btn ledger-btn" value="<?= $loanID ?>" <?= ($totalPayment || $totalPass) == 0 ? 'disabled' : '' ?>></input>
               </form>
-              <button title="Delete" type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower" disabled>Delete</button>
+              <button title="Delete" type="button" class="btn delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower" disabled>Delete</button>
 
             </div>
             <div class="d-none hidden-field">
@@ -469,8 +472,11 @@ try {
             <input name="data-row" type="hidden" class="d-none" value=''>
             <div class="container">
               <div class="row">
+                <div class="col-7">
+                  <h6 class="modal-body-label">Borrower Details</h6>
+                </div>
                 <div class="col">
-                  <h5 class="modal-body-label">Payment</h5>
+                  <h6 class="modal-body-label">Payment Details</h6>
                 </div>
               </div>
               <div class="row">
@@ -479,7 +485,7 @@ try {
                     <div class="col">
                       <div class="jai-mb-2 autocomplete">
                         <input type="hidden" class="borrower-id" name="borrower-id" placeholder="Search for borrowers...">
-                        <input type="text" name="borrower-name" id="namesearch" class="autocomplete-input form-control" placeholder="Search for borrowers..." required>
+                        <input type="text" name="borrower-name" id="namesearch" class="autocomplete-input form-control to-focus" placeholder="Search for borrowers..." required>
                         <div class="suggestions-container">
                         </div>
                       </div>
