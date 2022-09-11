@@ -214,40 +214,43 @@ if (isset($_POST['action'])) {
     $count++;
   }
 
-  $pagination .= '<div style="padding: 10px 20px 0px; border-top: dotted 1px #CCC;">';
-  $pagination .= '<strong>Page' . $pageNum . " of " . $totalPages . '</strong>';
-  $pagination .= '</div>';
-
-  $pagination .= '<ul class="pagination">';
+  $pagination .= '<ul class="pagination justify-content-center">';
   if ($pageNum > 1) {
     if (!$search) {
-      $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>First Page</a></li>";
+      $pagination .= '<li class="page-item first-page"><a class="page-link" data-pagecount="1" href="?page=1"><img src="../assets/icons/chevrons-left.svg"></a></li>';
     } else {
-      $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>First Page</a></li>";
+      $pagination .= '<li class="page-item first-page"><a class="page-link" data-pagecount="1" href="?page=1&search=' . $search . '"><img src="../assets/icons/chevrons-left.svg"></a></li>';
     }
   }
-
+  $pagination .= '<li ';
+  if ($pageNum <= 1) {
+    $pagination .= 'class="page-item disabled prev-page"';
+  } else {
+    $pagination .= 'class="page-item prev-page"';
+  }
+  $pagination .= '>';
+  $pagination .= '<a ';
   if ($pageNum > 1) {
-    $pagination .= "<li" . ($pageNum <= 1 ? " class='page-link disabled'" : '') . ">";
     if (!$search) {
-      $pagination .= "<a class='page-link' data-pagecount='$previousPage' href='?page=$previousPage'>";
+      $pagination .= 'class="page-link" data-pagecount="' . $previousPage . '" href="?page=' . $previousPage . '"';
     } else {
-      $pagination .= "<a class='page-link' data-pagecount='$previousPage' href='?page=$previousPage&search=$search'>";
+      $pagination .= 'class="page-link" data-pagecount="' . $previousPage . '" href="?page=' . $previousPage . '&search=' . $search . '"';
     }
-    $pagination .= "Previous</a></li>";
+  } else {
+    $pagination .= 'class="page-link" data-pagecount=' . $previousPage . ' href="?page=' . $previousPage . '"';
   }
-
-
-
+  $pagination .= '><img src="../assets/icons/chevron-left.svg"></a>';
+  $pagination .= '</li>';
+  $pagination .= '<div class="numbers-container">';
   if ($totalPages <= 10) {
     for ($counter = 1; $counter <= $totalPages; $counter++) {
       if ($counter == $pageNum) {
-        $pagination .= "<li class='page-item active'><a data-pagecount='$counter' class='page-link active'>$counter</a></li>";
+        $pagination .= '<li class="page-item is-number active"><a data-pagecount="' . $counter . '" class="page-link active">' . $counter . '</a></li>';
       } else {
         if (!$search) {
-          $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
+          $pagination .= '<li class="page-item is-number"><a class="page-link" data-pagecount="' . $counter . '" href="?page=' . $counter . '">' . $counter . '</a></li>';
         } else {
-          $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
+          $pagination .= '<li class="page-item is-number"><a class="page-link" data-pagecount="' . $counter . '" href="?page=' . $counter . '&search=' . $search . '">' . $counter . '</a></li>';
         }
       }
     }
@@ -255,109 +258,107 @@ if (isset($_POST['action'])) {
     if ($pageNum <= 4) {
       for ($counter = 1; $counter < 8; $counter++) {
         if ($counter == $pageNum) {
-          $pagination .= "<li class='page-item active'><a data-pagecount='$counter' class='page-link active'>$counter</a></li>";
+          $pagination .= '<li class="page-item is-number active"><a data-pagecount="' . $counter . '" class="page-link active">' . $counter . '</a></li>';
         } else {
           if (!$search) {
-            $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
+            $pagination .= '<li class="page-item is-number"><a class="page-link" data-pagecount="' . $counter . '" href="?page=' . $counter . '">' . $counter . '</a></li>';
           } else {
-            $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
+            $pagination .= '<li class="page-item is-number"><a class="page-link" data-pagecount="' . $counter . '" href="?page=' . $counter . '&search=' . $search . '">' . $counter . '</a></li>';
           }
         }
       }
-      $pagination .= "<li class='page-item'><a class='page-link'>...</a></li>";
+      $pagination .= "<li class='page-item is-number'><a class='page-link'>...</a></li>";
       if (!$search) {
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$secondLast' href='?page=$secondLast'>$secondLast</a></li>";
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages'>$totalPages</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='$secondLast' href='?page=$secondLast'>$secondLast</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages'>$totalPages</a></li>";
       } else {
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$secondLast' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='$secondLast' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
       }
     } elseif ($pageNum > 4 && $pageNum < $totalPages - 4) {
       if (!$search) {
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>1</a></li>";
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2'>2</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='1' href='?page=1'>1</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='2' href='?page=2'>2</a></li>";
       } else {
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>1</a></li>";
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2&search=$search'>2</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>1</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='2' href='?page=2&search=$search'>2</a></li>";
       }
-
-
-      $pagination .= "<li class='page-item'><a class='page-link'>...</a></li>";
+      $pagination .= "<li class='page-item is-number'><a class='page-link'>...</a></li>";
       for (
         $counter = $pageNum - $adjacents;
         $counter <= $pageNum + $adjacents;
         $counter++
       ) {
         if ($counter == $pageNum) {
-          $pagination .= "<li class='page-item active'><a class='page-link active' data-pagecount='" . $counter . "'>$counter</a></li>";
+          $pagination .= "<li class='page-item is-number active'><a class='page-link active' data-pagecount='" . $counter . "'>$counter</a></li>";
         } else {
           if (!$search) {
-            $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter'>$counter</a></li>";
+            $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter'>$counter</a></li>";
           } else {
-            $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter&search=$search'>$counter</a></li>";
+            $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter&search=$search'>$counter</a></li>";
           }
         }
       }
-      $pagination .= "<li class='page-item'><a class='page-link'>...</a></li>";
+      $pagination .= "<li class='page-item is-number'><a class='page-link'>...</a></li>";
       if (!$search) {
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast'>$secondLast</a></li>";
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages'>$totalPages</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast'>$secondLast</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages'>$totalPages</a></li>";
       } else {
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
       }
     } else {
       if (!$search) {
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>1</a></li>";
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2'>2</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='1' href='?page=1'>1</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='2' href='?page=2'>2</a></li>";
       } else {
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>1</a></li>";
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2&search=$search'>2</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>1</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='2' href='?page=2&search=$search'>2</a></li>";
       }
-      $pagination .= "<li class='page-item'><a class='page-link'>...</a></li>";
+      $pagination .= "<li class='page-item is-number'><a class='page-link'>...</a></li>";
       for (
         $counter = $totalPages - 6;
         $counter <= $totalPages;
         $counter++
       ) {
         if ($counter == $pageNum) {
-          $pagination .= "<li class='page-item active'><a class='page-link active'>$counter</a></li>";
+          $pagination .= "<li class='page-item is-number active'><a class='page-link active'>$counter</a></li>";
         } else {
           if (!$search) {
-            $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
+            $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
           } else {
-            $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
+            $pagination .= " class='page-item is-number'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
           }
         }
       }
     }
   }
-
-  if ($totalPages == 0) {
-    $pagination .= "<li class='page-item active'><a class='page-link active' data-pagecount='1' href='?page=1'>1</a></li>";
+  $pagination .= "</div>";
+  $pagination .= "<li ";
+  if ($pageNum >= $totalPages) {
+    $pagination .= "class='page-item next-page disabled'";
+  } else {
+    $pagination .= "class='page-item next-page'";
   }
-
-
+  $pagination .= ">";
+  $pagination .= "<a ";
   if ($pageNum < $totalPages) {
-    $pagination .= "<li " . ($pageNum >= $totalPages ? "class='page-link'" : '') . "><a ";
     if (!$search) {
       $pagination .= "class='page-link' data-pagecount='$nextPage' href='?page=$nextPage'";
     } else {
-      $pagination .= "class='page-link' data-pagecount='$nextPage' href='?page=$nextPage&search=$search'";
+      $pagination .= "class='page-link' data-pagecount='$nextPage href='?page=$nextPage&search=$search'";
     }
-    $pagination .= ">Next</a></li>";
   }
-
-
+  $pagination .= "><img src='../assets/icons/chevron-right.svg'></a>";
+  $pagination .= "</li>";
   if ($pageNum < $totalPages) {
     if (!$search) {
-      $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages'>Last &rsaquo;&rsaquo;</a></li>";
+      $pagination .= "<li class='page-item last-page'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages'><img src='../assets/icons/chevrons-right.svg'></a></li>";
     } else {
-      $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'>Last &rsaquo;&rsaquo;</a></li>";
+      $pagination .= "<li class='page-item last-page'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'><img src='../assets/icons/chevrons-right.svg'></a></li>";
     }
   }
-
-  $pagination .= '</ul>';
+  $pagination .= "</ul>";
 
 
   $data['table'] = $table;

@@ -1,6 +1,12 @@
 .btn {
   border-radius: 35px;
   padding: 10px 20px;
+  line-height: 20px;
+  font-size: 14px;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   &.edit-btn,
   &.delete-btn,
   &.ledger-btn {
@@ -11,13 +17,64 @@
     height: 42px;
     width: 42px;
   }
+  &:hover {
+    color: white;
+  }
+  &:focus {
+    box-shadow: none;
+  }
+  &:active {
+    &:focus {
+      box-shadow: none;
+    }
+  }
+  &.search-btn {
+    border: none;
+    background-color: $active-color;
+  }
+  &.btn-action,
+  &.add-new {
+    border: none;
+    background-color: $active-color;
+    min-width: 140px;
+  }
+  &.close-modal {
+    border: 1px solid $jai-error;
+    color: $jai-error;
+    background-color: transparent;
+    transition: all 0ms;
+    height: 40px;
+    &:active {
+      background-color: $jai-error;
+      color: white;
+    }
+  }
+  &.create-btn {
+    background-color: $active-color;
+    border: $active-color;
+    height: 40px;
+    box-shadow: 4px 4px 9px #c1c1c1, -4px -4px 9px #ffffff;
+
+    img {
+      margin-right: 5px;
+      position: relative;
+      bottom: 1px;
+    }
+  }
   &.edit-btn {
-    background-image: url(../icons/edit-icon.png);
+    background-image: url(../icons/edit.svg);
+    background-size: 17px;
   }
   &.delete-btn {
-    background-image: url(../icons/delete-icon.png);
+    background-image: url(../icons/trash-2.svg);
+    background-size: 17px;
   }
   &.ledger-btn {
     background-image: url(../icons/ledger.png);
   }
+}
+
+.input-group {
+  box-shadow: 4px 4px 9px #c1c1c1, -4px -4px 9px #ffffff;
+  border-radius: 50px;
 }

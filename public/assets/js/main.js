@@ -16,6 +16,7 @@ $(document).ready(function () {
   setToZero();
   imgInput();
   fakeSelectEvents();
+  triggerSubmit();
 
   // Autofill Functions
   autofillChoiceActions();
@@ -174,17 +175,17 @@ function refreshTable(actionFIle, search = false, page = false) {
     dataType: "json",
     beforeSend: function () {},
     success: function (data, xhr, success) {
-      console.log(data);
-      console.log(xhr);
-      console.log(success);
+      // console.log(data);
+      // console.log(xhr);
+      // console.log(success);
 
       table.html(data.table);
       pagination.html(data.pagination);
     },
     error: function (response, xhr, data) {
-      console.log(response);
-      console.log(xhr);
-      console.log(data);
+      // console.log(response);
+      // console.log(xhr);
+      // console.log(data);
     },
   });
 }
@@ -318,7 +319,7 @@ function autoFillAction(input, actionFile) {
         // console.log(success);
       },
       error: function (response, xhr, data) {
-        console.log(xhr);
+        // console.log(xhr);
         thisInput
           .siblings(messages.confirmMessages.borrower.noresults)
           .html(data);
@@ -389,9 +390,9 @@ function fillInputs(id) {
       }
     },
     error: function (xghr, status, error) {
-      console.log(xghr);
-      console.log(status);
-      console.log(error);
+      // console.log(xghr);
+      // console.log(status);
+      // console.log(error);
     },
   });
 }
@@ -403,12 +404,31 @@ function resetForm() {
     $(".action-form .no-reset").each(function () {
       noResetArr.push($(this).val());
     });
+    $(".remove-readonly").each(function () {
+      $(this).removeAttr("readonly");
+    });
     $(".action-form")[0].reset();
     $(".action-form .no-reset").each(function () {
       $(this).val(noResetArr[count]);
       count++;
     });
   }
+}
+
+function triggerSubmit() {
+  $(".modal input, .modal select, .modal stextarea").on(
+    "keydown",
+    function (event) {
+      let e = event.key;
+      if (event.ctrlKey && e == "Enter") {
+        if ($(".add-new").length) {
+          $(".add-new").click();
+        } else if ($(".btn-action").length) {
+          $(".btn-action").click();
+        }
+      }
+    }
+  );
 }
 
 function submitForm(
@@ -433,9 +453,9 @@ function submitForm(
           $(submitBtn).addClass("disabled");
         },
         success: function (response, xhr, data) {
-          console.log(response);
-          console.log(xhr);
-          console.log(data);
+          // console.log(response);
+          // console.log(xhr);
+          // console.log(data);
           if (tableAction) {
             refreshTable(tableAction);
           }
@@ -458,10 +478,10 @@ function submitForm(
           }
         },
         error: function (response, xhr, data) {
-          console.log("error");
-          console.log(response);
-          console.log(xhr);
-          console.log(data);
+          // console.log("error");
+          // console.log(response);
+          // console.log(xhr);
+          // console.log(data);
         },
       });
   });
@@ -827,7 +847,7 @@ function createCustomSelect() {
 
 function fakeSelectEvents() {
   $(document).on("keydown", ".autocomplete-input", function (event) {
-    console.log(event.key);
+    // console.log(event.key);
     if (event.key == "ArrowDown" || event.key == "ArrowUp") {
       if ($(".suggestion-container.focused").length) {
         goToNextInput(event.key);
@@ -865,11 +885,11 @@ function goToNextInput(event) {
 
   $(".suggestion-container").eq(currentIndex).removeClass("focused");
   if (event == "ArrowDown" && current.is(":last-child")) {
-    console.log("go to top");
+    // console.log("go to top");
     $(".suggestion-container:first-child").addClass("focused");
     container.scrollTop(0);
   } else if (event == "ArrowUp" && current.is(":first-child")) {
-    console.log("go to bottom");
+    // console.log("go to bottom");
     $(".suggestion-container:last-child").addClass("focused");
     container.scrollTop(containerIndex.scrollHeight);
   } else {
@@ -892,7 +912,7 @@ function checkPosition(current, container, scrollElement, action) {
       container.scrollHeight - indexHeight &&
     action == "prev"
   ) {
-    console.log("scroll up");
+    // console.log("scroll up");
     scrollElement.scrollTop(indexHeight - containerHeight);
   }
 }

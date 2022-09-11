@@ -93,25 +93,22 @@ if (isset($_POST['action'])) {
 
   $data = [];
 
-  $table .= '<div class="row">';
+  $table .= '<div class="row table-header">';
   $table .= '<div class="jai-col-ID">ID</div>';
   $table .= '<div class="col">Borrower Details</div>';
   $table .= '<div class="col">Loan Summary</div>';
-  $table .= '<div class="col-1">Action</div>';
+  $table .= '<div class="col-1 text-center">Action</div>';
   $table .= '</div>';
   $count = 1;
   foreach ($borrowers as $i => $borrower) {
-
     $l_id = $borrower['l_id'];
     $statementPayment = $conn->prepare("SELECT SUM(p.amount) as totalpayment
-                                         FROM jai_db.payments as p
-                                         WHERE l_id = :l_id");
+                                  FROM jai_db.payments as p
+                                  WHERE l_id = :l_id");
     $statementPayment->bindValue(':l_id', $l_id);
     $statementPayment->execute();
     $totalPayment = $statementPayment->fetch(PDO::FETCH_ASSOC);
-
     $picturePath = $borrower['picture'] ? $borrower['picture'] : 'assets/icons/borrower-picture-placeholder.jpg';
-
     $table .= '<div class="row jai-data-row" data-row="row-' . $borrower['b_id'] . '">';
     $table .= '<div class="jai-col-ID">' . $borrower['b_id'] . '</div>';
     $table .= '<div class="col">';
@@ -142,7 +139,7 @@ if (isset($_POST['action'])) {
     } else {
       $table .= '<div class="row">';
       $table .= '<div class="col">';
-      $table .= '<p class="jai-table-amount primary-font"><span class="jai-table-label">Amount:</span> <span class="value">' .  "₱ " . number_format($borrower['amount'], 2) . '</span></p>';
+      $table .= '<p class="jai-table-amount primary-font"><span class="jai-table-label">Amount:</span> <span class="value">' . "₱ " . number_format($borrower['amount'], 2) . '</span></p>';
       $table .= '</div>';
       $table .= '<div class="col">';
       $table .= '<p class="jai-table-payable primary-font"> <span class="jai-table-label">Balance: </span> <span class="value">' . "₱ " . number_format($borrower['payable'] - $totalPayment['totalpayment'], 2) . '</span></p> <!-- CALCULATED BALANCE -->';
@@ -153,18 +150,22 @@ if (isset($_POST['action'])) {
       $table .= '<p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Payable: </span> <span class="value">' . "₱ " . number_format($borrower['payable'], 2) . '</span></p>';
       $table .= '<p class="jai-table-mode sub-font"> <span class="jai-table-label">Mode & Term: </span> <span class="value">' . ucwords(strtolower($borrower['mode'] . ', ' . $borrower['term'])) . '</span></p>';
       $table .= '<p class="jai-table-amort sub-font"> <span class="jai-table-label">Amortization: </span> <span class="value">' . "₱ " . number_format($borrower['amortization'], 2) . '</span></p>';
+      $table .= '' . (date('Y-m-d') > date_format(date_create($borrower['duedate']), 'Y-m-d')  ? '<p class="primary-font red">(PAST DUE)</p>' : '') . '';
       $table .= '</div>';
       $table .= '<div class="col">';
       $table .= '<p class="jai-table-release sub-font"> <span class="jai-table-label">Release Date: </span> ' . date_format(date_create($borrower['releasedate']), 'M-d-Y') . '</p>';
       $table .= '<p class="jai-table-due sub-font"> <span class="jai-table-label">Due Date: </span> ' . date_format(date_create($borrower['duedate']), 'M-d-Y') . '</p>';
-      $table .= '<p class="sub-font"> <span class="jai-table-label"><strong>(TEST) LOAN ID: </span> ' .  $borrower['l_id'] . ' </strong></p>';
+      $table .= '<p class="sub-font"> <span class="jai-table-label"><strong>(TEST) LOAN ID: </span> ' . $borrower['l_id'] . ' </strong></p>';
       $table .= '</div>';
       $table .= '</div>';
     }
     $table .= '</div>';
-    $table .= '<div class="col-1 d-flex align-items-center justify-content-around">';
-    $table .= '<a title="Edit" href="#" class="btn btn-primary btn-sm edit-btn">Edit</a>';
-    $table .= '<button title="Delete" type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower"' . ($borrower['activeloan'] == 1 ? 'disabled' : '') . '>Delete</button>';
+    $table .= '<!-- <div class="col position-relative">';
+    $table .= '<textarea class="jai-table-input" type="text"></textarea>';
+    $table .= ' </div> -->';
+    $table .= '<div class="col-1 d-flex align-items-start justify-content-around">';
+    $table .= '<a title="Edit" href="#" class="btn edit-btn">Edit</a>';
+    $table .= '<button title="Delete" type="button" class="btn delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower" disabled>Delete</button>';
     $table .= '</div>';
     $table .= '<div class="d-none hidden-field">';
     $table .= '<form id="hidden-form-' . $count . '" class="hidden-form" action="">';
@@ -186,41 +187,43 @@ if (isset($_POST['action'])) {
     $count++;
   }
 
-
-  $pagination .= '<div style="padding: 10px 20px 0px; border-top: dotted 1px #CCC;">';
-  $pagination .= '<strong>Page' . $pageNum . " of " . $totalPages . '</strong>';
-  $pagination .= '</div>';
-
-  $pagination .= '<ul class="pagination">';
+  $pagination .= '<ul class="pagination justify-content-center">';
   if ($pageNum > 1) {
     if (!$search) {
-      $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>First Page</a></li>";
+      $pagination .= '<li class="page-item first-page"><a class="page-link" data-pagecount="1" href="?page=1"><img src="../assets/icons/chevrons-left.svg"></a></li>';
     } else {
-      $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>First Page</a></li>";
+      $pagination .= '<li class="page-item first-page"><a class="page-link" data-pagecount="1" href="?page=1&search=' . $search . '"><img src="../assets/icons/chevrons-left.svg"></a></li>';
     }
   }
-
+  $pagination .= '<li ';
+  if ($pageNum <= 1) {
+    $pagination .= 'class="page-item disabled prev-page"';
+  } else {
+    $pagination .= 'class="page-item prev-page"';
+  }
+  $pagination .= '>';
+  $pagination .= '<a ';
   if ($pageNum > 1) {
-    $pagination .= "<li" . ($pageNum <= 1 ? " class='page-link disabled'" : '') . ">";
     if (!$search) {
-      $pagination .= "<a class='page-link' data-pagecount='$previousPage' href='?page=$previousPage'>";
+      $pagination .= 'class="page-link" data-pagecount="' . $previousPage . '" href="?page=' . $previousPage . '"';
     } else {
-      $pagination .= "<a class='page-link' data-pagecount='$previousPage' href='?page=$previousPage&search=$search'>";
+      $pagination .= 'class="page-link" data-pagecount="' . $previousPage . '" href="?page=' . $previousPage . '&search=' . $search . '"';
     }
-    $pagination .= "Previous</a></li>";
+  } else {
+    $pagination .= 'class="page-link" data-pagecount=' . $previousPage . ' href="?page=' . $previousPage . '"';
   }
-
-
-
+  $pagination .= '><img src="../assets/icons/chevron-left.svg"></a>';
+  $pagination .= '</li>';
+  $pagination .= '<div class="numbers-container">';
   if ($totalPages <= 10) {
     for ($counter = 1; $counter <= $totalPages; $counter++) {
       if ($counter == $pageNum) {
-        $pagination .= "<li class='page-item active'><a data-pagecount='$counter' class='page-link active'>$counter</a></li>";
+        $pagination .= '<li class="page-item is-number active"><a data-pagecount="' . $counter . '" class="page-link active">' . $counter . '</a></li>';
       } else {
         if (!$search) {
-          $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
+          $pagination .= '<li class="page-item is-number"><a class="page-link" data-pagecount="' . $counter . '" href="?page=' . $counter . '">' . $counter . '</a></li>';
         } else {
-          $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
+          $pagination .= '<li class="page-item is-number"><a class="page-link" data-pagecount="' . $counter . '" href="?page=' . $counter . '&search=' . $search . '">' . $counter . '</a></li>';
         }
       }
     }
@@ -228,109 +231,108 @@ if (isset($_POST['action'])) {
     if ($pageNum <= 4) {
       for ($counter = 1; $counter < 8; $counter++) {
         if ($counter == $pageNum) {
-          $pagination .= "<li class='page-item active'><a data-pagecount='$counter' class='page-link'>$counter</a></li>";
+          $pagination .= '<li class="page-item is-number active"><a data-pagecount="' . $counter . '" class="page-link active">' . $counter . '</a></li>';
         } else {
           if (!$search) {
-            $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
+            $pagination .= '<li class="page-item is-number"><a class="page-link" data-pagecount="' . $counter . '" href="?page=' . $counter . '">' . $counter . '</a></li>';
           } else {
-            $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
+            $pagination .= '<li class="page-item is-number"><a class="page-link" data-pagecount="' . $counter . '" href="?page=' . $counter . '&search=' . $search . '">' . $counter . '</a></li>';
           }
         }
       }
-      $pagination .= "<li class='page-item'><a class='page-link'>...</a></li>";
+      $pagination .= "<li class='page-item is-number'><a class='page-link'>...</a></li>";
       if (!$search) {
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$secondLast' href='?page=$secondLast'>$secondLast</a></li>";
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages'>$totalPages</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='$secondLast' href='?page=$secondLast'>$secondLast</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages'>$totalPages</a></li>";
       } else {
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$secondLast' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='$secondLast' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
       }
     } elseif ($pageNum > 4 && $pageNum < $totalPages - 4) {
       if (!$search) {
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>1</a></li>";
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2'>2</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='1' href='?page=1'>1</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='2' href='?page=2'>2</a></li>";
       } else {
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>1</a></li>";
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2&search=$search'>2</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>1</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='2' href='?page=2&search=$search'>2</a></li>";
       }
-
-
-      $pagination .= "<li class='page-item'><a class='page-link'>...</a></li>";
+      $pagination .= "<li class='page-item is-number'><a class='page-link'>...</a></li>";
       for (
         $counter = $pageNum - $adjacents;
         $counter <= $pageNum + $adjacents;
         $counter++
       ) {
         if ($counter == $pageNum) {
-          $pagination .= "<li class='page-item active'><a class='page-link' data-pagecount='" . $counter . "'>$counter</a></li>";
+          $pagination .= "<li class='page-item is-number active'><a class='page-link active' data-pagecount='" . $counter . "'>$counter</a></li>";
         } else {
           if (!$search) {
-            $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter'>$counter</a></li>";
+            $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter'>$counter</a></li>";
           } else {
-            $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter&search=$search'>$counter</a></li>";
+            $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='" . $counter . "' href='?page=$counter&search=$search'>$counter</a></li>";
           }
         }
       }
-      $pagination .= "<li class='page-item'><a class='page-link'>...</a></li>";
+      $pagination .= "<li class='page-item is-number'><a class='page-link'>...</a></li>";
       if (!$search) {
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast'>$secondLast</a></li>";
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages'>$totalPages</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast'>$secondLast</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages'>$totalPages</a></li>";
       } else {
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='" . $secondLast . "' href='?page=$secondLast&search=$search'>$secondLast</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='" . $totalPages . "' href='?page=$totalPages&search=$search'>$totalPages</a></li>";
       }
     } else {
       if (!$search) {
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1'>1</a></li>";
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2'>2</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='1' href='?page=1'>1</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='2' href='?page=2'>2</a></li>";
       } else {
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>1</a></li>";
-        $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='2' href='?page=2&search=$search'>2</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='1' href='?page=1&search=$search'>1</a></li>";
+        $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='2' href='?page=2&search=$search'>2</a></li>";
       }
-      $pagination .= "<li class='page-item'><a class='page-link'>...</a></li>";
+      $pagination .= "<li class='page-item is-number'><a class='page-link'>...</a></li>";
       for (
         $counter = $totalPages - 6;
         $counter <= $totalPages;
         $counter++
       ) {
         if ($counter == $pageNum) {
-          $pagination .= "<li class='page-item active'><a class='page-link'>$counter</a></li>";
+          $pagination .= "<li class='page-item is-number active'><a class='page-link active'>$counter</a></li>";
         } else {
           if (!$search) {
-            $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
+            $pagination .= "<li class='page-item is-number'><a class='page-link' data-pagecount='$counter' href='?page=$counter'>$counter</a></li>";
           } else {
-            $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
+            $pagination .= " class='page-item is-number'><a class='page-link' data-pagecount='$counter' href='?page=$counter&search=$search'>$counter</a></li>";
           }
         }
       }
     }
   }
-
-  if ($totalPages == 0) {
-    $pagination .= "<li class='page-item'><a class='page-link active' data-pagecount='1' href='?page=1'>1</a></li>";
+  $pagination .= "</div>";
+  $pagination .= "<li ";
+  if ($pageNum >= $totalPages) {
+    $pagination .= "class='page-item next-page disabled'";
+  } else {
+    $pagination .= "class='page-item next-page'";
   }
-
-
+  $pagination .= ">";
+  $pagination .= "<a ";
   if ($pageNum < $totalPages) {
-    $pagination .= "<li " . ($pageNum >= $totalPages ? "class='page-link'" : '') . "><a ";
     if (!$search) {
       $pagination .= "class='page-link' data-pagecount='$nextPage' href='?page=$nextPage'";
     } else {
-      $pagination .= "class='page-link' data-pagecount='$nextPage' href='?page=$nextPage&search=$search'";
+      $pagination .= "class='page-link' data-pagecount='$nextPage href='?page=$nextPage&search=$search'";
     }
-    $pagination .= ">Next</a></li>";
   }
-
-
+  $pagination .= "><img src='../assets/icons/chevron-right.svg'></a>";
+  $pagination .= "</li>";
   if ($pageNum < $totalPages) {
     if (!$search) {
-      $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages'>Last &rsaquo;&rsaquo;</a></li>";
+      $pagination .= "<li class='page-item last-page'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages'><img src='../assets/icons/chevrons-right.svg'></a></li>";
     } else {
-      $pagination .= "<li class='page-item'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'>Last &rsaquo;&rsaquo;</a></li>";
+      $pagination .= "<li class='page-item last-page'><a class='page-link' data-pagecount='$totalPages' href='?page=$totalPages&search=$search'><img src='../assets/icons/chevrons-right.svg'></a></li>";
     }
   }
+  $pagination .= "</ul>";
 
-  $pagination .= '</ul>';
   $data['table'] = $table;
   $data['pagination'] = $pagination;
 
