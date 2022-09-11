@@ -680,6 +680,9 @@ textarea.form-control {
   align-items: center;
   color: #333;
 }
+.pagination-container .pagination .numbers-container .page-link:focus {
+  box-shadow: none;
+}
 .pagination-container .pagination .prev-page,
 .pagination-container .pagination .first-page,
 .pagination-container .pagination .next-page,

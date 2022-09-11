@@ -122,6 +122,11 @@
         align-items: center;
         color: $jai-black;
       }
+      .page-link {
+        &:focus {
+          box-shadow: none;
+        }
+      }
     }
     .prev-page,
     .first-page,
@@ -131,8 +136,6 @@
       border-radius: 30px;
       background-color: white;
       overflow: hidden;
-      .page-link {
-      }
       img {
         width: 17px;
       }
