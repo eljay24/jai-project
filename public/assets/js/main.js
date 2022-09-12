@@ -175,17 +175,17 @@ function refreshTable(actionFIle, search = false, page = false) {
     dataType: "json",
     beforeSend: function () {},
     success: function (data, xhr, success) {
-      // console.log(data);
-      // console.log(xhr);
-      // console.log(success);
+      console.log(data);
+      console.log(xhr);
+      console.log(success);
 
       table.html(data.table);
       pagination.html(data.pagination);
     },
     error: function (response, xhr, data) {
-      // console.log(response);
-      // console.log(xhr);
-      // console.log(data);
+      console.log(response);
+      console.log(xhr);
+      console.log(data);
     },
   });
 }
@@ -462,8 +462,10 @@ function submitForm(
           $(".success-message .success-content").text(successMessage);
 
           if (addNew) {
+            $("input, textarea, select").blur();
             resetForm();
             clearErrors(form);
+            $(".to-focus").focus();
             $(submitBtn).removeClass("disabled");
           } else {
             $(".form-modal .modal-content").fadeOut(150, function () {
@@ -908,7 +910,7 @@ function checkPosition(current, container, scrollElement, action) {
   if (indexHeight > scrollHeight && action == "next") {
     scrollElement.scrollTop(indexHeight - current.outerHeight());
   } else if (
-    container.scrollHeight - containerOffsetTop <=
+    container.scrollHeight - containerOffsetTop - 2 <=
       container.scrollHeight - indexHeight &&
     action == "prev"
   ) {

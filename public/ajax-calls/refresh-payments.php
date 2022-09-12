@@ -31,7 +31,7 @@ if (isset($_POST['action'])) {
                                                  OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                                  OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
                                                  OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
-                                                 OR CONCAT('l', l.l_id) LIKE :search
+                                                 OR CONCAT('l', p.l_id) LIKE :search
                                                  OR CONCAT('b', b.b_id) LIKE :search
                                                  OR CONCAT('p', p.p_id) LIKE :search)
                                           ORDER BY p.date ASC");
@@ -39,7 +39,6 @@ if (isset($_POST['action'])) {
   } else {
     $statementTotalRows = $conn->prepare("SELECT COUNT(*) as count FROM jai_db.payments");
   }
-
   $statementTotalRows->execute();
 
   $totalRows = $statementTotalRows->fetchAll(PDO::FETCH_ASSOC);
@@ -47,8 +46,8 @@ if (isset($_POST['action'])) {
   $secondLast = $totalPages - 1;
 
   if ($search) {
-    $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, b.contactno, l.l_id, l.mode, l.status,
-                                        p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
+    $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, b.contactno, l.l_id, l.mode, l.status, l.payable, l.amount as loanamount, l.amortization,
+                                        p.p_id, p.amount as amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
                                  FROM jai_db.payments as p
                                  INNER JOIN jai_db.collectors as c 
                                  ON p.c_id = c.c_id
@@ -70,8 +69,8 @@ if (isset($_POST['action'])) {
     $statement->bindValue(':numOfRowsPerPage', $numOfRowsPerPage, PDO::PARAM_INT); // "PDO::PARAM_INT" removes quotes from SQL
     $statement->bindValue(':search', "%$search%");
   } else {
-    $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, b.contactno, l.l_id, l.mode, l.status,
-                                        p.p_id, p.amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
+    $statement = $conn->prepare("SELECT b.b_id, b.firstname as borrowerfname, b.middlename as borrowermname, b.lastname as borrowerlname, b.picture, b.contactno, l.l_id, l.mode, l.status, l.payable, l.amount as loanamount, l.amortization,
+                                        p.p_id, p.amount as amount, p.type, p.date, c.firstname as collectorfname, c.middlename as collectormname, c.lastname as collectorlname
                                  FROM jai_db.payments as p
                                  INNER JOIN jai_db.collectors as c 
                                  ON p.c_id = c.c_id
@@ -100,33 +99,36 @@ if (isset($_POST['action'])) {
 
   $data = [];
 
-  $table .= '<div class="row">';
+  $table .= '<div class="row table-header">';
   $table .= '<div class="jai-col-ID">Ref#</div>';
   $table .= '<div class="col">Borrower</div>';
   $table .= '<div class="col">Payment Details</div>';
   $table .= '<div class="col">Collector</div>';
-  $table .= '<div class="col-1">Action</div>';
+  $table .= '<div class="col-1 text-center">Action</div>';
   $table .= '</div>';
   $count = 1;
   foreach ($payments as $i => $payment) {
+    $profit = $payment['payable'] - $payment['loanamount'];
+    $paymentsToCloseLoan = $payment['payable'] / $payment['amortization'];
+    $profitPerPayment = $profit / $paymentsToCloseLoan;
+    $profitOrLoss = ($profitPerPayment / $payment['amortization']) * $payment['amount'];
 
     $date = date_create($payment['date']);
     $loanID = $payment['l_id'];
 
     /* ----- GET TOTAL PAYMENTS MADE ----- */
     $statementTotalPayments = $conn->prepare("SELECT COUNT(amount) as totalpayments
-                                              FROM jai_db.payments as p
-                                              WHERE l_id = :l_id AND (p.type = 'Cash' OR p.type = 'GCash')");
+                                      FROM jai_db.payments as p
+                                      WHERE l_id = :l_id AND (p.type = 'Cash' OR p.type = 'GCash')");
     $statementTotalPayments->bindValue(':l_id', $loanID);
     $statementTotalPayments->execute();
     $totalPayments = $statementTotalPayments->fetch(PDO::FETCH_ASSOC);
     $totalPayment = $totalPayments['totalpayments'];
     /* ----- END - GET TOTAL PAYMENTS MADE ----- */
-
     /* ----- GET TOTAL PASSES ----- */
     $statementTotalPasses = $conn->prepare("SELECT COUNT(amount) as totalpasses
-                                              FROM jai_db.payments as p
-                                              WHERE l_id = :l_id AND (p.type = 'Pass')");
+                                      FROM jai_db.payments as p
+                                      WHERE l_id = :l_id AND (p.type = 'Pass')");
     $statementTotalPasses->bindValue(':l_id', $loanID);
     $statementTotalPasses->execute();
     $totalPasses = $statementTotalPasses->fetch(PDO::FETCH_ASSOC);
@@ -137,13 +139,8 @@ if (isset($_POST['action'])) {
     $table .= '<div class="jai-col-ID">' . $payment['p_id'] . '</div>';
     $table .= '<div class="col">';
     $table .= '<div class="row">';
-    $table .= '<!-- <div class="jai-image-col">';
-    $table .= '<div class="jai-picture">';
-    $table .= '<img src="/JAI/public/' . $payment['picture'] . '" class="thumb-image2">';
-    $table .= '</div>';
-    $table .= '</div> -->';
     $table .= '<div class="col">';
-    $table .= '<p class="jai-table-name primary-font"><span class="jai-table-label"></span> ' . '#' . $payment['b_id'] . ' ' . ucwords(strtolower($payment['borrowerfname'])) . ' ' . ucwords(strtolower($payment['borrowermname'])) . ' ' . ucwords(strtolower($payment['borrowerlname'])) . '</p>';
+    $table .= '<p class="jai-table-name primary-font"><span class="jai-table-label"></span> #' . $payment['b_id'] . ' ' . ucwords(strtolower($payment['borrowerfname'])) . ' ' . ucwords(strtolower(substr($payment['borrowermname'], 0, 1))) . '. ' . ucwords(strtolower($payment['borrowerlname'])) . '</p>';
     $table .= '</div>';
     $table .= '<div class="col-4">';
     $table .= '<p class="primary-font">Loan Ref #' . $payment['l_id'] . '</p>';
@@ -156,50 +153,32 @@ if (isset($_POST['action'])) {
     $table .= '<div class="col">';
     $table .= '<div class="row">';
     $table .= '<div class="col">';
-    $table .= '<p class="jai-table-comaker primary-font"><span class="jai-table-label">Amount:</span> ' . "₱ " . number_format($payment['amount'], 2) . '</p>';
+    $table .= '<p class="jai-table-comaker primary-font"><span class="jai-table-label">Amount:</span> ' . "₱ " .  number_format($payment['amount'], 2) . '</p>';
     $table .= '<p class="jai-table-contact sub-font"> <span class="jai-table-label">Type: </span>' . $payment['type'] . '</p>';
     $table .= '</div>';
     $table .= '<div class="col">';
     $table .= '<p class="primary-font">Date: ' . date_format($date, "M-d-Y") . '</p>';
     $table .= '<p class="sub-font">Mode: ' . ucwords(strtolower($payment['mode'])) . '</p>';
     $table .= '</div>';
-    $table .= '<!-- <div class="col">';
-    $table .= '<p class="jai-table-amount primary-font"><span class="jai-table-label">Collector: </span>' . ucwords(strtolower($payment['collectorfname'])) . ' ' . ucwords(strtolower($payment['collectormname'])) . ' ' . ucwords(strtolower($payment['collectorlname'])) . '</p>';
     $table .= '</div>';
-    $table .= '<div class="col">';
-    $table .= '<p class="jai-table-payable primary-font"> <span class="jai-table-label">Remaining Bal.: </span></p>';
-    $table .= '</div> -->';
-    $table .= '</div>';
-    $table .= '<!-- <div class="row">';
-    $table .= '<div class="col">';
-    $table .= '<p class="jai-table-payment-made sub-font"> <span class="jai-table-label">Payable??: </span></p>';
-    $table .= '<p class="jai-table-mode sub-font"> <span class="jai-table-label">Mode & Term??: </span></p>';
-    $table .= '<p class="jai-table-amort sub-font"> <span class="jai-table-label">Amortization???: </span></p>';
-    $table .= '</div>';
-    $table .= '<div class="col">';
-    $table .= '<p class="jai-table-release sub-font"> <span class="jai-table-label">Hmm???: </span> 01/01/22</p>';
-    $table .= '<p class="jai-table-due sub-font"> <span class="jai-table-label">Due Date???: </span> 01/01/22</p>';
-    $table .= '</div>';
-    $table .= '</div> -->';
     $table .= '</div>';
     $table .= '<div class="col position-relative">';
     $table .= '<div class="row">';
     $table .= '<div class="col">';
     $table .= '<p class="jai-table-address primary-font"> <span class="jai-table-label">Collector: </span>' . ucwords(strtolower($payment['collectorfname'])) . ' ' . ucwords(strtolower($payment['collectormname'])) . ' ' . ucwords(strtolower($payment['collectorlname'])) . '</p>';
-    $table .= '<!-- <textarea class="jai-table-input" type="text"></textarea> -->';
+    $table .= '<p class="sub-font">' . (($profitOrLoss > 0) ? '(test)Profit: +' . number_format($profitOrLoss, 2) : '(test)Loss: ' . number_format($profitOrLoss, 2)) . '</p>';
     $table .= '</div>';
-    $table .= '<div class="col-3">';
+    $table .= '<div class="col-4">';
     $table .= '<p class="primary-font">' . $payment['status'] . '</p>';
+    $table .= '<p class="sub-font">Amort.: ' . $payment['amortization'] . '</p>';
     $table .= '</div>';
     $table .= '</div>';
     $table .= '</div>';
-    $table .= '<div class="col-1 d-flex align-items-center justify-content-around">';
-    $table .= '<a title="Edit" href="#" class="btn btn-primary btn-sm edit-btn">Edit</a>';
-    $table .= '<button title="Delete" type="button" class="btn btn-danger btn-sm delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower" disabled>Delete</button>';
-    $table .= '<form method="get" action="ledger.php" target="_blank">';
-    $table .= '<input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="' . $loanID . '" ' . (($totalPayment || $totalPass) == 0 ? 'disabled' : '') . '></input>';
+    $table .= '<div class="col-1 d-flex align-items-start justify-content-around">';
+    $table .= '<form method="get" action="ledger" target="_blank">';
+    $table .= '<input title="View ledger" type="submit" name="loanID" class="btn ledger-btn" value="' . $loanID . '" ' . (($totalPayment || $totalPass) == 0 ? 'disabled' : '') . '></input>';
     $table .= '</form>';
-
+    $table .= '<button title="Delete" type="button" class="btn delete-borrower delete-btn" data-toggle="modal" data-target="#deleteBorrower" disabled>Delete</button>';
     $table .= '</div>';
     $table .= '<div class="d-none hidden-field">';
     $table .= '<form id="hidden-form-' . $count . '" class="hidden-form" action="">';

@@ -16,7 +16,8 @@ select {
     border-radius: 25px;
     min-height: 40px;
     font-size: 14px;
-    &[readonly] {
+    &[readonly],
+    &[disabled] {
       background-color: transparent;
     }
     &:focus {

@@ -111,7 +111,10 @@ try {
 
 <div class="content-container">
   <div class="page-name">
-    <h1>Loans</h1>
+    <div class="title-container d-flex">
+      <img src="../assets/icons/book_dark.svg">
+      <h1>Loans</h1>
+    </div>
     <div class="actions-container">
       <a href="#" type="button" class="btn btn-new-loan create-btn"><img src="../assets/icons/plus.svg"> New Loan</a>
 
@@ -127,12 +130,12 @@ try {
   <div class="neumorph-container">
     <div class="table-wrapper">
       <div class="jai-table table-container loans-table">
-        <div class="row">
+        <div class="row table-header">
           <div class="jai-col-ID">ID</div>
           <div class="col">Borrower</div>
           <div class="col">Loan Details</div>
           <div class="col">Payment Details</div>
-          <div class="col-1">Action</div>
+          <div class="col-1 text-center">Action</div>
         </div>
         <?php
         $count = 1;
@@ -361,11 +364,11 @@ try {
               <?php } ?>
               <!-- <textarea class="jai-table-input" type="text"></textarea> -->
             </div>
-            <div class="col-1 d-flex align-items-center justify-content-around">
+            <div class="col-1 d-flex align-items-start justify-content-around">
               <form method="get" action="ledger" target="_blank">
-                <input title="View ledger" type="submit" name="loanID" class="btn btn-primary btn-sm ledger-btn" value="<?= $loan['l_id'] ?>" <?= ($totalPayment || $totalPass) == 0 ? 'disabled' : '' ?>></input>
+                <input title="View ledger" type="submit" name="loanID" class="btn ledger-btn" value="<?= $loan['l_id'] ?>" <?= ($totalPayment || $totalPass) == 0 ? 'disabled' : '' ?>></input>
               </form>
-              <button title="Delete" type="button" class="btn btn-danger btn-sm delete-btn delete-borrower" data-toggle="modal" data-target="#deleteBorrower" <?= ($totalPayment || $totalPass) != 0 ? 'disabled' : '' ?>>Delete</button>
+              <button title="Delete" type="button" class="btn delete-btn delete-borrower" data-toggle="modal" data-target="#deleteBorrower" <?= ($totalPayment || $totalPass) != 0 ? 'disabled' : '' ?>>Delete</button>
 
             </div>
             <div class="d-none hidden-field">
