@@ -30,7 +30,7 @@ $statement = $conn->prepare("SELECT DISTINCT l.l_id, l.b_id, CONCAT(b.lastname, 
                                              
                                              (SELECT MAX(date)
                                              FROM jai_db.payments as p1
-                                             WHERE p1.l_id = l.l_id) as lasttransaction,
+                                             WHERE (p1.l_id = l.l_id) AND (p1.type = 'Cash' OR p1.type = 'GCash')) as lasttransaction,
 
                                              CONCAT(c.lastname, ', ', c.firstname, ' ', c.middlename) as collector
 
