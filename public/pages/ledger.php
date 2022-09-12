@@ -213,7 +213,7 @@ if ($payments) {
     $pdf->Cell(195.9, 7, '', 'T', 1, 'C');
 
     $pdf->Cell(195.9, 0, '', 0, 1, 'C');
-    $pdf->Cell(195.9, 3, '--------------------------------    NOTHING FOLLOWS    --------------------------------', 0, 0, 'C');
+    $pdf->Cell(195.9, 3, '- - - - - - - - - - - - - - - -     NOTHING FOLLOWS    - - - - - - - - - - - - - - - - ', 0, 0, 'C');
 } else {
     $pdf->SetTitle('JAI Invalid Ledger');
 }
