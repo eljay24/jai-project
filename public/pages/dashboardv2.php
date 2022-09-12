@@ -291,7 +291,7 @@ foreach ($allLoans as $i => $loan) {
     <?php
     echo 'Overview for ' . date('Y');
     echo '<br>';
-    echo 'Active loans: ' . count($allLoans);
+    echo 'Active loans: ' . $activeLoans;
     echo '<br>';
     echo 'Total collection per month';
     echo '<br>';
@@ -318,8 +318,6 @@ foreach ($allLoans as $i => $loan) {
     echo 'Nov - ' . number_format($novCollection, 2);
     echo '<br>';
     echo 'Dec - ' . number_format($decCollection, 2);
-    echo '<br>';
-    echo $activeLoans;
     echo '<br>';
     echo 'total released (active): ' . number_format($totalReleased, 2);
     echo '<br>';
