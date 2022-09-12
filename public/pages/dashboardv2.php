@@ -293,6 +293,7 @@ foreach ($allLoans as $i => $loan) {
     echo '<br>';
     echo 'Active loans: ' . $activeLoans;
     echo '<br>';
+    echo '<br>';
     echo 'Total collection per month';
     echo '<br>';
     echo 'Jan - ' . number_format($janCollection, 2);
@@ -319,6 +320,7 @@ foreach ($allLoans as $i => $loan) {
     echo '<br>';
     echo 'Dec - ' . number_format($decCollection, 2);
     echo '<br>';
+    echo '<br>';
     echo 'total released (active): ' . number_format($totalReleased, 2);
     echo '<br>';
     echo 'total collection this year: ' . number_format($currentYearCollection, 2);
@@ -329,7 +331,21 @@ foreach ($allLoans as $i => $loan) {
     echo '<br>';
     echo 'total collection this month: ' . number_format($currentMonthCollection, 2);
     echo '<br>';
-    echo 'total payments this year: ' . count($currentYearCollectionArray);
+    echo number_format(count($currentYearCollectionArray)) . ' payments made this year.';
+
+    //TEST
+    $begin = new DateTime($monCurrentWeek);
+    $end = new DateTime($satCurrentWeek);
+    $end->setTime(0, 0, 1);
+
+    $dateRange = new DatePeriod($begin, new DateInterval('P1D'), $end);
+
+    foreach ($dateRange as $date) {
+        echo '<br>';
+        echo $date->format('Y-m-d');
+    }
+
+
     ?>
 
 </div>
