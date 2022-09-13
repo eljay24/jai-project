@@ -124,7 +124,7 @@ foreach ($allPayments as $i => $payment) {
     /*                            */
     /*     TODAY's collection     */
     /*                            */
-    if ($payment['date'] == $dateToday) {
+    if ($payment['date'] == $dateToday && ($payment['type'] != 'Pass')) {
         array_push($todaysCollectionArray, $allPayments[$i]);
         $todaysCollection += $payment['amount'];
     }
@@ -192,73 +192,73 @@ foreach ($allPayments as $i => $payment) {
     /*                                   */
 
     //All January payments
-    if (($payment['date'] >= date('Y-01-01')) && ($payment['date'] <= date('Y-m-t', strtotime('January')))) {
+    if (($payment['date'] >= date('Y-01-01')) && ($payment['date'] <= date('Y-m-t', strtotime('January'))) && ($payment['type'] != 'Pass')) {
         array_push($janCollectionArray, $allPayments[$i]);
         array_push($currentYearCollectionArray, $allPayments[$i]);
         $janCollection += $payment['amount'];
     }
     //All February payments
-    if (($payment['date'] >= date('Y-02-01')) && ($payment['date'] <= date('Y-m-t', strtotime('February')))) {
+    if (($payment['date'] >= date('Y-02-01')) && ($payment['date'] <= date('Y-m-t', strtotime('February'))) && ($payment['type'] != 'Pass')) {
         array_push($febCollectionArray, $allPayments[$i]);
         array_push($currentYearCollectionArray, $allPayments[$i]);
         $febCollection += $payment['amount'];
     }
     //All March payments
-    if (($payment['date'] >= date('Y-03-01')) && ($payment['date'] <= date('Y-m-t', strtotime('March')))) {
+    if (($payment['date'] >= date('Y-03-01')) && ($payment['date'] <= date('Y-m-t', strtotime('March'))) && ($payment['type'] != 'Pass')) {
         array_push($marCollectionArray, $allPayments[$i]);
         array_push($currentYearCollectionArray, $allPayments[$i]);
         $marCollection += $payment['amount'];
     }
     //All April payments
-    if (($payment['date'] >= date('Y-04-01')) && ($payment['date'] <= date('Y-m-t', strtotime('April')))) {
+    if (($payment['date'] >= date('Y-04-01')) && ($payment['date'] <= date('Y-m-t', strtotime('April'))) && ($payment['type'] != 'Pass')) {
         array_push($aprCollectionArray, $allPayments[$i]);
         array_push($currentYearCollectionArray, $allPayments[$i]);
         $aprCollection += $payment['amount'];
     }
     //All May payments
-    if (($payment['date'] >= date('Y-05-01')) && ($payment['date'] <= date('Y-m-t', strtotime('May')))) {
+    if (($payment['date'] >= date('Y-05-01')) && ($payment['date'] <= date('Y-m-t', strtotime('May'))) && ($payment['type'] != 'Pass')) {
         array_push($mayCollectionArray, $allPayments[$i]);
         array_push($currentYearCollectionArray, $allPayments[$i]);
         $mayCollection += $payment['amount'];
     }
     //All June payments
-    if (($payment['date'] >= date('Y-06-01')) && ($payment['date'] <= date('Y-m-t', strtotime('June')))) {
+    if (($payment['date'] >= date('Y-06-01')) && ($payment['date'] <= date('Y-m-t', strtotime('June'))) && ($payment['type'] != 'Pass')) {
         array_push($junCollectionArray, $allPayments[$i]);
         array_push($currentYearCollectionArray, $allPayments[$i]);
         $junCollection += $payment['amount'];
     }
     //All July payments
-    if (($payment['date'] >= date('Y-07-01')) && ($payment['date'] <= date('Y-m-t', strtotime('July')))) {
+    if (($payment['date'] >= date('Y-07-01')) && ($payment['date'] <= date('Y-m-t', strtotime('July'))) && ($payment['type'] != 'Pass')) {
         array_push($julCollectionArray, $allPayments[$i]);
         array_push($currentYearCollectionArray, $allPayments[$i]);
         $julCollection += $payment['amount'];
     }
     //All August payments
-    if (($payment['date'] >= date('Y-08-01')) && ($payment['date'] <= date('Y-m-t', strtotime('August')))) {
+    if (($payment['date'] >= date('Y-08-01')) && ($payment['date'] <= date('Y-m-t', strtotime('August'))) && ($payment['type'] != 'Pass')) {
         array_push($augCollectionArray, $allPayments[$i]);
         array_push($currentYearCollectionArray, $allPayments[$i]);
         $augCollection += $payment['amount'];
     }
     //All September payments
-    if (($payment['date'] >= date('Y-09-01')) && ($payment['date'] <= date('Y-m-t', strtotime('September')))) {
+    if (($payment['date'] >= date('Y-09-01')) && ($payment['date'] <= date('Y-m-t', strtotime('September'))) && ($payment['type'] != 'Pass')) {
         array_push($sepCollectionArray, $allPayments[$i]);
         array_push($currentYearCollectionArray, $allPayments[$i]);
         $sepCollection += $payment['amount'];
     }
     //All October payments
-    if (($payment['date'] >= date('Y-10-01')) && ($payment['date'] <= date('Y-m-t', strtotime('October')))) {
+    if (($payment['date'] >= date('Y-10-01')) && ($payment['date'] <= date('Y-m-t', strtotime('October'))) && ($payment['type'] != 'Pass')) {
         array_push($octCollectionArray, $allPayments[$i]);
         array_push($currentYearCollectionArray, $allPayments[$i]);
         $octCollection += $payment['amount'];
     }
     //All November payments
-    if (($payment['date'] >= date('Y-11-01')) && ($payment['date'] <= date('Y-m-t', strtotime('November')))) {
+    if (($payment['date'] >= date('Y-11-01')) && ($payment['date'] <= date('Y-m-t', strtotime('November'))) && ($payment['type'] != 'Pass')) {
         array_push($novCollectionArray, $allPayments[$i]);
         array_push($currentYearCollectionArray, $allPayments[$i]);
         $novCollection += $payment['amount'];
     }
     //All December payments
-    if (($payment['date'] >= date('Y-12-01')) && ($payment['date'] <= date('Y-m-t', strtotime('December')))) {
+    if (($payment['date'] >= date('Y-12-01')) && ($payment['date'] <= date('Y-m-t', strtotime('December'))) && ($payment['type'] != 'Pass')) {
         array_push($decCollectionArray, $allPayments[$i]);
         array_push($currentYearCollectionArray, $allPayments[$i]);
         $decCollection += $payment['amount'];
@@ -289,6 +289,9 @@ foreach ($allLoans as $i => $loan) {
 <div class="content-container">
 
     <?php
+    // echo '<pre>';
+    // var_dump($todaysCollectionArray);
+    // exit;
     echo 'Overview for ' . date('Y');
     echo '<br>';
     echo 'Active loans: ' . $activeLoans;
@@ -330,6 +333,9 @@ foreach ($allLoans as $i => $loan) {
     echo 'total collection last month: ' . number_format($lastMonthCollection, 2);
     echo '<br>';
     echo 'total collection this month: ' . number_format($currentMonthCollection, 2);
+    echo '<br>';
+    echo '<br>';
+    echo number_format(count($todaysCollectionArray)) . ' payments made today.';
     echo '<br>';
     echo number_format(count($currentYearCollectionArray)) . ' payments made this year.';
 
