@@ -55,14 +55,18 @@ $allLoans = $queryAllLoans->fetchAll(PDO::FETCH_ASSOC);
 
 /*                                                 */
 /*        PUSH PAYMENTS TO DIFFERENT ARRAYS        */
+/*              AND DIFFERENT TOTALS               */
 /*                                                 */
+
+//New releases array
+$newReleases = [];
 
 //Today array and collection
 $todaysCollectionArray = [];
 
 $todaysCollection = (float)0;
 
-//Current week per day arrays and per day collection
+//Current week per day arrays, per day collection, and total current week collection 
 $monCurrentWeekCollectionArray = [];
 $tueCurrentWeekCollectionArray = [];
 $wedCurrentWeekCollectionArray = [];
@@ -76,6 +80,8 @@ $wedCurrentWeekCollection = (float)0;
 $thuCurrentWeekCollection = (float)0;
 $friCurrentWeekCollection = (float)0;
 $satCurrentWeekCollection = (float)0;
+
+$totalCurrentWeekCollection = (float)0;
 
 //Last month array and total collection
 $lastMonthCollectionArray = [];
@@ -134,46 +140,52 @@ foreach ($allPayments as $i => $payment) {
     /*                                     */
 
     //Monday of current week
-    if (($payment['date'] == $monCurrentWeek)) {
+    if ($payment['date'] == $monCurrentWeek && ($payment['type'] != 'Pass')) {
         array_push($monCurrentWeekCollectionArray, $allPayments[$i]);
         $monCurrentWeekCollection += $payment['amount'];
+        $totalCurrentWeekCollection += $payment['amount'];
     }
 
     //Tuesday of current week
-    if (($payment['date'] == $tueCurrentWeek)) {
+    if ($payment['date'] == $tueCurrentWeek && ($payment['type'] != 'Pass')) {
         array_push($tueCurrentWeekCollectionArray, $allPayments[$i]);
         $tueCurrentWeekCollection += $payment['amount'];
+        $totalCurrentWeekCollection += $payment['amount'];
     }
 
     //Wednesday of current week
-    if (($payment['date'] == $wedCurrentWeek)) {
+    if ($payment['date'] == $wedCurrentWeek && ($payment['type'] != 'Pass')) {
         array_push($wedCurrentWeekCollectionArray, $allPayments[$i]);
         $wedCurrentWeekCollection += $payment['amount'];
+        $totalCurrentWeekCollection += $payment['amount'];
     }
 
     //Thursday of current week
-    if (($payment['date'] == $thuCurrentWeek)) {
+    if ($payment['date'] == $thuCurrentWeek && ($payment['type'] != 'Pass')) {
         array_push($thuCurrentWeekCollectionArray, $allPayments[$i]);
         $thuCurrentWeekCollection += $payment['amount'];
+        $totalCurrentWeekCollection += $payment['amount'];
     }
 
     //Friday of current week
-    if (($payment['date'] == $friCurrentWeek)) {
+    if ($payment['date'] == $friCurrentWeek && ($payment['type'] != 'Pass')) {
         array_push($friCurrentWeekCollectionArray, $allPayments[$i]);
         $friCurrentWeekCollection += $payment['amount'];
+        $totalCurrentWeekCollection += $payment['amount'];
     }
 
     //Saturday of current week
-    if (($payment['date'] == $satCurrentWeek)) {
+    if ($payment['date'] == $satCurrentWeek && ($payment['type'] != 'Pass')) {
         array_push($satCurrentWeekCollectionArray, $allPayments[$i]);
         $satCurrentWeekCollection += $payment['amount'];
+        $totalCurrentWeekCollection += $payment['amount'];
     }
 
     /*                                   */
     /*      LAST MONTH's collection      */
     /*                                   */
 
-    if (($payment['date'] >= $firstOfLastMonth) && ($payment['date'] <= $lastOfLastMonth)) {
+    if (($payment['date'] >= $firstOfLastMonth) && ($payment['date'] <= $lastOfLastMonth) && ($payment['type'] != 'Pass')) {
         array_push($lastMonthCollectionArray, $allPayments[$i]);
         $lastMonthCollection += $payment['amount'];
     }
@@ -182,7 +194,7 @@ foreach ($allPayments as $i => $payment) {
     /*      THIS MONTH's collection      */
     /*                                   */
 
-    if (($payment['date'] >= $firstOfCurrentMonth) && ($payment['date'] <= $lastOfCurrentMonth)) {
+    if (($payment['date'] >= $firstOfCurrentMonth) && ($payment['date'] <= $lastOfCurrentMonth) && ($payment['type'] != 'Pass')) {
         array_push($currentMonthCollectionArray, $allPayments[$i]);
         $currentMonthCollection += $payment['amount'];
     }
@@ -282,6 +294,13 @@ foreach ($allLoans as $i => $loan) {
         $totalPayable += $loan['payable'];
         $activeLoans++;
     }
+
+    /*                            */
+    /*        New releases        */
+    /*                            */
+    if ($loan['releasedate'] >= date('Y-m-d')) {
+        array_push($newReleases, $allLoans[$i]);
+    }
 }
 
 ?>
@@ -295,6 +314,8 @@ foreach ($allLoans as $i => $loan) {
     echo 'Overview for ' . date('Y');
     echo '<br>';
     echo 'Active loans: ' . $activeLoans;
+    echo '<br>';    
+    echo 'New release(s): ' . count($newReleases);
     echo '<br>';
     echo '<br>';
     echo 'Total collection per month';
@@ -330,6 +351,11 @@ foreach ($allLoans as $i => $loan) {
     echo '<br>';
     echo 'total payable remaining: ' . number_format($totalPayable - $currentYearCollection, 2);
     echo '<br>';
+    echo '<br>';
+    echo 'total collection today: ' . number_format($todaysCollection, 2);
+    echo '<br>';
+    echo 'total collection this week: ' . number_format($totalCurrentWeekCollection, 2);
+    echo '<br>';
     echo 'total collection last month: ' . number_format($lastMonthCollection, 2);
     echo '<br>';
     echo 'total collection this month: ' . number_format($currentMonthCollection, 2);
@@ -338,7 +364,10 @@ foreach ($allLoans as $i => $loan) {
     echo number_format(count($todaysCollectionArray)) . ' payments made today.';
     echo '<br>';
     echo number_format(count($currentYearCollectionArray)) . ' payments made this year.';
-
+    echo '<br>';
+    // echo date('e');
+    echo '<br>';
+    
     //TEST
     $begin = new DateTime($monCurrentWeek);
     $end = new DateTime($satCurrentWeek);
