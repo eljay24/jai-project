@@ -35,72 +35,78 @@ $dailyPass = [];
 $weeklyPass = [];
 
 foreach ($activeLoans as $i => $activeLoan) {
-    //Will run only on Weekdays and Saturdays
-    if (date('D') != 'Sun') {
-        /*               */
-        /*     DAILY     */
-        /*               */
-        if ($activeLoan['mode'] == 'Daily') {
-            //Check if no payment today AND if pass already entered AND if last transaction is not null (Null = new loan/no payments yet)
-            if ($activeLoan['lasttransaction'] != date('Y-m-d') && $activeLoan['lastpass'] != date('Y-m-d') && !is_null($activeLoan['lasttransaction']) && $activeLoan['releasedate'] != date('Y-m-d')) {
-                array_push($dailyPass, $activeLoans[$i]);
-            }
+
+    if ($activeLoan['mode'] == 'Daily') {
+        //Check if no payment today AND if pass already entered AND if last transaction is not null (Null = new loan/no payments yet)
+        if ($activeLoan['lasttransaction'] != date('Y-m-d') && $activeLoan['lastpass'] != date('Y-m-d') && !is_null($activeLoan['lasttransaction']) && $activeLoan['releasedate'] != date('Y-m-d')) {
+            array_push($dailyPass, $activeLoans[$i]);
         }
     }
-    //Will run only on Saturdays
-    if (date('D') == 'Sat') { // (Set condition to == for actual use)
-        /*                */
-        /*     WEEKLY     */
-        /*                */
-        if ($activeLoan['mode'] == 'Weekly') {
-            //Check if no payment this week AND if pass already entered
-            if (
-                ($activeLoan['lasttransaction'] != $mon || $activeLoan['lasttransaction'] != $tue || $activeLoan['lasttransaction'] != $wed || $activeLoan['lasttransaction'] != $thu || $activeLoan['lasttransaction'] != $fri || $activeLoan['lasttransaction'] != $sat)
-                &&
-                ($activeLoan['lastpass'] != $mon || $activeLoan['lastpass'] != $tue || $activeLoan['lastpass'] != $wed || $activeLoan['lastpass'] != $thu || $activeLoan['lastpass'] != $fri || $activeLoan['lastpass'] != $sat)
-                && 
-                (!is_null($activeLoan['lasttransaction']))
-            ) {
-                array_push($weeklyPass, $activeLoans[$i]);
-            }
+
+    if ($activeLoan['mode'] == 'Weekly') {
+        //Check if no payment this week AND if pass already entered
+        if (
+            ($activeLoan['lasttransaction'] != $mon || $activeLoan['lasttransaction'] != $tue || $activeLoan['lasttransaction'] != $wed || $activeLoan['lasttransaction'] != $thu || $activeLoan['lasttransaction'] != $fri || $activeLoan['lasttransaction'] != $sat)
+            &&
+            ($activeLoan['lastpass'] != $mon || $activeLoan['lastpass'] != $tue || $activeLoan['lastpass'] != $wed || $activeLoan['lastpass'] != $thu || $activeLoan['lastpass'] != $fri || $activeLoan['lastpass'] != $sat)
+            &&
+            (!is_null($activeLoan['lasttransaction']))
+        ) {
+            array_push($weeklyPass, $activeLoans[$i]);
         }
     }
 }
 
-//INSERT PASSES FOR TODAY
-foreach ($dailyPass as $i => $dailyP) {
-    $newPassQuery = $conn->prepare("INSERT INTO jai_db.payments
+/*               */
+/*     DAILY     */
+/*               */
+
+//INSERT PASSES FOR TODAY (If past 6PM)
+//Will run only Monday - Saturday
+if ((date('D') != 'Sun') && (date('H:i:s') > date('18:00:00'))) {
+
+    foreach ($dailyPass as $i => $dailyP) {
+        $newPassQuery = $conn->prepare("INSERT INTO jai_db.payments
                                     (b_id, l_id, c_id, amount, passamount, type, date)
                                     VALUES
                                     (:b_id, :l_id, :c_id, :amount, :passamount, :type, :date)");
 
-    $newPassQuery->bindValue(':b_id', $dailyP['b_id']);
-    $newPassQuery->bindValue(':l_id', $dailyP['l_id']);
-    $newPassQuery->bindValue(':c_id', $dailyP['c_id']);
-    $newPassQuery->bindValue(':amount', 0);
-    $newPassQuery->bindValue(':passamount', $dailyP['amortization']);
-    $newPassQuery->bindValue(':type', 'Pass');
-    $newPassQuery->bindValue(':date', date('Y-m-d'));
+        $newPassQuery->bindValue(':b_id', $dailyP['b_id']);
+        $newPassQuery->bindValue(':l_id', $dailyP['l_id']);
+        $newPassQuery->bindValue(':c_id', $dailyP['c_id']);
+        $newPassQuery->bindValue(':amount', 0);
+        $newPassQuery->bindValue(':passamount', $dailyP['amortization']);
+        $newPassQuery->bindValue(':type', 'Pass');
+        $newPassQuery->bindValue(':date', date('Y-m-d'));
 
-    $newPassQuery->execute();
+        $newPassQuery->execute();
+    }
 }
 
-//INSERT PASS FOR THIS WEEK
-foreach ($weeklyPass as $i => $weeklyP) {
-    // $newPassQuery = $conn->prepare("INSERT INTO jai_db.payments
-    //                                 (b_id, l_id, c_id, amount, passamount, type, date)
-    //                                 VALUES
-    //                                 (:b_id, :l_id, :c_id, :amount, :passamount, :type, :date)");
+/*                */
+/*     WEEKLY     */
+/*                */
 
-    // $newPassQuery->bindValue(':b_id', $weeklyP['b_id']);
-    // $newPassQuery->bindValue(':l_id', $weeklyP['l_id']);
-    // $newPassQuery->bindValue(':c_id', $weeklyP['c_id']);
-    // $newPassQuery->bindValue(':amount', 0);
-    // $newPassQuery->bindValue(':passamount', $weeklyP['amortization']);
-    // $newPassQuery->bindValue(':type', 'Pass');
-    // $newPassQuery->bindValue(':date', date('Y-m-d'));
+// INSERT PASS FOR THIS WEEK (If past 6PM)
+// Will run only on Saturdays
+if ((date('D') == 'Sat') && (date('H:i:s') > date('18:00:00'))) {
 
-    // $newPassQuery->execute();
+    foreach ($weeklyPass as $i => $weeklyP) {
+        $newPassQuery = $conn->prepare("INSERT INTO jai_db.payments
+                                        (b_id, l_id, c_id, amount, passamount, type, date)
+                                        VALUES
+                                        (:b_id, :l_id, :c_id, :amount, :passamount, :type, :date)");
+
+        $newPassQuery->bindValue(':b_id', $weeklyP['b_id']);
+        $newPassQuery->bindValue(':l_id', $weeklyP['l_id']);
+        $newPassQuery->bindValue(':c_id', $weeklyP['c_id']);
+        $newPassQuery->bindValue(':amount', 0);
+        $newPassQuery->bindValue(':passamount', $weeklyP['amortization']);
+        $newPassQuery->bindValue(':type', 'Pass');
+        $newPassQuery->bindValue(':date', date('Y-m-d'));
+
+        $newPassQuery->execute();
+    }
 }
 
 ?>
@@ -112,11 +118,11 @@ foreach ($weeklyPass as $i => $weeklyP) {
     echo '<pre>';
     echo 'daily: ';
     echo '<br>';
-    var_dump($dailyPass);
+    echo count($dailyPass);
     echo '<br>';
     echo 'weekly: ';
     echo '<br>';
-    var_dump($weeklyPass);
+    echo count($weeklyPass);
 
     // echo 'Passes today (From Daily): ' . count($dailyPass);
     // echo '<br>';
