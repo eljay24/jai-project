@@ -34,11 +34,17 @@ $activeLoans = $activeLoansQuery->fetchAll(PDO::FETCH_ASSOC);
 $dailyPass = [];
 $weeklyPass = [];
 
+//PUSH TO DAILY OR WEEKLY
+
 foreach ($activeLoans as $i => $activeLoan) {
 
     if ($activeLoan['mode'] == 'Daily') {
         //Check if no payment today AND if pass already entered AND if last transaction is not null (Null = new loan/no payments yet)
-        if ($activeLoan['lasttransaction'] != date('Y-m-d') && $activeLoan['lastpass'] != date('Y-m-d') && !is_null($activeLoan['lasttransaction']) && $activeLoan['releasedate'] != date('Y-m-d')) {
+        if (($activeLoan['lasttransaction'] != date('Y-m-d') && $activeLoan['lastpass'] != date('Y-m-d') && !is_null($activeLoan['lasttransaction']) && $activeLoan['releasedate'] != date('Y-m-d'))
+            ||
+            //Below condition checks if new loan AND past the release date
+            (is_null($activeLoan['lasttransaction']) && is_null($activeLoan['lastpass']) && $activeLoan['releasedate'] != date('Y-m-d'))
+        ) {
             array_push($dailyPass, $activeLoans[$i]);
         }
     }
@@ -46,11 +52,14 @@ foreach ($activeLoans as $i => $activeLoan) {
     if ($activeLoan['mode'] == 'Weekly') {
         //Check if no payment this week AND if pass already entered
         if (
-            ($activeLoan['lasttransaction'] != $mon || $activeLoan['lasttransaction'] != $tue || $activeLoan['lasttransaction'] != $wed || $activeLoan['lasttransaction'] != $thu || $activeLoan['lasttransaction'] != $fri || $activeLoan['lasttransaction'] != $sat)
+            (($activeLoan['lasttransaction'] != $mon || $activeLoan['lasttransaction'] != $tue || $activeLoan['lasttransaction'] != $wed || $activeLoan['lasttransaction'] != $thu || $activeLoan['lasttransaction'] != $fri || $activeLoan['lasttransaction'] != $sat)
             &&
             ($activeLoan['lastpass'] != $mon || $activeLoan['lastpass'] != $tue || $activeLoan['lastpass'] != $wed || $activeLoan['lastpass'] != $thu || $activeLoan['lastpass'] != $fri || $activeLoan['lastpass'] != $sat)
             &&
-            (!is_null($activeLoan['lasttransaction']))
+            (!is_null($activeLoan['lasttransaction'])))
+            ||
+            //Below condition checks if new loan AND past the release date
+            (is_null($activeLoan['lasttransaction']) && is_null($activeLoan['lastpass']) && $activeLoan['releasedate'] != date('Y-m-d'))
         ) {
             array_push($weeklyPass, $activeLoans[$i]);
         }
@@ -61,11 +70,11 @@ foreach ($activeLoans as $i => $activeLoan) {
 /*     DAILY     */
 /*               */
 
-//INSERT PASSES FOR TODAY (If past 6PM)
+//INSERT PASSES FOR TODAY (If past 6:30PM)
 //Will run only Monday - Saturday
-if ((date('D') != 'Sun') && (date('H:i:s') > date('18:00:00'))) {
+if ((date('D') != 'Sun') && (date('H:i:s') > date('18:30:00'))) {
 
-    foreach ($dailyPass as $i => $dailyP) {
+    /* foreach ($dailyPass as $i => $dailyP) {
         $newPassQuery = $conn->prepare("INSERT INTO jai_db.payments
                                     (b_id, l_id, c_id, amount, passamount, type, date)
                                     VALUES
@@ -80,18 +89,18 @@ if ((date('D') != 'Sun') && (date('H:i:s') > date('18:00:00'))) {
         $newPassQuery->bindValue(':date', date('Y-m-d'));
 
         $newPassQuery->execute();
-    }
+    } */
 }
 
 /*                */
 /*     WEEKLY     */
 /*                */
 
-// INSERT PASS FOR THIS WEEK (If past 6PM)
+// INSERT PASS FOR THIS WEEK (If past 6:30PM)
 // Will run only on Saturdays
-if ((date('D') == 'Sat') && (date('H:i:s') > date('18:00:00'))) {
+if ((date('D') == 'Sat') && (date('H:i:s') > date('18:30:00'))) {
 
-    foreach ($weeklyPass as $i => $weeklyP) {
+    /* foreach ($weeklyPass as $i => $weeklyP) {
         $newPassQuery = $conn->prepare("INSERT INTO jai_db.payments
                                         (b_id, l_id, c_id, amount, passamount, type, date)
                                         VALUES
@@ -106,7 +115,7 @@ if ((date('D') == 'Sat') && (date('H:i:s') > date('18:00:00'))) {
         $newPassQuery->bindValue(':date', date('Y-m-d'));
 
         $newPassQuery->execute();
-    }
+    } */
 }
 
 ?>
@@ -116,6 +125,8 @@ if ((date('D') == 'Sat') && (date('H:i:s') > date('18:00:00'))) {
 
     <?php
     echo '<pre>';
+    echo 'Passes today';
+    echo '<br>';
     echo 'daily: ';
     echo '<br>';
     echo count($dailyPass);
