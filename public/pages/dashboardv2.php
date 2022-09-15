@@ -59,7 +59,8 @@ $allLoans = $queryAllLoans->fetchAll(PDO::FETCH_ASSOC);
 /*                                                 */
 
 //New releases array
-$newReleases = [];
+$newReleasesToday = [];
+$newReleasesTomorrow = [];
 
 //Today array and collection
 $todaysCollectionArray = [];
@@ -298,8 +299,10 @@ foreach ($allLoans as $i => $loan) {
     /*                            */
     /*        New releases        */
     /*                            */
-    if ($loan['releasedate'] >= date('Y-m-d')) {
-        array_push($newReleases, $allLoans[$i]);
+    if ($loan['releasedate'] == date('Y-m-d')) {
+        array_push($newReleasesToday, $allLoans[$i]);
+    } elseif ($loan['releasedate'] == date('Y-m-d', strtotime('tomorrow'))) {
+        array_push($newReleasesTomorrow, $allLoans[$i]);
     }
 }
 
@@ -315,7 +318,9 @@ foreach ($allLoans as $i => $loan) {
     echo '<br>';
     echo 'Active loans: ' . $activeLoans;
     echo '<br>';    
-    echo 'New release(s): ' . count($newReleases);
+    echo 'New releases today: ' . count($newReleasesToday);
+    echo '<br>';    
+    echo 'New releases tomorrow: ' . count($newReleasesTomorrow);
     echo '<br>';
     echo '<br>';
     echo 'Total collection per month';
