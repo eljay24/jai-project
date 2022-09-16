@@ -828,9 +828,9 @@ $sat = date_create('saturday this week');
       <div class="chart-div">
         <canvas id="chartTotalCollectionToday"></canvas>
         <center>Profit today: ₱ <?= number_format($profitOrLossToday, 2) ?></center>
-        <div class="no-collections">
+        <!-- <div class="no-collections">
           <?= $totalCollectionToday == 0 ? '<span>No collections today</span>' : '' ?>
-        </div>
+        </div> -->
       </div>
     </div>
 
