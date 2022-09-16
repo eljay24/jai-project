@@ -75,6 +75,8 @@ $thuCurrentWeekCollectionArray = [];
 $friCurrentWeekCollectionArray = [];
 $satCurrentWeekCollectionArray = [];
 
+$totalCurrentWeekCollectionArray = [];
+
 $monCurrentWeekCollection = (float)0;
 $tueCurrentWeekCollection = (float)0;
 $wedCurrentWeekCollection = (float)0;
@@ -143,6 +145,7 @@ foreach ($allPayments as $i => $payment) {
     //Monday of current week
     if ($payment['date'] == $monCurrentWeek && ($payment['type'] != 'Pass')) {
         array_push($monCurrentWeekCollectionArray, $allPayments[$i]);
+        array_push($totalCurrentWeekCollectionArray, $allPayments[$i]);
         $monCurrentWeekCollection += $payment['amount'];
         $totalCurrentWeekCollection += $payment['amount'];
     }
@@ -150,6 +153,7 @@ foreach ($allPayments as $i => $payment) {
     //Tuesday of current week
     if ($payment['date'] == $tueCurrentWeek && ($payment['type'] != 'Pass')) {
         array_push($tueCurrentWeekCollectionArray, $allPayments[$i]);
+        array_push($totalCurrentWeekCollectionArray, $allPayments[$i]);
         $tueCurrentWeekCollection += $payment['amount'];
         $totalCurrentWeekCollection += $payment['amount'];
     }
@@ -157,6 +161,7 @@ foreach ($allPayments as $i => $payment) {
     //Wednesday of current week
     if ($payment['date'] == $wedCurrentWeek && ($payment['type'] != 'Pass')) {
         array_push($wedCurrentWeekCollectionArray, $allPayments[$i]);
+        array_push($totalCurrentWeekCollectionArray, $allPayments[$i]);
         $wedCurrentWeekCollection += $payment['amount'];
         $totalCurrentWeekCollection += $payment['amount'];
     }
@@ -164,6 +169,7 @@ foreach ($allPayments as $i => $payment) {
     //Thursday of current week
     if ($payment['date'] == $thuCurrentWeek && ($payment['type'] != 'Pass')) {
         array_push($thuCurrentWeekCollectionArray, $allPayments[$i]);
+        array_push($totalCurrentWeekCollectionArray, $allPayments[$i]);
         $thuCurrentWeekCollection += $payment['amount'];
         $totalCurrentWeekCollection += $payment['amount'];
     }
@@ -171,6 +177,7 @@ foreach ($allPayments as $i => $payment) {
     //Friday of current week
     if ($payment['date'] == $friCurrentWeek && ($payment['type'] != 'Pass')) {
         array_push($friCurrentWeekCollectionArray, $allPayments[$i]);
+        array_push($totalCurrentWeekCollectionArray, $allPayments[$i]);
         $friCurrentWeekCollection += $payment['amount'];
         $totalCurrentWeekCollection += $payment['amount'];
     }
@@ -178,6 +185,7 @@ foreach ($allPayments as $i => $payment) {
     //Saturday of current week
     if ($payment['date'] == $satCurrentWeek && ($payment['type'] != 'Pass')) {
         array_push($satCurrentWeekCollectionArray, $allPayments[$i]);
+        array_push($totalCurrentWeekCollectionArray, $allPayments[$i]);
         $satCurrentWeekCollection += $payment['amount'];
         $totalCurrentWeekCollection += $payment['amount'];
     }
@@ -352,10 +360,6 @@ foreach ($allLoans as $i => $loan) {
     echo '<br>';
     echo 'total released (active): ' . number_format($totalReleased, 2);
     echo '<br>';
-    echo 'total collection this year: ' . number_format($currentYearCollection, 2);
-    echo '<br>';
-    echo 'total payable remaining: ' . number_format($totalPayable - $currentYearCollection, 2);
-    echo '<br>';
     echo '<br>';
     echo 'total collection today: ' . number_format($todaysCollection, 2);
     echo '<br>';
@@ -365,8 +369,14 @@ foreach ($allLoans as $i => $loan) {
     echo '<br>';
     echo 'total collection this month: ' . number_format($currentMonthCollection, 2);
     echo '<br>';
+    echo 'total collection this year: ' . number_format($currentYearCollection, 2);
+    echo '<br>';
     echo '<br>';
     echo number_format(count($todaysCollectionArray)) . ' payments made today.';
+    echo '<br>';
+    echo number_format(count($totalCurrentWeekCollectionArray)) . ' payments made this week.';
+    echo '<br>';
+    echo number_format(count($currentMonthCollectionArray)) . ' payments made this month.';
     echo '<br>';
     echo number_format(count($currentYearCollectionArray)) . ' payments made this year.';
     echo '<br>';
