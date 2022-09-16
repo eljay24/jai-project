@@ -33,7 +33,7 @@ $endOfCurrentYear = date('Y-m-d', strtotime('this year December 31st'));
 /*           QUERY FOR ALL PAYMENTS           */
 /*                                            */
 
-$queryAllPayments = $conn->prepare("SELECT p.*, l.activeloan
+$queryAllPayments = $conn->prepare("SELECT p.*, l.activeloan, l.releasedate, l.status
                                     FROM jai_db.payments as p
                                     INNER JOIN jai_db.collectors as c
                                     ON p.c_id = c.c_id
@@ -48,8 +48,12 @@ $allPayments = $queryAllPayments->fetchAll(PDO::FETCH_ASSOC);
 /*      QUERY FOR ACTIVE LOANS      */
 /*                                  */
 
-$queryAllLoans = $conn->prepare("SELECT *
-                                 FROM jai_db.loans as l");
+$queryAllLoans = $conn->prepare("SELECT DISTINCT l.l_id AS xxx, l.*, (SELECT MAX(p2.date)
+                                                                            FROM jai_db.payments as p2
+                                                                            WHERE p2.l_id = l.l_id) as latestpayment
+                                 FROM jai_db.loans as l
+                                 LEFT JOIN jai_db.payments as p
+                                 ON l.l_id = p.l_id");
 $queryAllLoans->execute();
 $allLoans = $queryAllLoans->fetchAll(PDO::FETCH_ASSOC);
 
@@ -62,10 +66,18 @@ $allLoans = $queryAllLoans->fetchAll(PDO::FETCH_ASSOC);
 $newReleasesToday = [];
 $newReleasesTomorrow = [];
 
+//Closed loans today
+$closedLoansTodayArray = [];
+
 //Today array and collection
 $todaysCollectionArray = [];
 
 $todaysCollection = (float)0;
+
+//Today passes and passamount
+$todaysPassesArray = [];
+
+$todaysPassesAmount = (float)0;
 
 //Current week per day arrays, per day collection, and total current week collection 
 $monCurrentWeekCollectionArray = [];
@@ -128,6 +140,14 @@ $currentYearCollectionArray = [];
 
 $currentYearCollection = (float)0;
 
+//Active loan collection array and total
+$activeLoansCollectionsArray = [];
+
+$activeLoansCollections = (float)0;
+
+/*                                */
+/*      FOREACH ALL PAYMENTS      */
+/*                                */
 foreach ($allPayments as $i => $payment) {
 
     /*                            */
@@ -136,6 +156,14 @@ foreach ($allPayments as $i => $payment) {
     if ($payment['date'] == $dateToday && ($payment['type'] != 'Pass')) {
         array_push($todaysCollectionArray, $allPayments[$i]);
         $todaysCollection += $payment['amount'];
+    }
+
+    /*                        */
+    /*     TODAY's passes     */
+    /*                        */
+    if ($payment['date'] == $dateToday && ($payment['type'] == 'Pass') && $payment['releasedate'] != $dateToday) {
+        array_push($todaysPassesArray, $allPayments[$i]);
+        $todaysPassesAmount += $payment['passamount'];
     }
 
     /*                                     */
@@ -285,6 +313,12 @@ foreach ($allPayments as $i => $payment) {
         $decCollection += $payment['amount'];
     }
 
+    //All active loans payments
+    if ($payment['activeloan'] == 1) {
+        array_push($activeLoansCollectionsArray, $allPayments[$i]);
+        $activeLoansCollections += $payment['amount'];
+    }
+
     //Current year collection
     $currentYearCollection = $janCollection + $febCollection + $marCollection + $aprCollection + $mayCollection + $junCollection + $julCollection + $augCollection + $sepCollection + $octCollection + $novCollection + $decCollection;
 }
@@ -302,6 +336,13 @@ foreach ($allLoans as $i => $loan) {
         $totalReleased += $loan['amount'];
         $totalPayable += $loan['payable'];
         $activeLoans++;
+    }
+
+    /*                            */
+    /*     Closed loans TODAY     */
+    /*                            */
+    if ($loan['status'] == 'Closed' && $loan['latestpayment'] == $dateToday) {
+        array_push($closedLoansTodayArray, $allLoans[$i]);
     }
 
     /*                            */
@@ -360,8 +401,19 @@ foreach ($allLoans as $i => $loan) {
     echo '<br>';
     echo 'total released (active): ' . number_format($totalReleased, 2);
     echo '<br>';
+    echo 'total payables (active): ' . number_format($totalPayable, 2);
+    echo '<br>';
+    echo 'remaining payables (active): ' . number_format($totalPayable - $activeLoansCollections, 2);
+    echo '<br>';
+    echo 'collection (active): ' . number_format($activeLoansCollections, 2);
+    echo '<br>';
     echo '<br>';
     echo 'total collection today: ' . number_format($todaysCollection, 2);
+    echo '<br>';
+    echo number_format(count($todaysCollectionArray)) . ' payments  and '. number_format(count($todaysPassesArray)) .' passes today.';
+    echo '<br>';
+    echo number_format(count($closedLoansTodayArray)) . ' loans closed today.';
+    echo '<br>';
     echo '<br>';
     echo 'total collection this week: ' . number_format($totalCurrentWeekCollection, 2);
     echo '<br>';
@@ -371,10 +423,11 @@ foreach ($allLoans as $i => $loan) {
     echo '<br>';
     echo 'total collection this year: ' . number_format($currentYearCollection, 2);
     echo '<br>';
-    echo '<br>';
-    echo number_format(count($todaysCollectionArray)) . ' payments made today.';
+   
     echo '<br>';
     echo number_format(count($totalCurrentWeekCollectionArray)) . ' payments made this week.';
+    echo '<br>';
+    echo number_format(count($lastMonthCollectionArray)) . ' payments made last month.';
     echo '<br>';
     echo number_format(count($currentMonthCollectionArray)) . ' payments made this month.';
     echo '<br>';
