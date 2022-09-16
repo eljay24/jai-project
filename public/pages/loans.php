@@ -362,7 +362,6 @@ try {
                   <p class="sub-font"> <span class="jai-table-label">Amount: </span> <?= number_format($lastPayment['amount'], 2) ?></p>
                 </div>
               <?php } ?>
-              <!-- <textarea class="jai-table-input" type="text"></textarea> -->
             </div>
             <div class="col-1 d-flex align-items-start justify-content-around">
               <form method="get" action="ledger" target="_blank">
