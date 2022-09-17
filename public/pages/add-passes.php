@@ -49,16 +49,16 @@ foreach ($activeLoans as $i => $activeLoan) {
         }
     }
 
-    if ($activeLoan['mode'] == 'Weekly') {
+    elseif ($activeLoan['mode'] == 'Weekly') {
         //Check if no payment this week AND if pass already entered
         if (
-            (($activeLoan['lasttransaction'] != $mon || $activeLoan['lasttransaction'] != $tue || $activeLoan['lasttransaction'] != $wed || $activeLoan['lasttransaction'] != $thu || $activeLoan['lasttransaction'] != $fri || $activeLoan['lasttransaction'] != $sat)
+            (($activeLoan['lasttransaction'] != $mon && $activeLoan['lasttransaction'] != $tue && $activeLoan['lasttransaction'] != $wed && $activeLoan['lasttransaction'] != $thu && $activeLoan['lasttransaction'] != $fri && $activeLoan['lasttransaction'] != $sat)
             &&
-            ($activeLoan['lastpass'] != $mon || $activeLoan['lastpass'] != $tue || $activeLoan['lastpass'] != $wed || $activeLoan['lastpass'] != $thu || $activeLoan['lastpass'] != $fri || $activeLoan['lastpass'] != $sat)
+            ($activeLoan['lastpass'] != $mon && $activeLoan['lastpass'] != $tue && $activeLoan['lastpass'] != $wed && $activeLoan['lastpass'] != $thu && $activeLoan['lastpass'] != $fri && $activeLoan['lastpass'] != $sat)
             &&
-            (!is_null($activeLoan['lasttransaction'])))
+            (is_null($activeLoan['lasttransaction'])))
             ||
-            //Below condition checks if new loan AND past the release date
+            // Below condition checks if new loan AND past the release date
             (is_null($activeLoan['lasttransaction']) && is_null($activeLoan['lastpass']) && $activeLoan['releasedate'] != date('Y-m-d'))
         ) {
             array_push($weeklyPass, $activeLoans[$i]);
@@ -134,6 +134,10 @@ if ((date('D') == 'Sat') && (date('H:i:s') > date('18:30:00'))) {
     echo 'weekly: ';
     echo '<br>';
     echo count($weeklyPass);
+    echo '<br>';
+    
+    echo '<pre>';
+    var_dump($weeklyPass);
 
     // echo 'Passes today (From Daily): ' . count($dailyPass);
     // echo '<br>';
