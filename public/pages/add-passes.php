@@ -50,13 +50,13 @@ foreach ($activeLoans as $i => $activeLoan) {
     }
 
     elseif ($activeLoan['mode'] == 'Weekly') {
-        //Check if no payment this week AND if pass already entered
+        //Check that no payments and passes entered this week
         if (
             (($activeLoan['lasttransaction'] != $mon && $activeLoan['lasttransaction'] != $tue && $activeLoan['lasttransaction'] != $wed && $activeLoan['lasttransaction'] != $thu && $activeLoan['lasttransaction'] != $fri && $activeLoan['lasttransaction'] != $sat)
             &&
             ($activeLoan['lastpass'] != $mon && $activeLoan['lastpass'] != $tue && $activeLoan['lastpass'] != $wed && $activeLoan['lastpass'] != $thu && $activeLoan['lastpass'] != $fri && $activeLoan['lastpass'] != $sat)
-            &&
-            (is_null($activeLoan['lasttransaction'])))
+            /* &&
+            (is_null($activeLoan['lasttransaction'])) */)
             ||
             // Below condition checks if new loan AND past the release date
             (is_null($activeLoan['lasttransaction']) && is_null($activeLoan['lastpass']) && $activeLoan['releasedate'] != date('Y-m-d'))
