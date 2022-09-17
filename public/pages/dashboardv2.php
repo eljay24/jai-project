@@ -145,6 +145,9 @@ $activeLoansCollectionsArray = [];
 
 $activeLoansCollections = (float)0;
 
+//Collections and arrays per collector
+
+
 /*                                */
 /*      FOREACH ALL PAYMENTS      */
 /*                                */
@@ -437,7 +440,7 @@ foreach ($allLoans as $i => $loan) {
     echo '<br>';
     
     //TEST
-    $begin = new DateTime($monCurrentWeek);
+    /* $begin = new DateTime($monCurrentWeek);
     $end = new DateTime($satCurrentWeek);
     $end->setTime(0, 0, 1);
 
@@ -446,7 +449,8 @@ foreach ($allLoans as $i => $loan) {
     foreach ($dateRange as $date) {
         echo '<br>';
         echo $date->format('Y-m-d');
-    }
+    } */
+    //END TEST
 
 
     ?>
