@@ -40,7 +40,7 @@ foreach ($activeLoans as $i => $activeLoan) {
 
     if ($activeLoan['mode'] == 'Daily') {
         //Check if no payment today AND if pass already entered AND if last transaction is not null (Null = new loan/no payments yet)
-        if (($activeLoan['lasttransaction'] != date('Y-m-d') && $activeLoan['lastpass'] != date('Y-m-d') && !is_null($activeLoan['lasttransaction']) && $activeLoan['releasedate'] != date('Y-m-d'))
+        if (($activeLoan['lasttransaction'] != date('Y-m-d') && $activeLoan['lastpass'] != date('Y-m-d') /* && !is_null($activeLoan['lasttransaction']) */ && $activeLoan['releasedate'] != date('Y-m-d'))
             ||
             //Below condition checks if new loan AND past the release date
             (is_null($activeLoan['lasttransaction']) && is_null($activeLoan['lastpass']) && $activeLoan['releasedate'] != date('Y-m-d'))
@@ -137,7 +137,7 @@ if ((date('D') == 'Sat') && (date('H:i:s') > date('18:30:00'))) {
     echo '<br>';
     
     echo '<pre>';
-    var_dump($weeklyPass);
+    var_dump($dailyPass);
 
     // echo 'Passes today (From Daily): ' . count($dailyPass);
     // echo '<br>';
