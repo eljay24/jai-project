@@ -47,15 +47,13 @@ foreach ($activeLoans as $i => $activeLoan) {
         ) {
             array_push($dailyPass, $activeLoans[$i]);
         }
-    }
-
-    elseif ($activeLoan['mode'] == 'Weekly') {
+    } elseif ($activeLoan['mode'] == 'Weekly') {
         //Check that no payments and passes entered this week
         if (
             (($activeLoan['lasttransaction'] != $mon && $activeLoan['lasttransaction'] != $tue && $activeLoan['lasttransaction'] != $wed && $activeLoan['lasttransaction'] != $thu && $activeLoan['lasttransaction'] != $fri && $activeLoan['lasttransaction'] != $sat)
-            &&
-            ($activeLoan['lastpass'] != $mon && $activeLoan['lastpass'] != $tue && $activeLoan['lastpass'] != $wed && $activeLoan['lastpass'] != $thu && $activeLoan['lastpass'] != $fri && $activeLoan['lastpass'] != $sat)
-            /* &&
+                &&
+                ($activeLoan['lastpass'] != $mon && $activeLoan['lastpass'] != $tue && $activeLoan['lastpass'] != $wed && $activeLoan['lastpass'] != $thu && $activeLoan['lastpass'] != $fri && $activeLoan['lastpass'] != $sat)
+                /* &&
             (is_null($activeLoan['lasttransaction'])) */)
             ||
             // Below condition checks if new loan AND past the release date
@@ -135,13 +133,10 @@ if ((date('D') == 'Sat') && (date('H:i:s') > date('18:30:00'))) {
     echo '<br>';
     echo count($weeklyPass);
     echo '<br>';
-    
+
     echo '<pre>';
     var_dump($dailyPass);
 
-    // echo 'Passes today (From Daily): ' . count($dailyPass);
-    // echo '<br>';
-    // echo 'Passes today (From Weekly): ' . count($weeklyPass);
     ?>
 
 </div>
