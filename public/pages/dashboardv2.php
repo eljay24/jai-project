@@ -48,12 +48,15 @@ $allPayments = $queryAllPayments->fetchAll(PDO::FETCH_ASSOC);
 /*      QUERY FOR ACTIVE LOANS      */
 /*                                  */
 
-$queryAllLoans = $conn->prepare("SELECT DISTINCT l.l_id AS xxx, l.*, (SELECT MAX(p2.date)
-                                                                            FROM jai_db.payments as p2
-                                                                            WHERE p2.l_id = l.l_id) as latestpayment
+$queryAllLoans = $conn->prepare("SELECT DISTINCT l.l_id AS xxx, b.firstname, b.middlename, b.lastname, l.*,
+                                                 (SELECT MAX(p2.date)
+                                                  FROM jai_db.payments as p2
+                                                  WHERE p2.l_id = l.l_id) as latestpayment
                                  FROM jai_db.loans as l
                                  LEFT JOIN jai_db.payments as p
-                                 ON l.l_id = p.l_id");
+                                 ON l.l_id = p.l_id
+                                 INNER JOIN jai_db.borrowers as b
+                                 ON l.b_id = b.b_id");
 $queryAllLoans->execute();
 $allLoans = $queryAllLoans->fetchAll(PDO::FETCH_ASSOC);
 
@@ -332,13 +335,20 @@ foreach ($allPayments as $i => $payment) {
 
 $totalReleased = (float)0;
 $totalPayable = (float)0;
-$activeLoans = (int)0;
+$activeLoans = [];
+$activeDailyLoans = [];
+$activeWeeklyLoans = [];
 
 foreach ($allLoans as $i => $loan) {
     if ($loan['activeloan'] == 1) {
         $totalReleased += $loan['amount'];
         $totalPayable += $loan['payable'];
-        $activeLoans++;
+        array_push($activeLoans, $allLoans[$i]);
+        if ($loan['mode'] == 'Daily') {
+            array_push($activeDailyLoans, $allLoans[$i]);
+        } elseif ($loan['mode'] == 'Weekly') {
+            array_push($activeWeeklyLoans, $allLoans[$i]);
+        }
     }
 
     /*                            */
@@ -368,10 +378,19 @@ foreach ($allLoans as $i => $loan) {
     // exit;
     echo 'Overview for ' . date('Y');
     echo '<br>';
-    echo 'Active loans: ' . $activeLoans;
-    echo '<br>';    
+    echo '<br>';
+    echo 'Active loans: ' . count($activeLoans);
+    echo '<br>';
+    echo '(' . count($activeDailyLoans) . ' daily, ' . count($activeWeeklyLoans) . ' weekly)';
+    echo '<br>';
+    echo '<br>';
     echo 'New releases today: ' . count($newReleasesToday);
-    echo '<br>';    
+    echo '<br>';
+    foreach ($newReleasesToday as $i => $newReleaseToday) {
+        echo '₱ ' . number_format($newReleaseToday['amount'], 2) . ' - #' . $newReleaseToday['b_id'] . ' ' . $newReleaseToday['firstname'] . ' ' . $newReleaseToday['lastname'];
+        echo '<br>';
+    }
+    echo '<br>';
     echo 'New releases tomorrow: ' . count($newReleasesTomorrow);
     echo '<br>';
     echo '<br>';
@@ -413,7 +432,7 @@ foreach ($allLoans as $i => $loan) {
     echo '<br>';
     echo 'total collection today: ' . number_format($todaysCollection, 2);
     echo '<br>';
-    echo number_format(count($todaysCollectionArray)) . ' payments  and '. number_format(count($todaysPassesArray)) .' passes today.';
+    echo number_format(count($todaysCollectionArray)) . ' payments  and ' . number_format(count($todaysPassesArray)) . ' passes today.';
     echo '<br>';
     echo number_format(count($closedLoansTodayArray)) . ' loans closed today.';
     echo '<br>';
@@ -426,7 +445,7 @@ foreach ($allLoans as $i => $loan) {
     echo '<br>';
     echo 'total collection this year: ' . number_format($currentYearCollection, 2);
     echo '<br>';
-   
+
     echo '<br>';
     echo number_format(count($totalCurrentWeekCollectionArray)) . ' payments made this week.';
     echo '<br>';
@@ -436,9 +455,24 @@ foreach ($allLoans as $i => $loan) {
     echo '<br>';
     echo number_format(count($currentYearCollectionArray)) . ' payments made this year.';
     echo '<br>';
+    echo '<br>';
+    echo 'monday collection: ' . number_format($monCurrentWeekCollection, 2);
+    echo '<br>';
+    echo 'tuesday collection: ' . number_format($tueCurrentWeekCollection, 2);
+    echo '<br>';
+    echo 'wednesday collection: ' . number_format($wedCurrentWeekCollection, 2);
+    echo '<br>';
+    echo 'thursday collection: ' . number_format($thuCurrentWeekCollection, 2);
+    echo '<br>';
+    echo 'friday collection: ' . number_format($friCurrentWeekCollection, 2);
+    echo '<br>';
+    echo 'saturday collection: ' . number_format($satCurrentWeekCollection, 2);
     // echo date('e');
     echo '<br>';
-    
+
+    // echo '<pre>';
+    // var_dump($closedLoansTodayArray);
+
     //TEST
     /* $begin = new DateTime($monCurrentWeek);
     $end = new DateTime($satCurrentWeek);
