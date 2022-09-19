@@ -264,7 +264,12 @@ if ($accounts) {
                 $pdf->Cell(30.86, 4.5, number_format($inArrearsAcc['outstandingbalance'], 2), 'B', 0, 'R');
                 $pdf->Cell(23.86, 4.5, number_format($inArrearsAcc['SCB'], 2), 'B', 0, 'R');
                 $pdf->Cell(23.86, 4.5, number_format($inArrearsAcc['arrears'], 2), 'B', 0, 'R');
-                $pdf->Cell(23.86, 4.5, $inArrearsAcc['lasttransaction'], 'RB', 1, 'R');
+
+                if ($inArrearsAcc['lasttransaction']) {
+                    $pdf->Cell(23.86, 4.5, $inArrearsAcc['lasttransaction'], 'RB', 1, 'R');
+                } else {
+                    $pdf->Cell(23.86, 4.5, 'N/A', 'RB', 1, 'R');
+                }
 
                 $inArrearsAccsTotalOutBal += $inArrearsAcc['outstandingbalance'];
                 $inArrearsAccsTotalSCB += $inArrearsAcc['SCB'];
