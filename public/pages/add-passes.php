@@ -133,9 +133,14 @@ if ((date('D') == 'Sat') && (date('H:i:s') > date('18:00:00'))) {
     echo '<br>';
     echo count($weeklyPass);
     echo '<br>';
+    echo '<br>';
+    echo '<br>';
 
-    // echo '<pre>';
-    // var_dump($dailyPass);
+    echo '<pre>';
+    var_dump($dailyPass);
+    echo '<br>';
+    echo '<br>';
+    var_dump($weeklyPass);
 
     ?>
 
