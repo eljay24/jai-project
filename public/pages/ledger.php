@@ -35,7 +35,7 @@ $sumOfPayments = $statementSumOfPayments->fetch(PDO::FETCH_ASSOC);
 if ($payments) {
     /* ----- CALCULATE Supposed Current Balance & Arrears ----- */
 
-    if ($payments[0]['payable'] - $sumOfPayments['sumofpayments'] <= 0) {
+    if ($payments[0]['payable'] - $sumOfPayments['sumofpayments'] <= 0 || $payments[0]['status'] == 'Closed') {
         $SCB = 0;
         $arrears = 0;
     } else {
