@@ -68,9 +68,9 @@ foreach ($activeLoans as $i => $activeLoan) {
 /*     DAILY     */
 /*               */
 
-//INSERT PASSES FOR TODAY (If past 6:00PM)
+//INSERT PASSES FOR TODAY (If past 5:30PM)
 //Will run only Monday - Saturday
-if ((date('D') != 'Sun') && (date('H:i:s') > date('18:00:00'))) {
+if ((date('D') != 'Sun') && (date('H:i:s') > date('17:30:00'))) {
 
     foreach ($dailyPass as $i => $dailyP) {
         $newPassQuery = $conn->prepare("INSERT INTO jai_db.payments
@@ -94,9 +94,9 @@ if ((date('D') != 'Sun') && (date('H:i:s') > date('18:00:00'))) {
 /*     WEEKLY     */
 /*                */
 
-// INSERT PASS FOR THIS WEEK (If past 6:00PM)
+// INSERT PASS FOR THIS WEEK (If past 5:30PM)
 // Will run only on Saturdays
-if ((date('D') == 'Sat') && (date('H:i:s') > date('18:00:00'))) {
+if ((date('D') == 'Sat') && (date('H:i:s') > date('17:30:00'))) {
 
     foreach ($weeklyPass as $i => $weeklyP) {
         $newPassQuery = $conn->prepare("INSERT INTO jai_db.payments
