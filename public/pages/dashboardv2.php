@@ -51,12 +51,15 @@ $allPayments = $queryAllPayments->fetchAll(PDO::FETCH_ASSOC);
 $queryAllLoans = $conn->prepare("SELECT DISTINCT l.l_id AS xxx, b.firstname, b.middlename, b.lastname, l.*,
                                                  (SELECT MAX(p2.date)
                                                   FROM jai_db.payments as p2
-                                                  WHERE p2.l_id = l.l_id) as latestpayment
+                                                  WHERE p2.l_id = l.l_id) as latestpayment,
+                                                  CONCAT(c.firstname, ' ', c.lastname) as collector
                                  FROM jai_db.loans as l
                                  LEFT JOIN jai_db.payments as p
                                  ON l.l_id = p.l_id
                                  INNER JOIN jai_db.borrowers as b
-                                 ON l.b_id = b.b_id");
+                                 ON l.b_id = b.b_id
+                                 INNER JOIN jai_db.collectors as c
+                                 ON l.c_id = c.c_id");
 $queryAllLoans->execute();
 $allLoans = $queryAllLoans->fetchAll(PDO::FETCH_ASSOC);
 
@@ -384,10 +387,10 @@ foreach ($allLoans as $i => $loan) {
     echo '(' . count($activeDailyLoans) . ' daily, ' . count($activeWeeklyLoans) . ' weekly)';
     echo '<br>';
     echo '<br>';
-    echo 'New releases today: ' . count($newReleasesToday);
+    echo 'New release(s) today: ' . count($newReleasesToday);
     echo '<br>';
     foreach ($newReleasesToday as $i => $newReleaseToday) {
-        echo '₱ ' . number_format($newReleaseToday['amount'], 2) . ' - #' . $newReleaseToday['b_id'] . ' ' . $newReleaseToday['firstname'] . ' ' . $newReleaseToday['lastname'];
+        echo '₱ ' . number_format($newReleaseToday['amount'], 2) . ' (' . $newReleaseToday['term'] . ', ' . $newReleaseToday['mode'] . ') - #' . $newReleaseToday['b_id'] . ' ' . $newReleaseToday['firstname'] . ' ' . $newReleaseToday['lastname'] . ' / ' . $newReleaseToday['collector'];
         echo '<br>';
     }
     echo '<br>';
@@ -434,7 +437,8 @@ foreach ($allLoans as $i => $loan) {
     echo '<br>';
     echo number_format(count($todaysCollectionArray)) . ' payments  and ' . number_format(count($todaysPassesArray)) . ' passes today.';
     echo '<br>';
-    echo number_format(count($closedLoansTodayArray)) . ' loans closed today.';
+    echo '<br>';
+    echo number_format(count($closedLoansTodayArray)) . ' loan(s) closed today.';
     echo '<br>';
     echo '<br>';
     echo 'total collection this week: ' . number_format($totalCurrentWeekCollection, 2);
