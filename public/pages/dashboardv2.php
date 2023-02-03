@@ -109,6 +109,14 @@ $lastMonthCollectionArray = [];
 
 $lastMonthCollection = (float)0;
 
+$kingLastMonthTotalCollection = (float)0;
+$kingLastMonthCashCollection = (float)0;
+$kingLastMonthGCashCollection = (float)0;
+
+$carlLastMonthTotalCollection = (float)0;
+$carlLastMonthCashCollection = (float)0;
+$carlLastMonthGCashCollection = (float)0;
+
 //This month array and total collection
 $currentMonthCollectionArray = [];
 
@@ -243,6 +251,32 @@ foreach ($allPayments as $i => $payment) {
         array_push($lastMonthCollectionArray, $allPayments[$i]);
         $lastMonthCollection += $payment['amount'];
     }
+
+    //King Collection Last Month
+    if (($payment['date'] >= $firstOfLastMonth && $payment['date'] <= $lastOfLastMonth) && ($payment['c_id'] == 1)) {
+        $kingLastMonthTotalCollection += $payment['amount'];
+        if ($payment['type'] == 'Cash') {
+            $kingLastMonthCashCollection += $payment['amount'];
+        } elseif ($payment['type'] == 'GCash') {
+            $kingLastMonthGCashCollection += $payment['amount'];
+        }
+    }
+
+    //King Collection Incentives Last Month
+    $kingLastMonthIncentives = $kingLastMonthTotalCollection * 0.001;
+
+    //Carl Collection Last Month
+    if (($payment['date'] >= $firstOfLastMonth && $payment['date'] <= $lastOfLastMonth) && ($payment['c_id'] == 2)) {
+        $carlLastMonthTotalCollection += $payment['amount'];
+        if ($payment['type'] == 'Cash') {
+            $carlLastMonthCashCollection += $payment['amount'];
+        } elseif ($payment['type'] == 'GCash') {
+            $carlLastMonthGCashCollection += $payment['amount'];
+        }
+    }
+
+    //Carl Collection Incentives Last Month
+    $carlLastMonthIncentives = $carlLastMonthTotalCollection * 0.001;
 
     /*                                   */
     /*      THIS MONTH's collection      */
@@ -478,6 +512,23 @@ foreach ($allLoans as $i => $loan) {
     echo 'total collection last month: ' . number_format($lastMonthCollection, 2);
     echo '<br>';
     echo '<br>';
+    echo 'king total collection last month: ' . number_format($kingLastMonthTotalCollection, 2);
+    echo '<br>';
+    echo 'king cash collection last month: ' . number_format($kingLastMonthCashCollection, 2);
+    echo '<br>';
+    echo 'king gcash collection last month: ' . number_format($kingLastMonthGCashCollection, 2);
+    echo '<br>';
+    echo 'king collection incentive last month: ' . number_format($kingLastMonthIncentives, 2);
+    echo '<br>';
+    echo '<br>';
+    echo 'carl total collection last month: ' . number_format($carlLastMonthTotalCollection, 2);
+    echo '<br>';
+    echo 'carl cash collection last month: ' . number_format($carlLastMonthCashCollection, 2);
+    echo '<br>';
+    echo 'carl gcash collection last month: ' . number_format($carlLastMonthGCashCollection, 2);
+    echo '<br>';
+    echo 'carl collection incentive last month: ' . number_format($carlLastMonthIncentives, 2);
+    echo '<hr>';
     echo 'total collection this month: ' . number_format($currentMonthCollection, 2);
     echo '<br>';
     echo '<br>';
@@ -497,7 +548,7 @@ foreach ($allLoans as $i => $loan) {
     echo 'carl gcash collection this month: ' . number_format($carlCurrentMonthGCashCollection, 2);
     echo '<br>';
     echo 'carl collection incentive this month: ' . number_format($carlCurrentMonthIncentives, 2);
-    echo '<br>';
+    echo '<hr>';
     echo '<br>';
     echo 'total collection this year: ' . number_format($currentYearCollection, 2);
     echo '<br>';
