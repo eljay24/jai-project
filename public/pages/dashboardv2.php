@@ -114,6 +114,14 @@ $currentMonthCollectionArray = [];
 
 $currentMonthCollection = (float)0;
 
+$kingCurrentMonthTotalCollection = (float)0;
+$kingCurrentMonthCashCollection = (float)0;
+$kingCurrentMonthGCashCollection = (float)0;
+
+$carlCurrentMonthTotalCollection = (float)0;
+$carlCurrentMonthCashCollection = (float)0;
+$carlCurrentMonthGCashCollection = (float)0;
+
 //Per month arrays and per month total collection of CURRENT YEAR
 $janCollectionArray = [];
 $febCollectionArray = [];
@@ -243,6 +251,26 @@ foreach ($allPayments as $i => $payment) {
     if (($payment['date'] >= $firstOfCurrentMonth) && ($payment['date'] <= $lastOfCurrentMonth) && ($payment['type'] != 'Pass')) {
         array_push($currentMonthCollectionArray, $allPayments[$i]);
         $currentMonthCollection += $payment['amount'];
+    }
+
+    //King Collection This Month
+    if (($payment['date'] >= $firstOfCurrentMonth && $payment['date'] <= $lastOfCurrentMonth) && ($payment['c_id'] == 1)) {
+        $kingCurrentMonthTotalCollection += $payment['amount'];
+        if ($payment['type'] == 'Cash') {
+            $kingCurrentMonthCashCollection += $payment['amount'];
+        } elseif ($payment['type'] == 'GCash') {
+            $kingCurrentMonthGCashCollection += $payment['amount'];
+        }
+    }
+
+    //Carl Collection This Month
+    if (($payment['date'] >= $firstOfCurrentMonth && $payment['date'] <= $lastOfCurrentMonth) && ($payment['c_id'] == 2)) {
+        $carlCurrentMonthTotalCollection += $payment['amount'];
+        if ($payment['type'] == 'Cash') {
+            $carlCurrentMonthCashCollection += $payment['amount'];
+        } elseif ($payment['type'] == 'GCash') {
+            $carlCurrentMonthGCashCollection += $payment['amount'];
+        }
     }
 
     /*                                   */
@@ -443,11 +471,28 @@ foreach ($allLoans as $i => $loan) {
     echo '<br>';
     echo 'total collection this week: ' . number_format($totalCurrentWeekCollection, 2);
     echo '<br>';
+    echo '<br>';
     echo 'total collection last month: ' . number_format($lastMonthCollection, 2);
+    echo '<br>';
     echo '<br>';
     echo 'total collection this month: ' . number_format($currentMonthCollection, 2);
     echo '<br>';
+    echo '<br>';
+    echo 'king total collection this month: ' . number_format($kingCurrentMonthTotalCollection, 2);
+    echo '<br>';
+    echo 'king cash collection this month: ' . number_format($kingCurrentMonthCashCollection, 2);
+    echo '<br>';
+    echo 'king gcash collection this month: ' . number_format($kingCurrentMonthGCashCollection, 2);
+    echo '<br>';
+    echo 'carl total collection this month: ' . number_format($carlCurrentMonthTotalCollection, 2);
+    echo '<br>';
+    echo 'carl cash collection this month: ' . number_format($carlCurrentMonthCashCollection, 2);
+    echo '<br>';
+    echo 'carl gcash collection this month: ' . number_format($carlCurrentMonthGCashCollection, 2);
+    echo '<br>';
+    echo '<br>';
     echo 'total collection this year: ' . number_format($currentYearCollection, 2);
+    echo '<br>';
     echo '<br>';
 
     echo '<br>';
