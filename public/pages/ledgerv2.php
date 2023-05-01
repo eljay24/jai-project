@@ -18,6 +18,27 @@ $statementLoan->bindValue(':loanID', $loanID);
 $statementLoan->execute();
 $payments = $statementLoan->fetchAll(PDO::FETCH_ASSOC);
 
+$paymentsArray = [];
+foreach ($payments as $i => $payment) {
+    if ($payment['type'] == 'Cash' || $payment['type'] == 'GCash') {
+        array_push($paymentsArray, $payments[$i]);
+    }
+}
+
+function in_multi_array($needle, $haystack, $strict = false)
+{
+    foreach ($haystack as $item) {
+        if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_multi_array($needle, $item, $strict))) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// echo '<pre>';
+// var_dump($paymentsArray);
+// exit;
+
 $statementPaymentCount = $conn->prepare("SELECT COUNT(*) as paymentcount
                                           FROM jai_db.payments as p
                                           WHERE p.l_id = :loanID");
@@ -35,7 +56,7 @@ $sumOfPayments = $statementSumOfPayments->fetch(PDO::FETCH_ASSOC);
 if ($payments) {
     /* ----- CALCULATE Supposed Current Balance & Arrears ----- */
 
-    if ($payments[0]['payable'] - $sumOfPayments['sumofpayments'] <= 0 || $payments[0]['status'] == 'Closed') {
+    if ($payments[0]['payable'] - $sumOfPayments['sumofpayments'] <= 0) {
         $SCB = 0;
         $arrears = 0;
     } else {
@@ -186,8 +207,6 @@ $pdf->AddPage();
 if ($payments) {
     $pdf->SetTitle('JAI Ledger B' . $payments[0]['b_id'] . ' L' . $payments[0]['l_id'] . ' (' . $payments[0]['status'] . ')');
 
-    // $pdf->Image('../assets/watermark/New-Project.png',10,10,195.9);
-
     $pdf->SetFont('Courier', '', 10);
 
     $pdf->Cell(48.975, 5.5, $payments[0]['releasedate'], 'LR', 0);
@@ -195,22 +214,56 @@ if ($payments) {
     $pdf->Cell(48.975, 5.5, '--->', 'LR', 0, 'R');
     $pdf->Cell(48.975, 5.5, number_format($payments[0]['payable'], 2), 'LR', 1, 'R');
 
+    // $payable = $payments[0]['payable'];
+    // foreach ($payments as $i => $payment) {
+    //     if ($payment['date'] == $payment['duedate']) {
+    //         $pdf->SetFont('Courier', 'B', 10);
+    //         $pdf->SetTextColor(204, 0, 0); //RED
+    //         $pdf->Cell(48.975, 5.5, $payment['date'] . ' (DUE DATE)', 'L', 0);
+    //         $pdf->SetFont('Courier', '', 10);
+    //         $pdf->SetTextColor(0, 0, 0); //BLACK
+    //     } else {
+    //         $pdf->Cell(48.975, 5.5, $payment['date'], 'L', 0);
+    //     }
+    //     $pdf->Cell(48.975, 5.5, $payment['type'] == 'Pass' ? $payment['type'] : ($payment['type'] == 'GCash' ? $payment['type'] . ' Payment' : 'Payment'), 'L', 0);
+    //     $pdf->Cell(48.975, 5.5, number_format($payment['paymentamount'], 2), 'L', 0, 'R');
+    //     $pdf->Cell(48.975, 5.5, number_format($payable -= $payment['paymentamount'], 2), 'LR', 1, 'R');
+    // }
+    // $pdf->Cell(195.9, 7, '', 'T', 1, 'C');
+
+    //TEST
+    $releaseDate = new DateTime($payments[0]['releasedate']);
+    $today = new DateTime(date('Y-m-d'));
+    $today->setTime(0, 0, 1);
+    $interval = new DateInterval('P1D');
+
+    $dateRange = new DatePeriod($releaseDate, $interval, $today);
+    $pdf->Cell(195.9, 7, 'TEST', 'TLR', 1, 'C');
+
     $payable = $payments[0]['payable'];
-    foreach ($payments as $i => $payment) {
-        if ($payment['date'] == $payment['duedate']) {
-            $pdf->SetFont('Courier', 'B', 10);
-            $pdf->SetTextColor(204, 0, 0); //RED
-            $pdf->Cell(48.975, 5.5, $payment['date'] . ' (DUE DATE)', 'L', 0);
-            $pdf->SetFont('Courier', '', 10);
-            $pdf->SetTextColor(0, 0, 0); //BLACK
-        } else {
-            $pdf->Cell(48.975, 5.5, $payment['date'], 'L', 0);
+    foreach ($dateRange as $date) {
+        if ($date->format('D') != 'Sun') {
+
+            if (in_multi_array($date->format('Y-m-d'), $paymentsArray)) {
+                
+                if ($date->format('Y-m-d') == $payment['duedate']) {
+                    $pdf->SetFont('Courier', 'B', 10);
+                    $pdf->SetTextColor(204, 0, 0); //RED
+                    $pdf->Cell(48.975, 5.5, $date->format('Y-m-d') . ' (DUE DATE)', 'L', 0);
+                    $pdf->SetFont('Courier', '', 10);
+                    $pdf->SetTextColor(0, 0, 0); //BLACK
+                } else {
+                    $pdf->Cell(48.975, 5.5, $date->format('Y-m-d'), 'L', 0);
+                }
+                $pdf->Cell(48.975, 5.5, $payment['type'] == 'Pass' ? $payment['type'] : ($payment['type'] == 'GCash' ? $payment['type'] . ' Payment' : 'Payment'), 'L', 0);
+                $pdf->Cell(48.975, 5.5, number_format($payment['paymentamount'], 2), 'L', 0, 'R');
+                $pdf->Cell(48.975, 5.5, number_format($payable -= $payment['paymentamount'], 2), 'LR', 1, 'R');
+            }
         }
-        $pdf->Cell(48.975, 5.5, $payment['type'] == 'Pass' ? $payment['type'] : ($payment['type'] == 'GCash' ? $payment['type'] . ' Payment' : 'Payment'), 'L', 0);
-        $pdf->Cell(48.975, 5.5, number_format($payment['paymentamount'], 2), 'L', 0, 'R');
-        $pdf->Cell(48.975, 5.5, number_format($payable -= $payment['paymentamount'], 2), 'LR', 1, 'R');
     }
+
     $pdf->Cell(195.9, 7, '', 'T', 1, 'C');
+    //END TEST
 
     $pdf->Cell(195.9, 0, '', 0, 1, 'C');
     $pdf->Cell(195.9, 3, '- - - - - - - - - - - - - - - -     NOTHING FOLLOWS    - - - - - - - - - - - - - - - - ', 0, 0, 'C');

@@ -34,7 +34,7 @@ try {
                                                  OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
                                                  OR CONCAT('l', l.l_id) LIKE :search
                                                  OR CONCAT('b', b.b_id) LIKE :search)
-                                          ORDER BY l.activeloan DESC, l.l_id DESC
+                                          ORDER BY l.activeloan DESC, l.releasedate DESC, l.l_id DESC
                                           ");
     $statementTotalRows->bindValue(':search', "%$search%");
   } else {
@@ -73,7 +73,7 @@ try {
                                         OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
                                         OR CONCAT('l', l.l_id) LIKE :search
                                         OR CONCAT('b', b.b_id) LIKE :search)
-                                 ORDER BY l.activeloan DESC, l.l_id DESC
+                                 ORDER BY l.activeloan DESC, l.releasedate DESC, l.l_id DESC
                                  LIMIT :offset, :numOfRowsPerPage");
     $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
     $statement->bindValue(':numOfRowsPerPage', $numOfRowsPerPage, PDO::PARAM_INT); // "PDO::PARAM_INT" removes quotes from SQL
@@ -88,7 +88,7 @@ try {
                                   ON b.b_id = l.b_id
                                   INNER JOIN jai_db.collectors as c
                                   ON l.c_id = c.c_id
-                                  ORDER BY l.activeloan DESC, l.l_id DESC
+                                  ORDER BY l.activeloan DESC, l.releasedate DESC, l.l_id DESC
                                   LIMIT :offset, :numOfRowsPerPage");
   }
 
@@ -357,12 +357,11 @@ try {
               <?php if ($lastPayment != 0) { ?>
                 <div class="row">
                   <p class="primary-font"><?= ($loan['status'] == 'Active') ? 'Latest Payment' : 'Final Payment' ?></p>
-                  <p class="sub-font"> <span class="jai-table-label">Date: </span> <?= $lastPayment['date'] ?></p>
+                  <p class="sub-font"> <span class="jai-table-label">Date: </span> <?= date_format(date_create($lastPayment['date']), 'M-d-Y') ?></p>
                   <p class="sub-font"> <span class="jai-table-label">Type: </span> <?= $lastPayment['type'] ?></p>
                   <p class="sub-font"> <span class="jai-table-label">Amount: </span> <?= number_format($lastPayment['amount'], 2) ?></p>
                 </div>
               <?php } ?>
-              <!-- <textarea class="jai-table-input" type="text"></textarea> -->
             </div>
             <div class="col-1 d-flex align-items-start justify-content-around">
               <form method="get" action="ledger" target="_blank">
