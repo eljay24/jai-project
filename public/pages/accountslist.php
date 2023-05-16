@@ -94,7 +94,7 @@ class PDF extends FPDF
             $this->Cell(103.4, 4, 'Date: ' . date('Y-m-d, D'), 0, 1, 'R');
             $this->Cell(103.4, 8, '', 0, 0, 'C');
             $this->SetFont('Courier', 'B', 10);
-            $this->Cell(103.4, 8, 'List of Active Loans by Collector', 0, 0, 'C');
+            $this->Cell(103.4, 8, 'Aging List', 0, 0, 'C');
             $this->SetFont('Courier', '', 10);
             $this->Cell(103.4, 8, 'Time: ' . date('g:i:s A'), 0, 1, 'R');
             $this->Cell(155.1, 4, 'Collector: ' . $accounts[0]['collector'], 0, 0, 'L');
