@@ -359,9 +359,9 @@ try {
               <?php if ($lastPayment != 0) { ?>
                 <div class="row">
                   <p class="primary-font"><?= ($loan['status'] == 'Active') ? 'Latest Payment' : 'Final Payment' ?></p>
-                  <p class="sub-font"> <span class="jai-table-label">Date: </span> <?= date_format(date_create($lastPayment['date']), 'M-d-Y') ?></p>
-                  <p class="sub-font"> <span class="jai-table-label">Type: </span> <?= $lastPayment['type'] ?></p>
                   <p class="sub-font"> <span class="jai-table-label">Amount: </span> <?= number_format($lastPayment['amount'], 2) ?></p>
+                  <p class="sub-font"> <span class="jai-table-label">Type: </span> <?= $lastPayment['type'] ?></p>
+                  <p class="sub-font"> <span class="jai-table-label">Date: </span> <?= date_format(date_create($lastPayment['date']), 'M-d-Y') ?></p>
                 </div>
               <?php } ?>
             </div>
