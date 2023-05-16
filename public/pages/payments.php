@@ -155,7 +155,7 @@ try {
     <div class="table-wrapper">
       <div class="jai-table table-container payments-table">
         <div class="row table-header">
-          <div class="jai-col-ID">Ref#</div>
+          <div class="jai-col-ID">Ref #</div>
           <div class="col">Borrower</div>
           <div class="col">Payment Details</div>
           <div class="col">Collector</div>

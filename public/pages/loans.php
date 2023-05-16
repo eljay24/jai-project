@@ -264,6 +264,8 @@ try {
         ?>
           <div class="row jai-data-row">
 
+
+
             <div class="jai-col-ID"><?php echo $loan['b_id'] ?></div>
             <div class="col">
               <div class="row">
@@ -368,8 +370,21 @@ try {
                 <input title="View ledger" type="submit" name="loanID" class="btn ledger-btn" value="<?= $loan['l_id'] ?>" <?= ($totalPayment || $totalPass) == 0 ? 'disabled' : '' ?>></input>
               </form>
               <button title="Delete" type="button" class="btn delete-btn delete-borrower" data-toggle="modal" data-target="#deleteBorrower" <?= ($totalPayment || $totalPass) != 0 ? 'disabled' : '' ?>>Delete</button>
+              
+              <!-- <button title="Edit" type="button" class="btn delete-btn">Edit</button> -->
+
+              <!-- add edit button to each row -->
+              <!-- <div class="jai-col-action">
+                <form action="edit_loan.php" method="POST">
+                  <input type="hidden" name="loan_id" value="<?php echo $loan['l_id']; ?>" />
+                  <button type="submit" class="btn btn-sm btn-primary">Edit</button>
+                </form>
+              </div> -->
 
             </div>
+
+
+
             <div class="d-none hidden-field">
               <form id="hidden-form-<?= $count; ?>" class="hidden-form" action="">
                 <input type="hidden" name="data-row" value='row-<?= $loan['b_id'] ?>'>
