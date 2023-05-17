@@ -70,7 +70,7 @@ foreach ($activeLoans as $i => $activeLoan) {
 
 //INSERT PASSES FOR TODAY (If past 5:30PM)
 //Will run only Monday - Saturday
-if ((date('D') != 'Sun') && (date('H:i:s') > date('17:30:00'))) {
+if ((date('D') != 'Sun') && (date('H:i:s') > date('17:00:00'))) {
 
     foreach ($dailyPass as $i => $dailyP) {
         $newPassQuery = $conn->prepare("INSERT INTO jai_db.payments
@@ -96,7 +96,7 @@ if ((date('D') != 'Sun') && (date('H:i:s') > date('17:30:00'))) {
 
 // INSERT PASS FOR THIS WEEK (If past 5:30PM)
 // Will run only on Saturdays
-if ((date('D') == 'Sat') && (date('H:i:s') > date('17:30:00'))) {
+if ((date('D') == 'Sat') && (date('H:i:s') > date('17:00:00'))) {
 
     foreach ($weeklyPass as $i => $weeklyP) {
         $newPassQuery = $conn->prepare("INSERT INTO jai_db.payments
@@ -138,10 +138,15 @@ if ((date('D') == 'Sat') && (date('H:i:s') > date('17:30:00'))) {
 
     echo '<pre>';
     var_dump($dailyPass);
+    if (count($dailyPass) == 0) {
+        echo 'Daily passes already added.';
+    }
     echo '<br>';
     echo '<br>';
     var_dump($weeklyPass);
-
+    if (count($weeklyPass) == 0) {
+        echo 'Weekly passes already added.';
+    }
     ?>
 
 </div>

@@ -93,8 +93,8 @@ class PDF extends FPDF
             $this->SetFont('Courier', '', 10);
             $this->Cell(103.4, 4, 'Date: ' . date('Y-m-d, D'), 0, 1, 'R');
             $this->Cell(103.4, 8, '', 0, 0, 'C');
-            $this->SetFont('Courier', 'B', 10);
-            $this->Cell(103.4, 8, 'List of Active Loans by Collector', 0, 0, 'C');
+            $this->SetFont('Courier', '', 10);
+            $this->Cell(103.4, 8, 'Aging List', 0, 0, 'C');
             $this->SetFont('Courier', '', 10);
             $this->Cell(103.4, 8, 'Time: ' . date('g:i:s A'), 0, 1, 'R');
             $this->Cell(155.1, 4, 'Collector: ' . $accounts[0]['collector'], 0, 0, 'L');
@@ -136,9 +136,9 @@ class PDF extends FPDF
 
 $pdf = new PDF('L', 'mm', array(330.2, 215.9));
 if ($accounts) {
-    $pdf->SetTitle('JAI Accounts List - ' . $accounts[0]['collector']);
+    $pdf->SetTitle('JAI Aging List - ' . $accounts[0]['collector']);
 } else {
-    $pdf->SetTitle('JAI Invalid Accounts List');
+    $pdf->SetTitle('JAI Invalid Aging List');
 }
 $pdf->AliasNbPages('{pages}');
 $pdf->AddPage();
@@ -467,11 +467,11 @@ if ($accounts) {
     $pdf->SetFont('Courier', 'B', 22);
     $pdf->Cell(310.2, 50, '', 0, 1, 'C');
     $pdf->Cell(310.2, 20, 'NO DATA RETRIEVED OR INVALID COLLECTOR ID', 0, 1, 'C');
-    $pdf->Cell(310.2, 6, 'ACCOUNTS LIST UNAVAILABLE', 0, 1, 'C');
+    $pdf->Cell(310.2, 6, 'AGING LIST UNAVAILABLE', 0, 1, 'C');
 }
 
 if ($accounts) {
-    $pdf->Output('I', 'JAI Accounts List_' . $accounts[0]['collector'] . '_' . date('Y-m-d') . '_' . date('giA') . '.pdf');
+    $pdf->Output('I', 'JAI Aging List_' . $accounts[0]['collector'] . '_' . date('Y-m-d') . '_' . date('giA') . '.pdf');
 } else {
-    $pdf->Output('I', 'JAI Invalid Accounts List.pdf');
+    $pdf->Output('I', 'JAI Invalid Aging List.pdf');
 }
