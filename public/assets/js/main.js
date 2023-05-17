@@ -271,7 +271,7 @@ function closeModal() {
   });
 
   $(".modal").on("hide.bs.modal", function () {
-    $(".btn-action").attr("class", "btn btn-primary btn-sm btn-action");
+    $(".btn-action:not(.add-passes)").attr("class", "btn btn-sm btn-action");
   });
   $(".modal").on("hidden.bs.modal", function () {
     if ($("#payment").length) $("#payment").prop("readonly", false);
