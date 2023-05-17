@@ -181,7 +181,7 @@ body span {
 .btn.add-passes {
   margin-right: auto !important;
 }
-.btn.btn-action {
+.btn.btn-action, .btn.add-passes, .btn.add-new {
   border: none;
   background-color: #25316d;
   min-width: 140px;
