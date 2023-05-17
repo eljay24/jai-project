@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>JAI Fair Loan</title>
-
+  <link rel="icon" type="image/png" href="../assets/icons/letter-j.png">
 
   <!------------------------------------------ BOOTSTRAP LINK-------------------------------------------------->
   <link rel="stylesheet" href="../assets/css/jquery-ui.css" />
