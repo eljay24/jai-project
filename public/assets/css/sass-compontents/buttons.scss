@@ -40,8 +40,10 @@
     border: none;
     background-color: $active-color;
   }
-  &.btn-action,
-  &.add-new {
+  &.add-passes {
+    margin-right: auto !important;
+  }
+  &.btn-action {
     border: none;
     background-color: $active-color;
     min-width: 140px;

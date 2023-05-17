@@ -565,9 +565,10 @@ try {
 
         </div>
         <div class="modal-footer">
+          <button type="button" class="btn btn-action add-passes">Add Passes</button>
           <button type="button" class="btn close-modal" data-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-action submit-payment">Submit</button>
-          <button type="button" class="btn add-new">Submit & Add New</button>
+          <button type="button" class="btn btn-action add-new">Submit & Add New</button>
         </div>
       </div>
       <div class="success-message" style="display: none;">

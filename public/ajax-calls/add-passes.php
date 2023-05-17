@@ -116,37 +116,4 @@ if ((date('D') == 'Sat') && (date('H:i:s') > date('17:00:00'))) {
     }
 }
 
-?>
-
-
-<div class="content-container">
-
-    <?php
-    echo '<pre>';
-    echo 'Passes today';
-    echo '<br>';
-    echo 'daily: ';
-    echo '<br>';
-    echo count($dailyPass);
-    echo '<br>';
-    echo 'weekly: ';
-    echo '<br>';
-    echo count($weeklyPass);
-    echo '<br>';
-    echo '<br>';
-    echo '<br>';
-
-    echo '<pre>';
-    var_dump($dailyPass);
-    if (count($dailyPass) == 0) {
-        echo 'Daily passes already added.';
-    }
-    echo '<br>';
-    echo '<br>';
-    var_dump($weeklyPass);
-    if (count($weeklyPass) == 0) {
-        echo 'Weekly passes already added.';
-    }
-    ?>
-
-</div>
+echo json_encode('working');

@@ -87,6 +87,15 @@ $(document).ready(function () {
     "refresh-payments.php",
     true
   );
+
+  addPasses();
+
+  // submitForm(
+  //   ".add-passes",
+  //   "add-passes.php",
+  //   messages.successMessages.Payment.create,
+  //   "refresh-payments.php",
+  // );
   // Modal Submit Functions END
 });
 
@@ -119,6 +128,7 @@ const messages = {
     Payment: {
       create: "New payment added",
       update: "Loan successfully updated",
+      pass: "Passes added successfully",
     },
   },
   confirmMessages: {
@@ -175,17 +185,17 @@ function refreshTable(actionFIle, search = false, page = false) {
     dataType: "json",
     beforeSend: function () {},
     success: function (data, xhr, success) {
-      console.log(data);
-      console.log(xhr);
-      console.log(success);
+      // console.log(data);
+      // console.log(xhr);
+      // console.log(success);
 
       table.html(data.table);
       pagination.html(data.pagination);
     },
     error: function (response, xhr, data) {
-      console.log(response);
-      console.log(xhr);
-      console.log(data);
+      // console.log(response);
+      // console.log(xhr);
+      // console.log(data);
     },
   });
 }
@@ -206,7 +216,7 @@ function openModal(
 
     clearFormErrors(modalName);
 
-    $(modalName).find(".btn-action").addClass(submitBtnClass);
+    $(modalName).find(".btn-action:not(.add-passes)").addClass(submitBtnClass);
     if (modalFunction) {
       modalFunction(buttonName, modalName, $(this));
     }
@@ -423,8 +433,8 @@ function triggerSubmit() {
       if (event.ctrlKey && e == "Enter") {
         if ($(".add-new").length) {
           $(".add-new").click();
-        } else if ($(".btn-action").length) {
-          $(".btn-action").click();
+        } else if ($(".btn-action:not(.add-passes)").length) {
+          $(".btn-action:not(.add-passes)").click();
         }
       }
     }
@@ -486,6 +496,46 @@ function submitForm(
           // console.log(data);
         },
       });
+  });
+}
+
+function addPasses() {
+  let btn = ".add-passes";
+  $(document).on("click", btn, function (event) {
+    $.ajax({
+      url: "../ajax-calls/add-passes.php",
+      method: "POST",
+      // data: formValues,
+      // dataType: "json",
+      beforeSend: function () {
+        console.log("before send working");
+        $(btn).addClass("disabled");
+      },
+      success: function (response, xhr, data) {
+        // console.log("success");
+        refreshTable("refresh-payments.php");
+        $(".success-message .success-content").text(
+          messages.successMessages.Payment.pass
+        );
+
+        // console.log("before fade");
+        $(".form-modal .modal-content").fadeOut(150, function () {
+          $(".success-message").fadeIn(150, function () {
+            $(btn).removeClass("disabled");
+            setTimeout(function () {
+              if ($("body").hasClass("modal-open"))
+                $(".form-modal").modal("hide");
+            }, 2000);
+          });
+        });
+      },
+      error: function (response, xhr, data) {
+        // console.log("error");
+        // console.log(response);
+        // console.log(xhr);
+        // console.log(data);
+      },
+    });
   });
 }
 

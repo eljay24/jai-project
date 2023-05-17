@@ -178,7 +178,10 @@ body span {
   border: none;
   background-color: #25316d;
 }
-.btn.btn-action, .btn.add-new {
+.btn.add-passes {
+  margin-right: auto !important;
+}
+.btn.btn-action {
   border: none;
   background-color: #25316d;
   min-width: 140px;
@@ -674,7 +677,6 @@ textarea.form-control {
 .pagination-container .pagination .numbers-container > * {
   background-color: white;
   height: 30px;
-  width: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -717,7 +719,7 @@ textarea.form-control {
   border: none;
   height: 100%;
   width: 100%;
-  padding: 0;
+  padding: 0 15px;
   display: flex;
   justify-content: center;
   align-items: center;
