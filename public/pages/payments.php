@@ -577,6 +577,10 @@ try {
         </div>
         <h3 class="success-content">
         </h3>
+        <div class="data-content">
+          <p>Daily Passes: <span class="daily-pass"></span></p>
+          <p>Weekly Passes Passes: <span class="weekly-pass"></span></p>
+        </div>
       </div>
     </div>
   </div>

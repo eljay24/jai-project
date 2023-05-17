@@ -505,8 +505,8 @@ function addPasses() {
     $.ajax({
       url: "../ajax-calls/add-passes.php",
       method: "POST",
-      // data: formValues,
-      // dataType: "json",
+      // data: {},
+      dataType: "json",
       beforeSend: function () {
         console.log("before send working");
         $(btn).addClass("disabled");
@@ -518,14 +518,19 @@ function addPasses() {
           messages.successMessages.Payment.pass
         );
 
+        console.log(response)
+        console.log(xhr)
+        $(".success-message .daily-pass").text(response.daily);
+        $(".success-message .weekly-pass").text(response.weekly);
+
         // console.log("before fade");
         $(".form-modal .modal-content").fadeOut(150, function () {
           $(".success-message").fadeIn(150, function () {
             $(btn).removeClass("disabled");
-            setTimeout(function () {
-              if ($("body").hasClass("modal-open"))
-                $(".form-modal").modal("hide");
-            }, 2000);
+            // setTimeout(function () {
+            //   if ($("body").hasClass("modal-open"))
+            //     $(".form-modal").modal("hide");
+            // }, 2000);
           });
         });
       },

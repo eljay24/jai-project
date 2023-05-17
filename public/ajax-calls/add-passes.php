@@ -1,7 +1,7 @@
 <?php
 
 require_once "../../views/includes/dbconn.php";
-require_once "../../views/partials/header.php";
+// require_once "../../views/partials/header.php";
 
 $mon = date('Y-m-d', strtotime('monday this week'));
 $tue = date('Y-m-d', strtotime('tuesday this week'));
@@ -26,6 +26,8 @@ $activeLoansQuery = $conn->prepare("SELECT DISTINCT l.l_id, l.b_id, l.c_id, l.mo
                                     WHERE l.activeloan = 1
                                     ORDER BY b.b_id ASC");
 $activeLoansQuery->execute();
+
+
 $activeLoans = $activeLoansQuery->fetchAll(PDO::FETCH_ASSOC);
 
 // echo '<pre>';
@@ -115,5 +117,13 @@ if ((date('D') == 'Sat') && (date('H:i:s') > date('17:00:00'))) {
         $newPassQuery->execute();
     }
 }
+$daily_passes = strval(count($dailyPass));
+$weekly_passes = strval(count($weeklyPass));
+$passes = [];
 
-echo json_encode('working');
+$passes['daily'] = $daily_passes;
+$passes['weekly'] = $weekly_passes;
+
+echo json_encode($passes);
+
+?>

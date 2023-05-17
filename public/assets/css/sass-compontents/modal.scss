@@ -31,11 +31,15 @@
       height: 300px;
       width: 100%;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       text-align: center;
       background-color: white;
       pointer-events: auto;
+      p {
+        margin-bottom: 0;
+      }
       .close-container {
         position: absolute;
         top: 15px;

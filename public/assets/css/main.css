@@ -757,11 +757,15 @@ textarea.form-control {
   height: 300px;
   width: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
   background-color: white;
   pointer-events: auto;
+}
+.modal .modal-dialog .success-message p {
+  margin-bottom: 0;
 }
 .modal .modal-dialog .success-message .close-container {
   position: absolute;
