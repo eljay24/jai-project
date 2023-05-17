@@ -33,11 +33,12 @@ if (isset($_POST['action'])) {
                                                  OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
                                                  OR CONCAT('l', p.l_id) LIKE :search
                                                  OR CONCAT('b', b.b_id) LIKE :search
-                                                 OR CONCAT('p', p.p_id) LIKE :search)
+                                                 OR CONCAT('p', p.p_id) LIKE :search) AND (p.type != 'Pass')
                                           ORDER BY p.date ASC");
     $statementTotalRows->bindValue(':search', "%$search%");
   } else {
-    $statementTotalRows = $conn->prepare("SELECT COUNT(*) as count FROM jai_db.payments");
+    $statementTotalRows = $conn->prepare("SELECT COUNT(*) as count FROM jai_db.payments as p
+    WHERE p.type != 'Pass'");
   }
   $statementTotalRows->execute();
 
@@ -55,14 +56,14 @@ if (isset($_POST['action'])) {
                                  ON p.l_id = l.l_id
                                  INNER JOIN jai_db.borrowers as b 
                                  ON b.b_id = l.b_id
-                                 WHERE b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search OR b.b_id LIKE :search OR c.firstname LIKE :search
+                                 WHERE (b.firstname LIKE :search OR b.middlename LIKE :search OR b.lastname LIKE :search OR b.b_id LIKE :search OR c.firstname LIKE :search
                                        OR c.middlename LIKE :search OR c.lastname LIKE :search OR p.type LIKE :search
                                        OR CONCAT(b.firstname, ' ', b.middlename, ' ', b.lastname) LIKE :search
                                        OR CONCAT(b.firstname, ' ', b.lastname) LIKE :search
                                        OR CONCAT(b.lastname, ' ', b.firstname) LIKE :search
                                        OR CONCAT('l', l.l_id) LIKE :search
                                        OR CONCAT('b', b.b_id) LIKE :search
-                                       OR CONCAT('p', p.p_id) LIKE :search
+                                       OR CONCAT('p', p.p_id) LIKE :search) AND (p.type != 'Pass')
                                  ORDER BY p.date DESC, p.p_id DESC
                                  LIMIT :offset, :numOfRowsPerPage");
     $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
@@ -78,6 +79,7 @@ if (isset($_POST['action'])) {
                                  ON p.l_id = l.l_id
                                  INNER JOIN jai_db.borrowers as b 
                                  ON b.b_id = l.b_id
+                                 WHERE (p.type != 'Pass')
                                  ORDER BY p.date DESC, p.p_id DESC
                                  LIMIT :offset, :numOfRowsPerPage");
   }
