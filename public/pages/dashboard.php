@@ -800,7 +800,21 @@ $sat = date_create('saturday this week');
 
 
 
-
+    <h3>Accounts List</h3>
+    <form method="get" action="accountslist" target="_blank">
+      <select name="c_id">
+        <option value="" selected disabled>Select collector</option>
+        <?php
+        foreach ($collectors as $i => $collector) {
+          echo '<option value="' . $collector['c_id'] . '">' . $collector['name'] . '</option>';
+        }
+        ?>
+      </select>
+      <button title="View accounts" class="btn-primary" type="submit">View accounts</button>
+    </form>
+    <br>
+    <br>
+    <?= 'Active loans: ' . count($activeLoans) ?>
 
 
     <!--                                 -->
@@ -846,32 +860,6 @@ $sat = date_create('saturday this week');
     <!--           END - DRAW CHARTS           -->
     <!--                                       -->
     <!--                                       -->
-
-
-
-
-
-
-
-
-
-    <br>
-    <br>
-    Accounts List
-    <form method="get" action="accountslist" target="_blank">
-      <select name="c_id">
-        <option value="" selected disabled>Select collector</option>
-        <?php
-        foreach ($collectors as $i => $collector) {
-          echo '<option value="' . $collector['c_id'] . '">' . $collector['name'] . '</option>';
-        }
-        ?>
-      </select>
-      <button title="View accounts" class="btn-primary" type="submit">View accounts</button>
-    </form>
-    <br>
-    <br>
-    <?= 'Active loans: ' . count($activeLoans) ?>
 
     <script>
       var fullDate = {
