@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="../assets/css/jquery-ui.css" />
   <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
   <link href="../assets/css/main.css" rel="stylesheet">
-
+  <link rel="icon" type="image/x-icon" href="../assets/icons/letter-j.png">
 
   <script src="../assets/js/jquery-3.6.0.min.js"></script>
   <script src="../assets/js/jquery-ui.min.js"></script>
@@ -33,6 +33,7 @@
         </div>
 
         <div class="nav-link-container d-flex"><a href="../../public/pages/dashboard" class="nav-link"><img src="../assets/icons/monitor.svg"> Dashboard</a></div>
+        <div class="nav-link-container d-flex"><a href="../../public/pages/collectors" class="nav-link"><img src="../assets/icons/suitcase-inverted.png" style="max-width: 24px;"> Collectors</a></div>
         <div class="nav-link-container d-flex"><a href="../../public/pages/borrowers" class="nav-link"><img src="../assets/icons/users.svg"> Borrowers</a></div>
         <div class="nav-link-container d-flex"><a href="../../public/pages/loans" class="nav-link"><img src="../assets/icons/book.svg"> Loans</a></div>
         <div class="nav-link-container d-flex"><a href="../../public/pages/payments" class="nav-link"><img src="../assets/icons/dollar-sign.svg"> Payments</a></div>

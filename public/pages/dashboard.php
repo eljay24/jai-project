@@ -422,10 +422,10 @@ $sat = date_create('saturday this week');
     /*                                                                   */
     /*                                                                   */
 
-    /*      -----     CASH KING      -----     */
+    /*      -----     CASH KEN      -----     */
     $queryTotalCashCollectionLastMonthKing = $conn->prepare("SELECT SUM(amount) as sum
                                                   FROM jai_db.payments as p
-                                                  WHERE type = 'Cash' AND (date BETWEEN :firstoflastmonth AND :lastoflastmonth) AND c_id = 1");
+                                                  WHERE type = 'Cash' AND (date BETWEEN :firstoflastmonth AND :lastoflastmonth) AND c_id = 3");
     $queryTotalCashCollectionLastMonthKing->bindValue(':firstoflastmonth', $firstOfLastMonth);
     $queryTotalCashCollectionLastMonthKing->bindValue(':lastoflastmonth', $lastOfLastMonth);
     $queryTotalCashCollectionLastMonthKing->execute();
@@ -440,10 +440,10 @@ $sat = date_create('saturday this week');
     $queryTotalCashCollectionLastMonthCarl->execute();
     $totalCashCollectionLastMonthCarl = $queryTotalCashCollectionLastMonthCarl->fetch(PDO::FETCH_ASSOC);
 
-    /*      -----     GCASH KING      -----     */
+    /*      -----     GCASH KEN      -----     */
     $queryTotalGCashCollectionLastMonthKing = $conn->prepare("SELECT SUM(amount) as sum
                                                   FROM jai_db.payments as p
-                                                  WHERE type = 'GCash' AND (date BETWEEN :firstoflastmonth AND :lastoflastmonth) AND c_id = 1");
+                                                  WHERE type = 'GCash' AND (date BETWEEN :firstoflastmonth AND :lastoflastmonth) AND c_id = 3");
     $queryTotalGCashCollectionLastMonthKing->bindValue(':firstoflastmonth', $firstOfLastMonth);
     $queryTotalGCashCollectionLastMonthKing->bindValue(':lastoflastmonth', $lastOfLastMonth);
     $queryTotalGCashCollectionLastMonthKing->execute();
@@ -498,7 +498,7 @@ $sat = date_create('saturday this week');
     /*      -----     CASH KING      -----     */
     $queryTotalCashCollectionThisMonthKing = $conn->prepare("SELECT SUM(amount) as sum
                                                   FROM jai_db.payments as p
-                                                  WHERE type = 'Cash' AND (date BETWEEN :firstofthismonth AND :lastofthismonth) AND c_id = 1");
+                                                  WHERE type = 'Cash' AND (date BETWEEN :firstofthismonth AND :lastofthismonth) AND c_id = 3");
     $queryTotalCashCollectionThisMonthKing->bindValue(':firstofthismonth', $firstOfThisMonth);
     $queryTotalCashCollectionThisMonthKing->bindValue(':lastofthismonth', $lastOfThisMonth);
     $queryTotalCashCollectionThisMonthKing->execute();
@@ -516,7 +516,7 @@ $sat = date_create('saturday this week');
     /*      -----     GCASH KING      -----     */
     $queryTotalGCashCollectionThisMonthKing = $conn->prepare("SELECT SUM(amount) as sum
                                                   FROM jai_db.payments as p
-                                                  WHERE type = 'GCash' AND (date BETWEEN :firstofthismonth AND :lastofthismonth) AND c_id = 1");
+                                                  WHERE type = 'GCash' AND (date BETWEEN :firstofthismonth AND :lastofthismonth) AND c_id = 3");
     $queryTotalGCashCollectionThisMonthKing->bindValue(':firstofthismonth', $firstOfThisMonth);
     $queryTotalGCashCollectionThisMonthKing->bindValue(':lastofthismonth', $lastOfThisMonth);
     $queryTotalGCashCollectionThisMonthKing->execute();
@@ -582,7 +582,7 @@ $sat = date_create('saturday this week');
     /*      -----     CASH KING      -----     */
     $queryTotalCashCollectionTodayKing = $conn->prepare("SELECT SUM(amount) as sum
                                                   FROM jai_db.payments as p
-                                                  WHERE type = 'Cash' AND date = :datetoday AND c_id = 1");
+                                                  WHERE type = 'Cash' AND date = :datetoday AND c_id = 3");
     $queryTotalCashCollectionTodayKing->bindValue(':datetoday', $dateToday);
     $queryTotalCashCollectionTodayKing->execute();
     $totalCashCollectionTodayKing = $queryTotalCashCollectionTodayKing->fetch(PDO::FETCH_ASSOC);
@@ -598,7 +598,7 @@ $sat = date_create('saturday this week');
     /*      -----     GCASH KING      -----     */
     $queryTotalGCashCollectionTodayKing = $conn->prepare("SELECT SUM(amount) as sum
                                                   FROM jai_db.payments as p
-                                                  WHERE type = 'GCash' AND date = :datetoday AND c_id = 1");
+                                                  WHERE type = 'GCash' AND date = :datetoday AND c_id = 3");
     $queryTotalGCashCollectionTodayKing->bindValue(':datetoday', $dateToday);
     $queryTotalGCashCollectionTodayKing->execute();
     $totalGCashCollectionTodayKing = $queryTotalGCashCollectionTodayKing->fetch(PDO::FETCH_ASSOC);
@@ -693,7 +693,7 @@ $sat = date_create('saturday this week');
 
       $profitOrLossThisWeek = ($profitPerPaymentThisWeek / $collection['amortization']) * $collection['amount'];
 
-      if ($collection['c_id'] == 1) {
+      if ($collection['c_id'] == 3) {
         if (date_format(date_create($collection['date']), 'D') == 'Mon') {
           $monCollectionKing += $collection['amount'];
         } elseif (date_format(date_create($collection['date']), 'D') == 'Tue') {
@@ -788,7 +788,7 @@ $sat = date_create('saturday this week');
     /*                                    */
 
     $statementCollectors = $conn->prepare("SELECT c.c_id, CONCAT(c.lastname, ', ', c.firstname) as name
-                                           FROM jai_db.collectors as c");
+                                           FROM jai_db.collectors as c WHERE c.is_deleted < 1");
     $statementCollectors->execute();
     $collectors = $statementCollectors->fetchAll(PDO::FETCH_ASSOC);
 
@@ -822,8 +822,8 @@ $sat = date_create('saturday this week');
       <div class="chart-div">
         <canvas id="chartTotalCollectionThisMonth"></canvas>
         <center>Profit this month: ₱ <?= number_format($profitOrLossThisMonth, 2) ?></center>
-        <center><?= ($profitDifference >= 0 ? '+' : '') . number_format($profitDifference, 4) . "% vs last month's profit (test)" ?></center>
-        <center><?= ($collectionDifference >= 0 ? '+' : '') . number_format($collectionDifference, 4) . "% vs last month's collection (test)" ?></center>
+        <!-- <center><?php // echo ($profitDifference >= 0 ? '+' : '') . number_format($profitDifference, 4) . "% vs last month's profit (test)" ?></center> -->
+        <!-- <center><?php // echo ($collectionDifference >= 0 ? '+' : '') . number_format($collectionDifference, 4) . "% vs last month's collection (test)" ?></center> -->
       </div>
       <div class="chart-div">
         <canvas id="chartTotalCollectionToday"></canvas>
@@ -835,7 +835,7 @@ $sat = date_create('saturday this week');
     </div>
 
     <div class="card-bar-chart-div jai-card">
-      <div class="bar-chart-div">
+      <div class="">
         <canvas id="chartCollectionThisWeek"></canvas>
         <center>Profit this week: ₱ <?= number_format($totalProfitThisWeek, 2) ?></center>
       </div>
@@ -846,32 +846,22 @@ $sat = date_create('saturday this week');
     <!--           END - DRAW CHARTS           -->
     <!--                                       -->
     <!--                                       -->
-
-
-
-
-
-
-
-
-
+    <div class="card-bar-chart-div jai-card accounts-list">
+      <h5 style="text-align: center;">Accounts List</h5>
+      <form method="get" class="d-flex" action="accountslist" target="_blank">
+        <select class="form-control" name="c_id">
+          <option value="" selected disabled>Select collector</option>
+          <?php
+          foreach ($collectors as $i => $collector) {
+            echo '<option value="' . $collector['c_id'] . '">' . $collector['name'] . '</option>';
+          }
+          ?>
+        </select>
+        <button title="View accounts" class="btn btn-blue accounts-list-btn" type="submit">View Accounts</button>
+      </form>
+    </div>
     <br>
     <br>
-    Accounts List
-    <form method="get" action="accountslist" target="_blank">
-      <select name="c_id">
-        <option value="" selected disabled>Select collector</option>
-        <?php
-        foreach ($collectors as $i => $collector) {
-          echo '<option value="' . $collector['c_id'] . '">' . $collector['name'] . '</option>';
-        }
-        ?>
-      </select>
-      <button title="View accounts" class="btn-primary" type="submit">View accounts</button>
-    </form>
-    <br>
-    <br>
-    <?= 'Active loans: ' . count($activeLoans) ?>
 
     <script>
       var fullDate = {
@@ -921,15 +911,15 @@ $sat = date_create('saturday this week');
 
       // SETUP BLOCK
       const dataLastMonth = {
-        labels: ['King Cruz (Cash)', 'King Cruz (GCash)', 'Carl Corpuz (Cash)', 'Carl Corpuz (GCash)'],
+        labels: ['Kenneth David (Cash)', 'Kenneth David (GCash)', 'Carl Corpuz (Cash)', 'Carl Corpuz (GCash)'],
         datasets: [{
           label: 'Collection Last Month',
           data: [totalCashCollectionLastMonthKing, totalGCashCollectionLastMonthKing, totalCashCollectionLastMonthCarl, totalGCashCollectionLastMonthCarl],
           backgroundColor: [
             'rgba(30, 139, 195, 1)',
-            'rgba(30, 139, 195, 1)',
+            'rgb(7, 111, 198)',
             'rgba(196, 77, 86, 1)',
-            'rgba(196, 77, 86, 1)'
+            'rgb(202, 68, 66)'
           ],
           borderColor: [
             'rgba(0, 0, 0, 1)',
@@ -1008,15 +998,15 @@ $sat = date_create('saturday this week');
 
       // SETUP BLOCK
       const dataThisMonth = {
-        labels: ['King Cruz (Cash)', 'King Cruz (GCash)', 'Carl Corpuz (Cash)', 'Carl Corpuz (GCash)'],
+        labels: ['Kenneth David (Cash)', 'Kenneth David (GCash)', 'Carl Corpuz (Cash)', 'Carl Corpuz (GCash)'],
         datasets: [{
           label: 'Collection This Month',
           data: [totalCashCollectionThisMonthKing, totalGCashCollectionThisMonthKing, totalCashCollectionThisMonthCarl, totalGCashCollectionThisMonthCarl],
           backgroundColor: [
             'rgba(30, 139, 195, 1)',
-            'rgba(30, 139, 195, 1)',
+            'rgb(7, 111, 198)',
             'rgba(196, 77, 86, 1)',
-            'rgba(196, 77, 86, 1)'
+            'rgb(202, 68, 66)'
           ],
           borderColor: [
             'rgba(0, 0, 0, 1)',
@@ -1096,15 +1086,15 @@ $sat = date_create('saturday this week');
 
       // SETUP BLOCK
       const data = {
-        labels: ['King Cruz (Cash)', 'King Cruz (GCash)', 'Carl Corpuz (Cash)', 'Carl Corpuz (GCash)'],
+        labels: ['Kenneth David (Cash)', 'Kenneth David (GCash)', 'Carl Corpuz (Cash)', 'Carl Corpuz (GCash)'],
         datasets: [{
           label: 'Total Collection Today',
           data: [totalCashCollectionTodayKing, totalGCashCollectionTodayKing, totalCashCollectionTodayCarl, totalGCashCollectionTodayCarl],
           backgroundColor: [
             'rgba(30, 139, 195, 1)',
-            'rgba(30, 139, 195, 1)',
+            'rgb(7, 111, 198)',
             'rgba(196, 77, 86, 1)',
-            'rgba(196, 77, 86, 1)'
+            'rgb(202, 68, 66)'
           ],
           borderColor: [
             'rgba(0, 0, 0, 1)',
@@ -1258,7 +1248,7 @@ $sat = date_create('saturday this week');
           // }
         }, {
           barPercentage: 0.7,
-          label: 'King Cruz',
+          label: 'Kenneth David',
           data: [monCollectionKing.toFixed(2), tueCollectionKing.toFixed(2), wedCollectionKing.toFixed(2), thuCollectionKing.toFixed(2), friCollectionKing.toFixed(2), satCollectionKing.toFixed(2)],
           backgroundColor: [
             'rgba(30, 139, 195, 1)'
@@ -1333,7 +1323,9 @@ $sat = date_create('saturday this week');
                 size: 14
               }
             }
-          }
+          },
+          // responsive: true,
+          aspectRatio: 3.5
         }
       };
 
@@ -1562,6 +1554,7 @@ $sat = date_create('saturday this week');
         type: 'bar',
         data: dataOverview,
         options: {
+          aspectRatio: 2.1,
           animation: {
             onComplete: () => {
               delayed = true;
@@ -1582,9 +1575,10 @@ $sat = date_create('saturday this week');
           plugins: {
             title: {
               display: true,
-              text: ['Overview for ' + today.toLocaleDateString("en-US", yearOnly)],
+              align: 'center',
+              text: ['Overview for ' + today.toLocaleDateString("en-US", yearOnly), 'Active Loans: '  + <?= count($activeLoans)?>],
               font: {
-                size: 14
+                size: 15
               }
             },
             tooltip: {
