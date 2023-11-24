@@ -40,11 +40,16 @@
     border: none;
     background-color: $active-color;
   }
+  &.btn-blue,
   &.btn-action,
   &.add-new {
     border: none;
     background-color: $active-color;
     min-width: 140px;
+  }
+  &.accounts-list-btn {
+    width: 450px;
+    margin-left: 50px;
   }
   &.close-modal {
     border: 1px solid $jai-error;

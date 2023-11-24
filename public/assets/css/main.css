@@ -178,10 +178,14 @@ body span {
   border: none;
   background-color: #25316d;
 }
-.btn.btn-action, .btn.add-new {
+.btn.btn-blue, .btn.btn-action, .btn.add-new {
   border: none;
   background-color: #25316d;
   min-width: 140px;
+}
+.btn.accounts-list-btn {
+  width: 450px;
+  margin-left: 50px;
 }
 .btn.close-modal {
   border: 1px solid #d32121;
@@ -269,6 +273,16 @@ input.error:focus,
 textarea.error:focus,
 select.error:focus {
   border-color: #d32121;
+}
+input.red,
+textarea.red,
+select.red {
+  border-color: #d32121 !important;
+}
+input.green,
+textarea.green,
+select.green {
+  border-color: green !important;
 }
 input.search-input,
 textarea.search-input,
@@ -859,6 +873,10 @@ body.modal-open {
 }
 .jai-card.card-chart-div {
   justify-content: space-around;
+}
+.jai-card.accounts-list {
+  top: 100px;
+  margin-bottom: 100px;
 }
 
 /*# sourceMappingURL=main.css.map */

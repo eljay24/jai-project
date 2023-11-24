@@ -61,7 +61,12 @@
 
 .jai-card {
   margin: 0 auto;
+  // max-height: 660px;
   &.card-chart-div {
     justify-content: space-around;
+  }
+  &.accounts-list {
+    top: 100px;
+    margin-bottom: 100px;
   }
 }

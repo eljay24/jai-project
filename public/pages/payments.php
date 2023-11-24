@@ -513,7 +513,7 @@ try {
                     </div>
                     <div class="col">
                       <div class="jai-mb-2">
-                        <input id="amortization" tabindex="-1" name="amortization" placeholder="Amortization" type="text" class="form-control" readonly>
+                        <input id="amortization" tabindex="-1" name="amortization" placeholder="Amortization" data-amort="" type="text" class="form-control" readonly>
                       </div>
                     </div>
                   </div>
@@ -522,7 +522,7 @@ try {
                   <div class="row">
                     <div class="col">
                       <div class="jai-mb-2">
-                        <input id="payment" name="payment" placeholder="Payment amount" type="text" class="form-control remove-readonly" required>
+                        <input id="payment" data-payment="" name="payment" placeholder="Payment amount" type="text" class="form-control remove-readonly" required>
                       </div>
                     </div>
                     <div class="col">

@@ -32,6 +32,12 @@ select {
       border-color: $jai-error;
     }
   }
+  &.red {
+    border-color: $jai-error !important;
+  }
+  &.green {
+    border-color: green !important;
+  }
   &.search-input {
     border: none;
   }

@@ -374,6 +374,7 @@ function fillInputs(id) {
         $("#payable").val(borrowerDetails[0]["payable"]);
         $("#remainingbalance").val(borrowerDetails[0]["balance"]);
         $("#amortization").val(borrowerDetails[0]["amortization"]);
+        $("#amortization").data("amort", borrowerDetails[0]["amortization"]);
         $("#mode").val(borrowerDetails[0]["mode"]);
         $("#term").val(borrowerDetails[0]["term"]);
         $("#collectorid").val(borrowerDetails[0]["c_id"]);
@@ -519,6 +520,22 @@ function validateInputs() {
   ).on("blur", function (event) {
     clearErrors(this);
     checkEmptyInput(this);
+  });
+
+  $("#payment").on("input change", function (param) {
+    currPay = $(this).val();
+    borrAmort = $("#amortization").data("amort");
+
+    console.log(currPay);
+    console.log(borrAmort);
+
+    if (+currPay > +borrAmort) {
+      $(this).removeClass("red");
+      $(this).addClass("green");
+    } else {
+      $(this).removeClass("green");
+      $(this).addClass("red");
+    }
   });
 }
 
