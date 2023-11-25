@@ -642,7 +642,9 @@ try {
                     <option value="" disabled selected>Collector</option>
                     <?php
                     foreach ($collectors as $collector) {
-                      echo '<option value="' . $collector['c_id'] . '">' . ucwords(strtolower($collector['firstname'])) . ' ' . ucwords(strtolower($collector['middlename'])) . ' ' . ucwords(strtolower($collector['lastname'])) . '</option>';
+                      if ($collector['is_deleted'] == 0) {
+                        echo '<option value="' . $collector['c_id'] . '">' . ucwords(strtolower($collector['firstname'])) . ' ' . ucwords(strtolower($collector['middlename'])) . ' ' . ucwords(strtolower($collector['lastname'])) . '</option>';
+                      }
                     }
                     ?>
                   </select>
