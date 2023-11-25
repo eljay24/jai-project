@@ -529,7 +529,7 @@ function validateInputs() {
     console.log(currPay);
     console.log(borrAmort);
 
-    if (+currPay > +borrAmort) {
+    if (+currPay >= +borrAmort) {
       $(this).removeClass("red");
       $(this).addClass("green");
     } else {
