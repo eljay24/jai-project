@@ -67,7 +67,7 @@ $sat = date_create('saturday this week');
 ?>
 
 <body>
-  <div class="content-container">
+  <div class="content-container dash">
     <?php
 
     /*                                                */
@@ -825,12 +825,16 @@ $sat = date_create('saturday this week');
         <!-- <center><?php // echo ($profitDifference >= 0 ? '+' : '') . number_format($profitDifference, 4) . "% vs last month's profit (test)" ?></center> -->
         <!-- <center><?php // echo ($collectionDifference >= 0 ? '+' : '') . number_format($collectionDifference, 4) . "% vs last month's collection (test)" ?></center> -->
       </div>
-      <div class="chart-div">
+      <div class="chart-div <?= $profitOrLossToday == 0 ? 'd-flex justify-content-center align-items-center' : '' ?>">
+        <?php if ($profitOrLossToday) :?>
         <canvas id="chartTotalCollectionToday"></canvas>
         <center>Profit today: ₱ <?= number_format($profitOrLossToday, 2) ?></center>
         <!-- <div class="no-collections">
           <?= $totalCollectionToday == 0 ? '<span>No collections today</span>' : '' ?>
         </div> -->
+        <?php else:?>
+          <h2 >NO ENTRIES TODAY</h2>
+        <?php endif;?>
       </div>
     </div>
 
@@ -846,6 +850,11 @@ $sat = date_create('saturday this week');
     <!--           END - DRAW CHARTS           -->
     <!--                                       -->
     <!--                                       -->
+    <div class="jai-card card-chart-div">
+      <h5 style="text-align: center;">Today's Report</h5>
+      <?php require_once "../../views/partials/reports_today.php"?>
+    </div>
+
     <div class="card-bar-chart-div jai-card accounts-list">
       <h5 style="text-align: center;">Accounts List</h5>
       <form method="get" class="d-flex" action="accountslist" target="_blank">
@@ -860,8 +869,6 @@ $sat = date_create('saturday this week');
         <button title="View accounts" class="btn btn-blue accounts-list-btn" type="submit">View Accounts</button>
       </form>
     </div>
-    <br>
-    <br>
 
     <script>
       var fullDate = {

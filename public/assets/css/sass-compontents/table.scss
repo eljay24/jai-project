@@ -13,6 +13,13 @@
   overflow-x: hidden;
   border-top-left-radius: 40px;
   border-top-right-radius: 40px;
+  &.no-border {
+    border-top-left-radius: initial;
+    border-top-right-radius: initial;
+  }
+  &.no-height {
+    height: initial;
+  }
   .jai-table {
     margin: 0 15px;
     p {

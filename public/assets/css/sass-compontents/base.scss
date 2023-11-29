@@ -47,10 +47,26 @@ body {
   width: 200px;
 }
 
+.green-font {
+  color: green !important;
+}
+
+.red-font {
+  color: $jai-error !important;
+}
+
 .content-container {
   padding: 20px 30px 0;
   margin: {
     left: 20px;
+  }
+  &.dash {
+    > * {
+      /* margin-bottom: 50px; */
+      margin-bottom: 50px !important;
+      + * {
+      }
+    }
   }
   .page-name {
     margin: {

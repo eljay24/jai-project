@@ -7,6 +7,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  &[disabled] {
+    opacity: 0.6;
+    pointer-events: none;
+  }
   &.edit-btn,
   &.delete-btn,
   &.ledger-btn {
@@ -62,7 +66,8 @@
       color: white;
     }
   }
-  &.create-btn {
+  &.create-btn,
+  &.add-passes {
     background-color: $active-color;
     border: $active-color;
     height: 40px;
