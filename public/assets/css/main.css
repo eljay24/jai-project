@@ -56,6 +56,14 @@ body span {
   width: 200px;
 }
 
+.green-font {
+  color: green !important;
+}
+
+.red-font {
+  color: #d32121 !important;
+}
+
 .content-container {
   padding: 20px 30px 0;
   margin-left: 20px;
@@ -149,6 +157,10 @@ body span {
   justify-content: center;
   align-items: center;
 }
+.btn[disabled] {
+  opacity: 0.6;
+  pointer-events: none;
+}
 .btn.edit-btn, .btn.delete-btn, .btn.ledger-btn {
   background-size: 20px;
   text-indent: -9999999px;
@@ -198,13 +210,13 @@ body span {
   background-color: #d32121;
   color: white;
 }
-.btn.create-btn {
+.btn.create-btn, .btn.add-passes {
   background-color: #25316d;
   border: #25316d;
   height: 40px;
   box-shadow: 4px 4px 9px #c1c1c1, -4px -4px 9px #ffffff;
 }
-.btn.create-btn img {
+.btn.create-btn img, .btn.add-passes img {
   margin-right: 5px;
   position: relative;
   bottom: 1px;
@@ -590,6 +602,10 @@ textarea.form-control {
   overflow-x: hidden;
   border-top-left-radius: 40px;
   border-top-right-radius: 40px;
+}
+.table-wrapper.no-border {
+  border-top-left-radius: initial;
+  border-top-right-radius: initial;
 }
 .table-wrapper .jai-table {
   margin: 0 15px;

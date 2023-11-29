@@ -860,8 +860,12 @@ $sat = date_create('saturday this week');
         <button title="View accounts" class="btn btn-blue accounts-list-btn" type="submit">View Accounts</button>
       </form>
     </div>
-    <br>
-    <br>
+
+    <div class="jai-card card-chart-div">
+      <h5 style="text-align: center;">Today's Report</h5>
+
+      <?php require_once "../../views/partials/reports_today.php"?>
+    </div>
 
     <script>
       var fullDate = {
