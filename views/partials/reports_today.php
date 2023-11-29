@@ -54,8 +54,8 @@ try {
       <div class="col">Borrower</div>
       <div class="col">Amortization</div>
       <div class="col">Mode</div>
-      <div class="col">Yesterday</div>
       <div class="col">Today</div>
+      <div class="col">Yesterday</div>
       <!-- <div class="col-1 text-center">Action</div> -->
     </div>
     <?php
@@ -84,12 +84,12 @@ try {
         </div>
         <div class="col">
           <div class="row">
-            <p class="primary-font <?= ((float)$mode_data['payment_yesterday'] < (float)$mode_data['mode'] ? 'red-font' : 'green-font')  ?>">₱<?= $mode_data['payment_yesterday'] ?></p>
+            <p class="primary-font <?= ((float)$mode_data['payment_today'] < (float)$mode_data['mode'] ? 'red-font' : 'green-font')  ?>">₱<?= $mode_data['payment_today'] ?></p>
           </div>
         </div>
         <div class="col">
           <div class="row">
-            <p class="primary-font <?= ((float)$mode_data['payment_today'] < (float)$mode_data['mode'] ? 'red-font' : 'green-font')  ?>">₱<?= $mode_data['payment_today'] ?></p>
+            <p class="primary-font <?= ((float)$mode_data['payment_yesterday'] < (float)$mode_data['mode'] ? 'red-font' : 'green-font')  ?>"><?= $mode_data['payment_yesterday'] == 0 ? 'PASS' : '₱' . $mode_data['payment_yesterday']  ?></p>
           </div>
         </div>
       </div>
