@@ -10,7 +10,8 @@ try {
       p.amount,
       l.b_id,
       l.mode,
-      ROW_NUMBER() OVER (PARTITION BY l_id ORDER BY COUNT(CASE WHEN p.amount <> 0 THEN 1 END) DESC) AS rnk
+      l.amortization,
+    ROW_NUMBER() OVER (PARTITION BY l_id ORDER BY COUNT(CASE WHEN p.amount <> 0 THEN 1 END) DESC) AS rnk
     FROM jai_db.payments as p
     JOIN jai_db.loans as l ON p.l_id = l.l_id
     WHERE l.activeloan = 1
@@ -20,7 +21,14 @@ try {
     FROM jai_db.payments as p
     WHERE p.date = CURDATE() - INTERVAL 1 DAY
   )
-  SELECT b.b_id, b.firstname as firstname, b.lastname as lastname, r.l_id, r.amount as mode, r.mode as ptype, y.amount as payment_yesterday, p.amount as payment_today
+  SELECT b.b_id, 
+        b.firstname as firstname, 
+        b.lastname as lastname, 
+        r.l_id, r.amount as mode, 
+        r.mode as ptype, 
+        y.amount as payment_yesterday, 
+        r.amortization as amort, 
+        p.amount as payment_today
   FROM ModeCTE as r
   JOIN jai_db.borrowers as b ON r.b_id = b.b_id
   JOIN jai_db.payments as p ON r.b_id = p.b_id
@@ -44,6 +52,7 @@ try {
       <div class="jai-col-ID">L. ID</div>
       <div class="jai-col-ID">B. ID</div>
       <div class="col">Borrower</div>
+      <div class="col">Amortization</div>
       <div class="col">Mode</div>
       <div class="col">Yesterday</div>
       <div class="col">Today</div>
@@ -61,6 +70,11 @@ try {
         <div class="col">
           <div class="row">
             <p class="jai-table-name primary-font"><span class="jai-table-label"></span> <?= ucwords(strtolower($mode_data['firstname'])) . ' ' . ucwords(strtolower($mode_data['lastname'])) ?></p>
+          </div>
+        </div>
+        <div class="col">
+          <div class="row">
+            <p class="primary-font">₱<?= $mode_data['amort'] ?></p>
           </div>
         </div>
         <div class="col">
