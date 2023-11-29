@@ -67,7 +67,7 @@ $sat = date_create('saturday this week');
 ?>
 
 <body>
-  <div class="content-container">
+  <div class="content-container dash">
     <?php
 
     /*                                                */
@@ -846,6 +846,11 @@ $sat = date_create('saturday this week');
     <!--           END - DRAW CHARTS           -->
     <!--                                       -->
     <!--                                       -->
+    <div class="jai-card card-chart-div">
+      <h5 style="text-align: center;">Today's Report</h5>
+      <?php require_once "../../views/partials/reports_today.php"?>
+    </div>
+
     <div class="card-bar-chart-div jai-card accounts-list">
       <h5 style="text-align: center;">Accounts List</h5>
       <form method="get" class="d-flex" action="accountslist" target="_blank">
@@ -859,12 +864,6 @@ $sat = date_create('saturday this week');
         </select>
         <button title="View accounts" class="btn btn-blue accounts-list-btn" type="submit">View Accounts</button>
       </form>
-    </div>
-
-    <div class="jai-card card-chart-div">
-      <h5 style="text-align: center;">Today's Report</h5>
-
-      <?php require_once "../../views/partials/reports_today.php"?>
     </div>
 
     <script>

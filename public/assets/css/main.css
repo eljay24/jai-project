@@ -68,6 +68,10 @@ body span {
   padding: 20px 30px 0;
   margin-left: 20px;
 }
+.content-container.dash > * {
+  /* margin-bottom: 50px; */
+  margin-bottom: 50px !important;
+}
 .content-container .page-name {
   margin-top: 20px;
   margin-bottom: 20px;
@@ -607,6 +611,9 @@ textarea.form-control {
   border-top-left-radius: initial;
   border-top-right-radius: initial;
 }
+.table-wrapper.no-height {
+  height: initial;
+}
 .table-wrapper .jai-table {
   margin: 0 15px;
 }
@@ -828,8 +835,6 @@ body.modal-open {
 }
 
 .card-bar-chart-div {
-  position: relative;
-  top: 60px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
   transition: 0.3s;
   width: 95%;
@@ -848,8 +853,6 @@ body.modal-open {
 }
 
 .card-chart-div {
-  position: relative;
-  top: 30px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
   transition: 0.3s;
   width: 95%;

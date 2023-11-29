@@ -34,7 +34,7 @@ try {
   JOIN jai_db.payments as p ON r.b_id = p.b_id
   JOIN Yesterday as y ON r.b_id = y.b_id
   WHERE (rnk = 1 AND r.amount != 0) AND (p.date = CURDATE()) AND (p.amount != 0)
-  ORDER BY p.amount < r.amount DESC, r.l_id");
+  ORDER BY p.amount < r.amount DESC, p.amount DESC");
 
   $statement->execute();
   $mode_datas = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -46,7 +46,8 @@ try {
 
 ?>
 
-<div class="table-wrapper no-border">
+<div class="table-wrapper no-border no-height">
+  <?php if ($mode_datas) :?>
   <div class="jai-table table-container">
     <div class="row table-header">
       <div class="jai-col-ID">L. ID</div>
@@ -96,6 +97,9 @@ try {
     <?php $count++;
     } ?>
   </div>
+  <?php else :?>
+  <h1 style="text-align: center;">NO ENTRIES TODAY</h1>
+  <?php endif;?>
 </div>
 <div class="table-padding">
 </div>

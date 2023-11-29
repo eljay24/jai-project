@@ -60,6 +60,14 @@ body {
   margin: {
     left: 20px;
   }
+  &.dash {
+    > * {
+      /* margin-bottom: 50px; */
+      margin-bottom: 50px !important;
+      + * {
+      }
+    }
+  }
   .page-name {
     margin: {
       top: 20px;

@@ -17,6 +17,9 @@
     border-top-left-radius: initial;
     border-top-right-radius: initial;
   }
+  &.no-height {
+    height: initial;
+  }
   .jai-table {
     margin: 0 15px;
     p {
