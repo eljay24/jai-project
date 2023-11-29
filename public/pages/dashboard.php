@@ -825,12 +825,16 @@ $sat = date_create('saturday this week');
         <!-- <center><?php // echo ($profitDifference >= 0 ? '+' : '') . number_format($profitDifference, 4) . "% vs last month's profit (test)" ?></center> -->
         <!-- <center><?php // echo ($collectionDifference >= 0 ? '+' : '') . number_format($collectionDifference, 4) . "% vs last month's collection (test)" ?></center> -->
       </div>
-      <div class="chart-div">
+      <div class="chart-div <?= $profitOrLossToday == 0 ? 'd-flex justify-content-center align-items-center' : '' ?>">
+        <?php if ($profitOrLossToday) :?>
         <canvas id="chartTotalCollectionToday"></canvas>
         <center>Profit today: ₱ <?= number_format($profitOrLossToday, 2) ?></center>
         <!-- <div class="no-collections">
           <?= $totalCollectionToday == 0 ? '<span>No collections today</span>' : '' ?>
         </div> -->
+        <?php else:?>
+          <h2 >NO ENTRIES TODAY</h2>
+        <?php endif;?>
       </div>
     </div>
 
