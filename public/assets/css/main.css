@@ -767,6 +767,9 @@ textarea.form-control {
 .modal.payment-modal .success-message {
   max-width: 1200px;
 }
+.modal.passes-modal .success-message {
+  display: flex;
+}
 .modal .modal-dialog .modal-content {
   border-radius: 15px;
 }

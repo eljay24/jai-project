@@ -42,6 +42,20 @@ $(document).ready(function () {
     ".autocomplete-input"
   );
 
+  // function openModal(
+  //   buttonName,
+  //   modalName,
+  //   submitBtnClass,
+  //   modalFunction = false,
+  //   focusOn
+  // ) {}
+
+  openModal(
+    ".add-passes-modal",
+    "#addPassesModal",
+    "add-today-pass",
+  );
+  
   openModal(
     ".open-payment-modal",
     "#paymentModal",
@@ -87,6 +101,8 @@ $(document).ready(function () {
     "refresh-payments.php",
     true
   );
+
+  addPasses();
   // Modal Submit Functions END
 });
 
@@ -119,6 +135,7 @@ const messages = {
     Payment: {
       create: "New payment added",
       update: "Loan successfully updated",
+      passes_added : "Passes added successfully"
     },
   },
   confirmMessages: {
@@ -430,6 +447,43 @@ function triggerSubmit() {
       }
     }
   );
+}
+
+function addPasses() {
+  let addPassBtn = '.add-today-pass'
+  $(document).on("click", addPassBtn, function (event) {
+    $.ajax({
+        url: "../ajax-calls/add-passes.php",
+        method: "POST",
+        dataType: "json",
+        beforeSend: function () {
+          $(addPassBtn).addClass("disabled");
+        },
+        success: function (response, xhr, data) {
+          $(".success-message .success-content").text(messages.successMessages.Payment.passes_added);
+          $(".success-message .daily.pass-count").text(response.daily_passes);
+          $(".success-message .weekly.pass-count").text(response.weekly_passes);
+          
+
+          $(".passes-modal .modal-content").fadeOut(150, function () {
+            $(".success-message").fadeIn(150, function () {
+              $(addPassBtn).removeClass("disabled");
+            });
+          });
+
+          // console.log("success");
+          // console.log(response);
+          // console.log(xhr);
+          // console.log(data);
+        },
+        error: function (response, xhr, data) {
+          console.log("error");
+          console.log(response);
+          console.log(xhr);
+          console.log(data);
+        },
+    })
+  });
 }
 
 function submitForm(

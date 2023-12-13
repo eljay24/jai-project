@@ -142,6 +142,7 @@ try {
     </div>
     <div class="actions-container">
       <a href="#" type="button" class="btn open-payment-modal create-btn"><img src="../assets/icons/plus.svg"> Add Payment</a>
+      <a href="#" type="button" class="btn add-passes-modal add-passes" <?= date('H:i:s') > date('17:30:00') ? 'disabled' : ''; ?>><img src="../assets/icons/plus.svg"> Add Passes</a>
       <form class="table-search">
         <div class="input-group search-group">
           <input type="text" class="form-control search-input" placeholder="Search..." name="search" value="<?php echo $search; ?>" autofocus onfocus="this.select()">
@@ -435,33 +436,43 @@ try {
 
   <!-- END - PAGE NAVIGATION -->
 
-  <!-- DELETE BORROWER START -->
+  <!-- ADD PASSES START -->
 
-  <div class="modal fade" data-borrower="1" id="deleteBorrower" tabindex="-1" role="dialog" aria-labelledby="deleteBorrowerLabel" aria-hidden="true">
+  <div class="modal fade passes-modal" data-passes="1" id="addPassesModal" tabindex="-1" role="dialog" aria-labelledby="addPassesLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
-        <div class="modal-body">
+        <div class="modal-body d-flex align-items-center flex-column">
+          <h4 class="mb-2">Add today's passes</h4>
+          <h6 class="m-0">Have you finished adding today's payments?</h6>
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer d-flex justify-content-center">
           <button type="button" class="btn btn-secondary btn-sm close-modal" data-dismiss="modal">Cancel</button>
-          <form class="delete-form" style="display: inline-block" method="post" action="delete.php">
-            <input type="hidden" name="b_id" value="">
-            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-          </form>
+          <button type="submit" class="btn btn-primary btn-action btn-sm">Add Passes</button>
+        </div>
+      </div>
+      <div class="success-message flex-column" style="display: none;">
+        <div class="close-container">
+          <div class="close-button"></div>
+        </div>
+        <h3 class="success-content">
+        </h3>
+        <div class="data-container">
+          <h6>Daily Passes: <span class="daily pass-count"></span></h6>
+          <h6>Weekly Passes: <span class="weekly pass-count"></span></h6>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- DELETE BORROWER END -->
+  <!-- ADD PASSES END -->
 
-  <!-- CREATE/EDIT BORROWER START -->
+  <!-- CREATE/EDIT PAYMENT START -->
 
   <div class="modal fade form-modal payment-modal" data-loan="1" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Create Payment</h5>
+          <h5 class="modal-title">Add a Payment</h5>
         </div>
         <div class="modal-body">
           <form class="action-form payment-form" autocomplete="off" action="payment-loan" method="post" enctype="multipart/form-data">
