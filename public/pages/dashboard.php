@@ -959,14 +959,18 @@ $sat = date_create('saturday this week');
               display: true,
               text: ['Collection Last Month ' + getFirstOfLastMonth(), '₱ ' + totalCollectionLastMonth.toLocaleString('en', numberFormat)],
               font: {
-                size: 14
+                family: '"Poppins Regular", Times, serif',
+                size: 14,
+                weight: 500
               }
             },
             tooltip: {
               titleFont: {
+                family: '"Poppins Regular", Times, serif',
                 size: 14
               },
               bodyFont: {
+                family: '"Poppins Regular", Times, serif',
                 size: 14
               }
             }
@@ -1046,14 +1050,18 @@ $sat = date_create('saturday this week');
               display: true,
               text: ['Collection This Month ' + today.toLocaleDateString("en-US", monthYear), '₱ ' + totalCollectionThisMonth.toLocaleString('en', numberFormat)],
               font: {
-                size: 14
+                family: '"Poppins Regular", Times, serif',
+                size: 14,
+                weight: 500
               }
             },
             tooltip: {
               titleFont: {
+                family: '"Poppins Regular", Times, serif',
                 size: 14
               },
               bodyFont: {
+                family: '"Poppins Regular", Times, serif',
                 size: 14
               }
             }
@@ -1135,14 +1143,18 @@ $sat = date_create('saturday this week');
               align: 'left',
               text: ['Collection Today ' + today.toLocaleDateString("en-US", fullDate), '₱ ' + totalCollectionToday.toLocaleString('en', numberFormat)],
               font: {
-                size: 14
+                family: '"Poppins Regular", Times, serif',
+                size: 14,
+                weight: 500
               }
             },
             tooltip: {
               titleFont: {
+                family: '"Poppins Regular", Times, serif',
                 size: 14
               },
               bodyFont: {
+                family: '"Poppins Regular", Times, serif',
                 size: 14
               }
             }
@@ -1319,14 +1331,18 @@ $sat = date_create('saturday this week');
               display: true,
               text: ['Collection This Week', '₱ ' + totalCollectionThisWeek.toLocaleString('en-US', numberFormat)],
               font: {
-                size: 14
+                family: '"Poppins Regular", Times, serif',
+                size: 14,
+                weight: 500
               }
             },
             tooltip: {
               titleFont: {
+                family: '"Poppins Regular", Times, serif',
                 size: 14
               },
               bodyFont: {
+                family: '"Poppins Regular", Times, serif',
                 size: 14
               }
             }
@@ -1585,14 +1601,18 @@ $sat = date_create('saturday this week');
               align: 'center',
               text: ['Overview for ' + today.toLocaleDateString("en-US", yearOnly), 'Active Loans: '  + <?= count($activeLoans)?>],
               font: {
-                size: 15
+                family: '"Poppins Regular", Times, serif',
+                size: 15,
+                weight: 500
               }
             },
             tooltip: {
               titleFont: {
+                family: '"Poppins Regular", Times, serif',
                 size: 14
               },
               bodyFont: {
+                family: '"Poppins Regular", Times, serif',
                 size: 14
               }
             }
