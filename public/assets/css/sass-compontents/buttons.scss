@@ -7,9 +7,17 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  &[disabled] {
+  &[disabled],
+  &.disabled {
     opacity: 0.6;
     pointer-events: none;
+    &.with-loader {
+      font-size: 0;
+      opacity: 1;
+      .spinner {
+        display: block;
+      }
+    }
   }
   &.edit-btn,
   &.delete-btn,

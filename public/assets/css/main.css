@@ -161,9 +161,16 @@ body span {
   justify-content: center;
   align-items: center;
 }
-.btn[disabled] {
+.btn[disabled], .btn.disabled {
   opacity: 0.6;
   pointer-events: none;
+}
+.btn[disabled].with-loader, .btn.disabled.with-loader {
+  font-size: 0;
+  opacity: 1;
+}
+.btn[disabled].with-loader .spinner, .btn.disabled.with-loader .spinner {
+  display: block;
 }
 .btn.edit-btn, .btn.delete-btn, .btn.ledger-btn {
   background-size: 20px;
@@ -770,6 +777,9 @@ textarea.form-control {
 .modal.passes-modal .success-message {
   display: flex;
 }
+.modal.passes-modal .success-message .data-container h6, .modal.passes-modal .success-message .data-container span {
+  font-size: 16px;
+}
 .modal .modal-dialog .modal-content {
   border-radius: 15px;
 }
@@ -899,6 +909,22 @@ body.modal-open {
 .jai-card.accounts-list {
   top: 100px;
   margin-bottom: 100px;
+}
+
+.spinner {
+  display: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(farthest-side, #fff 90%, #0000) top/4px 4px no-repeat, conic-gradient(#0000 38%, #fff);
+  -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 3px), #000 0);
+  animation: spinner-c7wet2 1s infinite linear;
+}
+
+@keyframes spinner-c7wet2 {
+  100% {
+    transform: rotate(1turn);
+  }
 }
 
 /*# sourceMappingURL=main.css.map */

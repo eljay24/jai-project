@@ -278,7 +278,11 @@ function closeModal() {
   });
 
   $(".modal").on("hide.bs.modal", function () {
-    $(".btn-action").attr("class", "btn btn-primary btn-sm btn-action");
+    if ($(this).find('.btn-action').hasClass('with-loader')) {
+      $(".btn-action").attr("class", "btn with-loader btn-primary btn-sm btn-action");
+    } else {
+      $(".btn-action").attr("class", "btn btn-primary btn-sm btn-action");
+    }
   });
   $(".modal").on("hidden.bs.modal", function () {
     if ($("#payment").length) $("#payment").prop("readonly", false);

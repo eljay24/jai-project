@@ -142,7 +142,7 @@ try {
     </div>
     <div class="actions-container">
       <a href="#" type="button" class="btn open-payment-modal create-btn"><img src="../assets/icons/plus.svg"> Add Payment</a>
-      <a href="#" type="button" class="btn add-passes-modal add-passes" <?= date('H:i:s') > date('17:30:00') ? 'disabled' : ''; ?>><img src="../assets/icons/plus.svg"> Add Passes</a>
+      <a href="#" type="button" class="btn add-passes-modal add-passes" <?= date('H:i:s') < date('17:30:00') ? 'disabled' : ''; ?>><img src="../assets/icons/plus.svg"> Add Passes</a>
       <form class="table-search">
         <div class="input-group search-group">
           <input type="text" class="form-control search-input" placeholder="Search..." name="search" value="<?php echo $search; ?>" autofocus onfocus="this.select()">
@@ -447,7 +447,7 @@ try {
         </div>
         <div class="modal-footer d-flex justify-content-center">
           <button type="button" class="btn btn-secondary btn-sm close-modal" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary btn-action btn-sm">Add Passes</button>
+          <button type="submit" class="btn with-loader btn-primary btn-action btn-sm">Add Passes<div class="spinner"></div></button>
         </div>
       </div>
       <div class="success-message flex-column" style="display: none;">
@@ -458,7 +458,7 @@ try {
         </h3>
         <div class="data-container">
           <h6>Daily Passes: <span class="daily pass-count"></span></h6>
-          <h6>Weekly Passes: <span class="weekly pass-count"></span></h6>
+          <h6 class="<?= date('D') !== 'Sat' ? 'd-none' : '' ?>">Weekly Passes: <span class="weekly pass-count"></span></h6>
         </div>
       </div>
     </div>

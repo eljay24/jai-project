@@ -11,6 +11,11 @@
   &.passes-modal {
     .success-message {
       display: flex;
+      .data-container {
+        h6, span {
+          font-size: 16px;
+        }
+      }
     }
   }
 
