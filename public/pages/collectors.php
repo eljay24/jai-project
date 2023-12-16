@@ -102,13 +102,14 @@ try {
                                   c.birthday,
                                   c.address,
                                   c.datecreated,
-                                  COUNT(l.c_id) as active_loans
+                                  COUNT(CASE WHEN l.activeloan <> 0 THEN c.c_id ELSE NULL END ) as active_loans
                                 FROM
                                   jai_db.collectors as c
                                 LEFT JOIN jai_db.loans as l 
                                 ON c.c_id = l.c_id
                                 WHERE
-                                  c.is_deleted = 0 AND l.activeloan <> 0
+                                  c.is_deleted = 0 
+                                --   AND l.activeloan <> 0
                                 GROUP BY
                                   c.c_id
                                 ORDER BY
