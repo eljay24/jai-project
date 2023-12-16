@@ -61,11 +61,20 @@ try {
 
 
   if ($search) {
-    $statement = $conn->prepare("SELECT c.c_id, c.firstname, c.lastname
+    $statement = $conn->prepare("SELECT  c.c_id,
+    c.firstname,
+    c.lastname,
+    c.contactno,
+    c.birthday,
+    c.address,
+    c.datecreated,
+    COUNT(l.c_id) as active_loans
     FROM
       jai_db.collectors as c
+    LEFT JOIN jai_db.loans as l 
+    ON c.c_id = l.c_id
     WHERE
-      (is_deleted = 0)
+      (is_deleted = 0) AND l.activeloan <> 0
       AND (
         c.firstname LIKE :search
         OR c.middlename LIKE :search
@@ -74,6 +83,8 @@ try {
         OR CONCAT(c.firstname, ' ', c.lastname) LIKE :search
         OR CONCAT(c.lastname, ' ', c.firstname) LIKE :search
       )
+    GROUP BY
+      c.c_id
     ORDER BY
       c.c_id ASC
     LIMIT
@@ -86,11 +97,20 @@ try {
     $statement = $conn->prepare("SELECT
                                   c.c_id,
                                   c.firstname,
-                                  c.lastname
+                                  c.lastname,
+                                  c.contactno,
+                                  c.birthday,
+                                  c.address,
+                                  c.datecreated,
+                                  COUNT(l.c_id) as active_loans
                                 FROM
                                   jai_db.collectors as c
+                                LEFT JOIN jai_db.loans as l 
+                                ON c.c_id = l.c_id
                                 WHERE
-                                  c.is_deleted = 0
+                                  c.is_deleted = 0 AND l.activeloan <> 0
+                                GROUP BY
+                                  c.c_id
                                 ORDER BY
                                   c.c_id ASC
                                 LIMIT
@@ -126,7 +146,7 @@ try {
       <h1>Collectors</h1>
     </div>
     <div class="actions-container">
-      <a href="#" type="button" class="btn create-borrower create-btn"><img src="../assets/icons/plus.svg"> Add Collector</a>
+      <a href="#" type="button" class="btn create-collector create-btn"><img src="../assets/icons/plus.svg"> Add Collector</a>
 
       <form class="table-search">
         <div class="input-group search-group">
@@ -140,7 +160,7 @@ try {
 
   <div class="neumorph-container">
     <div class="table-wrapper">
-      <div class="jai-table table-container borrower-table">
+      <div class="jai-table table-container collector-table">
         <div class="row table-header">
           <div class="jai-col-ID">ID</div>
           <div class="col">Personal Info</div>
@@ -153,7 +173,7 @@ try {
         foreach ($collectors as $i => $collector) {
 
           $c_id = $collector['c_id'];
-          $picturePath = 'assets/icons/borrower-picture-placeholder.jpg';
+          $picturePath = 'assets/icons/collector-picture-placeholder.jpg';
         ?>
           <div class="row jai-data-row" data-row="row-<?= $collector['c_id'] ?>">
             <div class="jai-col-ID"><?= $collector['c_id'] ?></div>
@@ -167,9 +187,19 @@ try {
                 <div class="col">
                   <div class="row">
                     <p class="jai-table-name primary-font"><span class="jai-table-label">Name:</span> <span class="value"><?= ucwords(strtolower($collector['firstname'])) . ' ' . ucwords(strtolower($collector['lastname'])) ?></span></p>
-                    <p class="jai-table-contact primary-font"> <span class="jai-table-label">Contact: </span> <span class="value"></span></p>
+                    <p class="jai-table-contact primary-font"> <span class="jai-table-label">Contact: </span> <span class="value"><?= $collector['contactno'] ?></span></p>
                   </div>
                 </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="row">
+                <p class="jai-table-contact primary-font"> <span class="jai-table-label">Date Joined: </span> <span class="value"><?= $collector['datecreated'] ?></span></p>
+                <p class="jai-table-contact primary-font"> <span class="jai-table-label">Active Loans: </span> <span class="value"><?= $collector['active_loans'] ?></span></p>
+              </div>
+            </div>
+            <div class="col-1">
+              <div class="row">
               </div>
             </div>
             <!-- <div class="col position-relative">
@@ -338,14 +368,14 @@ try {
 
   <!-- END - PAGE NAVIGATION -->
 
-  <div class="modal fade" data-borrower="1" id="deleteBorrower" tabindex="-1" role="dialog" aria-labelledby="deleteBorrowerLabel" aria-hidden="true">
+  <div class="modal fade" data-collector="1" id="deletecollector" tabindex="-1" role="dialog" aria-labelledby="deletecollectorLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-body">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary btn-sm close-modal" data-dismiss="modal">Cancel</button>
-          <form class="delete-form" style="display: inline-block" method="post" action="/JAI/views/functions/delete-borrower.php">
+          <form class="delete-form" style="display: inline-block" method="post" action="/JAI/views/functions/delete-collector.php">
             <input type="hidden" name="c_id" value="">
             <button type="submit" class="btn btn-danger btn-sm">Delete</button>
           </form>
@@ -354,14 +384,14 @@ try {
     </div>
   </div>
 
-  <div class="modal fade form-modal" data-borrower="1" id="createBorrower" tabindex="-1" role="dialog" aria-labelledby="createBorrowerLabel" aria-hidden="true">
+  <div class="modal fade form-modal" data-collector="1" id="createCollector" tabindex="-1" role="dialog" aria-labelledby="createCXollectorLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Add Collector</h5>
         </div>
         <div class="modal-body">
-          <form class="action-form" autocomplete="off" action="create-borrower" method="post" enctype="multipart/form-data">
+          <form class="action-form" autocomplete="off" action="create-collector" method="post" enctype="multipart/form-data">
             <input type="hidden" class="d-none" name="c_id" value="">
             <input name="data-row" type="hidden" class="d-none" value=''>
 
@@ -369,7 +399,7 @@ try {
               <div class="row">
                 <div class="col-3">
                   <div class="form-image-container">
-                    <img id="formImg" class="form-image" src="../assets/icons/borrower-picture-placeholder.jpg" alt="your image" />
+                    <img id="formImg" class="form-image" src="../assets/icons/collector-picture-placeholder.jpg" alt="your image" />
                     <input accept="image/*" type='file' id="imgInp" name="picture" class="img-input d-none" />
                   </div>
                 </div>
@@ -415,43 +445,6 @@ try {
                         <input placeholder="Address" type="text" class="form-control" name="address" value="" required>
                       </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="jai-mb-2">
-                        <input placeholder="Occupation" type="text" class="form-control letters-only" name="occupation" value="" required>
-                      </div>
-                    </div>
-                    <div class="col">
-                      <div class="jai-mb-2">
-                        <input placeholder="Business name" type="text" class="form-control" name="businessname" value="" required>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col">
-                  <h5 class="modal-body-label">Comaker</h5>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input placeholder="Comaker" type="text" class="form-control letters-only" name="comaker" value="" required>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <input placeholder="Comaker Contact Number" type="text" class="form-control phone-number" name="comakerno" value="" required>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="jai-mb-2">
-                    <textarea placeholder="Remarks" type="text" class="form-control" name="remarks"></textarea>
                   </div>
                 </div>
               </div>

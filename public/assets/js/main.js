@@ -25,6 +25,13 @@ $(document).ready(function () {
 
   // Toggle Modal Functions START
   openModal(
+    ".create-collector",
+    ".form-modal",
+    "submit-collector",
+    resetForm,
+    "input[name='firstname']"
+  );
+  openModal(
     ".create-borrower",
     ".form-modal",
     "submit-create",
@@ -67,7 +74,15 @@ $(document).ready(function () {
   closeModal();
   // Toggle Modal Functions END
 
-  // Modal Submit Functions START
+  // ----------------------------
+  // MODAL SUBMIT FUNCTIONS START
+  //  ---------------------------
+  submitForm(
+    ".submit-collector",
+    "create-collector.php",
+    messages.successMessages.collector.create,
+    // "refresh-collectors.php"
+  );
   submitForm(
     ".submit-create",
     "create-borrower.php",
@@ -123,6 +138,11 @@ const messages = {
     noresults: "No results found",
   },
   successMessages: {
+    collector: {
+      create: "New Collector successfully created",
+      update: "Collector successfully updated",
+      delete: "Collector has been deleted",
+    },
     borrower: {
       create: "New Borrower successfully created",
       update: "Borrower successfully updated",
@@ -539,10 +559,10 @@ function submitForm(
           }
         },
         error: function (response, xhr, data) {
-          // console.log("error");
-          // console.log(response);
-          // console.log(xhr);
-          // console.log(data);
+          console.log("error");
+          console.log(response);
+          console.log(xhr);
+          console.log(data);
         },
       });
   });

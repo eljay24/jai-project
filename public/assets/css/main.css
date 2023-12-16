@@ -768,7 +768,9 @@ textarea.form-control {
   pointer-events: none;
 }
 
-.modal#editBorrower .modal-dialog,
+.modal#editCollector .modal-dialog,
+.modal#editCollector .success-message, .modal#createCollector .modal-dialog,
+.modal#createCollector .success-message, .modal#editBorrower .modal-dialog,
 .modal#editBorrower .success-message, .modal#createBorrower .modal-dialog,
 .modal#createBorrower .success-message, .modal.payment-modal .modal-dialog,
 .modal.payment-modal .success-message {
